@@ -12,5 +12,22 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         mapDefaultZoom: 12,
         mapProvider: 'google',
+        mapMarkers: [
+            {
+                title: 'Agence Adeliom',
+                coordinates: {
+                    lat: 48.614782,
+                    lng: 7.714012,
+                }
+            },
+            {
+                title: 'Cathédrale de Strasbourg',
+                coordinates: {
+                    lat: 48.581825,
+                    lng: 7.75093,
+                }
+            }
+        ],
+        mapDisplayMarkers: true,
     });
 });

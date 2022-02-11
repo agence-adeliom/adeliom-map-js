@@ -39,38 +39,51 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
 
-var mapSelectorKey = 'mapSelector';
-var apiKeyKey = 'apiKey';
-var checkMapSizeKey = 'checkMapSize';
-var mapDefaultCenterKey = 'mapDefaultCenter';
-var mapDefaultZoomKey = 'mapDefaultZoom';
-var mapProviderKey = 'mapProvider';
+var keys = {};
+keys.apiKey = 'apiKey';
+keys.map = {};
+keys.map.selector = 'mapSelector';
+keys.map.defaultCenter = 'mapDefaultCenter';
+keys.map.defaultZoom = 'mapDefaultZoom';
+keys.map.provider = 'mapProvider';
+keys.map.checkSize = 'checkMapSize';
+keys.map.markers = 'mapMarkers';
+keys.map.displayMarkers = 'mapDisplayMarkers';
 var defaultOptions = {};
-defaultOptions[mapSelectorKey] = null;
-defaultOptions[apiKeyKey] = null;
-defaultOptions[checkMapSizeKey] = false;
-defaultOptions[mapDefaultCenterKey] = {
+defaultOptions[keys.map.selector] = null;
+defaultOptions[keys.apiKey] = null;
+defaultOptions[keys.map.checkSize] = false;
+defaultOptions[keys.map.defaultCenter] = {
   lat: 48.614782,
   lng: 7.714012
 };
-defaultOptions[mapDefaultZoomKey] = 12;
-defaultOptions[mapProviderKey] = 'google';
-var mapOptions = {};
+defaultOptions[keys.map.defaultZoom] = 12;
+defaultOptions[keys.map.provider] = 'google';
+defaultOptions[keys.map.displayMarkers] = false;
 
 var AdeliomMap = /*#__PURE__*/function () {
   function AdeliomMap(options) {
+    var _this$options$keys$ma,
+        _this$options$keys$ma2,
+        _this = this;
+
     _classCallCheck(this, AdeliomMap);
 
     this.defaultOptions = defaultOptions;
-    this.mapOptions = mapOptions;
     this.google = null;
     this.map = null;
     this.options = Object.assign(this.defaultOptions, options);
+    this.markers = (_this$options$keys$ma = this.options[keys.map.markers]) !== null && _this$options$keys$ma !== void 0 ? _this$options$keys$ma : [];
+    this.displayMarkers = (_this$options$keys$ma2 = this.options[keys.map.displayMarkers]) !== null && _this$options$keys$ma2 !== void 0 ? _this$options$keys$ma2 : false;
 
-    if (this.options[apiKeyKey]) {
-      this._initMap();
+    if (this.options[keys.apiKey]) {
+      this._initMap().then(function () {
+        if (_this.displayMarkers) {
+          _this._initMarkers();
+        }
+      });
     } else {
-      console.error("".concat(apiKeyKey, " not provided"));
+      console.error("".concat(keys.apiKey, " not provided"));
     }
   }
 
@@ -83,24 +96,24 @@ var AdeliomMap = /*#__PURE__*/function () {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                if (!this.options[mapSelectorKey]) {
+                if (!this.options[keys.map.selector]) {
                   _context.next = 17;
                   break;
                 }
 
-                mapContainer = document.querySelector(this.options[mapSelectorKey]);
+                mapContainer = document.querySelector(this.options[keys.map.selector]);
 
                 if (!mapContainer) {
                   _context.next = 14;
                   break;
                 }
 
-                if (!(!this.options[checkMapSizeKey] || mapContainer.clientHeight !== 0 && mapContainer.clientWidth !== 0)) {
+                if (!(!this.options[keys.map.checkSize] || mapContainer.clientHeight !== 0 && mapContainer.clientWidth !== 0)) {
                   _context.next = 11;
                   break;
                 }
 
-                _context.t0 = this.options[mapProviderKey];
+                _context.t0 = this.options[keys.map.provider];
                 _context.next = _context.t0 === 'google' ? 7 : 7;
                 break;
 
@@ -113,14 +126,14 @@ var AdeliomMap = /*#__PURE__*/function () {
                 break;
 
               case 11:
-                console.error("".concat(this.options[mapSelectorKey], " height and/or width is equal to 0"));
+                console.error("".concat(this.options[keys.map.selector], " height and/or width is equal to 0"));
 
               case 12:
                 _context.next = 15;
                 break;
 
               case 14:
-                console.error("".concat(this.options[mapSelectorKey], " not found"));
+                console.error("".concat(this.options[keys.map.selector], " not found"));
 
               case 15:
                 _context.next = 18;
@@ -159,8 +172,8 @@ var AdeliomMap = /*#__PURE__*/function () {
               case 3:
                 this.google = _context2.sent;
                 this.map = new this.google.maps.Map(container, {
-                  center: this.options[mapDefaultCenterKey],
-                  zoom: this.options[mapDefaultZoomKey]
+                  center: this.options[keys.map.defaultCenter],
+                  zoom: this.options[keys.map.defaultZoom]
                 });
 
               case 5:
@@ -177,6 +190,45 @@ var AdeliomMap = /*#__PURE__*/function () {
 
       return _initGoogleMap;
     }()
+  }, {
+    key: "_initMarkers",
+    value: function _initMarkers() {
+      switch (this.options[keys.map.provider]) {
+        case 'google':
+        default:
+          this._initGoogleMapMarkers();
+
+          break;
+      }
+    }
+  }, {
+    key: "_initGoogleMapMarkers",
+    value: function _initGoogleMapMarkers() {
+      var _this2 = this;
+
+      this.markers.forEach(function (marker) {
+        _this2._createGoogleMapMarker(marker);
+      });
+    }
+  }, {
+    key: "_createGoogleMapMarker",
+    value: function _createGoogleMapMarker(marker) {
+      var _this3 = this;
+
+      var markerPosition = new this.google.maps.LatLng(marker.coordinates.lat, marker.coordinates.lng);
+      var markerTitle = marker.title;
+      var markerInstance = new this.google.maps.Marker({
+        position: markerPosition,
+        title: markerTitle,
+        map: this.map
+      });
+      var infoWindowInstance = new this.google.maps.InfoWindow({
+        content: "<div>".concat(markerTitle, "</div>")
+      });
+      this.google.maps.event.addListener(markerInstance, 'click', function () {
+        infoWindowInstance.open(_this3.map, markerInstance);
+      });
+    }
   }]);
 
   return AdeliomMap;
