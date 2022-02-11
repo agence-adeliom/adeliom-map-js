@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+
+  main {
+    [js-map] {
+      height: 500px;
+      width: 500px;
+      background-color: red;
+    }
+  }
+}
