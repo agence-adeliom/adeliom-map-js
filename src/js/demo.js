@@ -11,5 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
             lng: 7.714012
         },
         mapDefaultZoom: 12,
+        mapProvider: 'google',
     });
 });
