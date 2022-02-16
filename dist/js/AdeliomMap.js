@@ -49,10 +49,16 @@ keys.map.provider = 'mapProvider';
 keys.map.checkSize = 'checkMapSize';
 keys.map.markers = 'mapMarkers';
 keys.map.displayMarkers = 'mapDisplayMarkers';
+keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
+keys.list = {};
+keys.list.selector = 'mapListSelector';
+keys.list.eltHtml = 'mapListEltHtml';
 var defaultOptions = {};
 defaultOptions[keys.map.selector] = null;
+defaultOptions[keys.list.selector] = null;
 defaultOptions[keys.apiKey] = null;
 defaultOptions[keys.map.checkSize] = false;
+defaultOptions[keys.map.allowMultipleInfoWindow] = true;
 defaultOptions[keys.map.defaultCenter] = {
   lat: 48.614782,
   lng: 7.714012
@@ -71,10 +77,16 @@ var AdeliomMap = /*#__PURE__*/function () {
 
     this.defaultOptions = defaultOptions;
     this.google = null;
+    this.mapContainer = null;
     this.map = null;
+    this.mapListContainer = null;
+    this.mapList = null;
+    this.mapListEltHtml = null;
     this.options = Object.assign(this.defaultOptions, options);
+    console.log(this.options);
     this.markers = (_this$options$keys$ma = this.options[keys.map.markers]) !== null && _this$options$keys$ma !== void 0 ? _this$options$keys$ma : [];
     this.displayMarkers = (_this$options$keys$ma2 = this.options[keys.map.displayMarkers]) !== null && _this$options$keys$ma2 !== void 0 ? _this$options$keys$ma2 : false;
+    this.markersData = [];
 
     if (this.options[keys.apiKey]) {
       this._initMap().then(function () {
@@ -91,58 +103,65 @@ var AdeliomMap = /*#__PURE__*/function () {
     key: "_initMap",
     value: function () {
       var _initMap2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var mapContainer;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 if (!this.options[keys.map.selector]) {
-                  _context.next = 17;
+                  _context.next = 18;
                   break;
                 }
 
-                mapContainer = document.querySelector(this.options[keys.map.selector]);
+                this.mapContainer = document.querySelector(this.options[keys.map.selector]);
 
-                if (!mapContainer) {
-                  _context.next = 14;
+                if (this.options[keys.list.selector]) {
+                  this.mapListContainer = document.querySelector(this.options[keys.list.selector]);
+
+                  if (this.options[keys.list.eltHtml]) {
+                    this.mapListEltHtml = this.options[keys.list.eltHtml];
+                  }
+                }
+
+                if (!this.mapContainer) {
+                  _context.next = 15;
                   break;
                 }
 
-                if (!(!this.options[keys.map.checkSize] || mapContainer.clientHeight !== 0 && mapContainer.clientWidth !== 0)) {
-                  _context.next = 11;
+                if (!(!this.options[keys.map.checkSize] || this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
+                  _context.next = 12;
                   break;
                 }
 
                 _context.t0 = this.options[keys.map.provider];
-                _context.next = _context.t0 === 'google' ? 7 : 7;
+                _context.next = _context.t0 === 'google' ? 8 : 8;
                 break;
 
-              case 7:
-                _context.next = 9;
-                return this._initGoogleMap(mapContainer);
+              case 8:
+                _context.next = 10;
+                return this._initGoogleMap(this.mapContainer);
 
-              case 9:
-                _context.next = 12;
+              case 10:
+                _context.next = 13;
                 break;
-
-              case 11:
-                console.error("".concat(this.options[keys.map.selector], " height and/or width is equal to 0"));
 
               case 12:
-                _context.next = 15;
-                break;
+                console.error("".concat(this.options[keys.map.selector], " height and/or width is equal to 0"));
 
-              case 14:
-                console.error("".concat(this.options[keys.map.selector], " not found"));
+              case 13:
+                _context.next = 16;
+                break;
 
               case 15:
-                _context.next = 18;
+                console.error("".concat(this.options[keys.map.selector], " not found"));
+
+              case 16:
+                _context.next = 19;
                 break;
 
-              case 17:
-                console.error('Need to provide mapSelector option');
-
               case 18:
+                console.error("Need to provide ".concat(keys.map.selector, " option"));
+
+              case 19:
               case "end":
                 return _context.stop();
             }
@@ -215,6 +234,7 @@ var AdeliomMap = /*#__PURE__*/function () {
     value: function _createGoogleMapMarker(marker) {
       var _this3 = this;
 
+      var markerData = {};
       var markerPosition = new this.google.maps.LatLng(marker.coordinates.lat, marker.coordinates.lng);
       var markerTitle = marker.title;
       var markerInstance = new this.google.maps.Marker({
@@ -222,11 +242,177 @@ var AdeliomMap = /*#__PURE__*/function () {
         title: markerTitle,
         map: this.map
       });
+      markerData.marker = markerInstance;
       var infoWindowInstance = new this.google.maps.InfoWindow({
         content: "<div>".concat(markerTitle, "</div>")
       });
+      markerData.infoWindow = infoWindowInstance;
+      var listElt = null;
+
+      if (this.mapListContainer) {
+        listElt = this._createMapListInstance(marker, markerInstance, infoWindowInstance);
+        markerData.listElt = listElt;
+      }
+
       this.google.maps.event.addListener(markerInstance, 'click', function () {
-        infoWindowInstance.open(_this3.map, markerInstance);
+        if (_this3._isInfoWindowOpened(infoWindowInstance)) {
+          infoWindowInstance.close();
+        } else {
+          if (!_this3.options[keys.map.allowMultipleInfoWindow]) {
+            _this3._closeAllInfoWindows();
+          }
+
+          infoWindowInstance.open(_this3.map, markerInstance);
+          console.log("Associated infoWindow", _this3._getInfoWindowByMarker(markerInstance));
+          console.log("Associated listEltNode", _this3._getListEltByMarker(markerInstance));
+        }
+      });
+      this.markersData.push(markerData);
+    }
+  }, {
+    key: "_createMapListInstance",
+    value: function _createMapListInstance(markerData, mapMarkerInstance, infoWindowInstance) {
+      var _this4 = this;
+
+      var mapListInstance = document.createElement('div');
+      var listInstanceHtml = this.mapListEltHtml;
+      Object.keys(markerData).forEach(function (key) {
+        var search = "{{ ".concat(key, " }}");
+        listInstanceHtml = listInstanceHtml.replaceAll(search, markerData[key]);
+      });
+      mapListInstance.innerHTML = listInstanceHtml;
+      mapListInstance.addEventListener('click', function () {
+        infoWindowInstance.open(_this4.map, mapMarkerInstance);
+        console.log("Associated marker", _this4._getMarkerByListEltNode(mapListInstance));
+        console.log("Associated infoWindow", _this4._getInfoWindowByListEltNode(mapListInstance));
+      });
+      this.mapListContainer.appendChild(mapListInstance);
+      return mapListInstance;
+    }
+    /**
+     * Returns an existing infoWindow instance by providing a marker
+     * @param marker
+     * @returns {null}
+     * @private
+     */
+
+  }, {
+    key: "_getInfoWindowByMarker",
+    value: function _getInfoWindowByMarker(marker) {
+      return this._returnDataByMarker('infoWindow', marker);
+    }
+    /**
+     * Returns an existing listElt node by providing a marker
+     * @param marker
+     * @returns {null}
+     * @private
+     */
+
+  }, {
+    key: "_getListEltByMarker",
+    value: function _getListEltByMarker(marker) {
+      return this._returnDataByMarker('listElt', marker);
+    }
+    /**
+     * Returns an existing marker node by providing a listEltNode
+     * @param marker
+     * @returns {null}
+     * @private
+     */
+
+  }, {
+    key: "_getMarkerByListEltNode",
+    value: function _getMarkerByListEltNode(listEltNode) {
+      return this._returnDataByListEltNode('marker', listEltNode);
+    }
+    /**
+     * Returns an existing infoWindow by providing a listEltNode
+     * @param marker
+     * @returns {null}
+     * @private
+     */
+
+  }, {
+    key: "_getInfoWindowByListEltNode",
+    value: function _getInfoWindowByListEltNode(listEltNode) {
+      return this._returnDataByListEltNode('infoWindow', listEltNode);
+    }
+    /**
+     * Generic method to retrieve some data by specifying a marker
+     * @param data
+     * @param marker
+     * @returns {null}
+     * @private
+     */
+
+  }, {
+    key: "_returnDataByMarker",
+    value: function _returnDataByMarker(data, marker) {
+      var returnedData = null;
+
+      for (var i = 0; i < Object.keys(this.markersData).length; i++) {
+        var tempMarker = this.markersData[Object.keys(this.markersData)[i]];
+
+        if ((tempMarker === null || tempMarker === void 0 ? void 0 : tempMarker.marker) === marker) {
+          returnedData = tempMarker[data];
+          break;
+        }
+      }
+
+      return returnedData;
+    }
+    /**
+     * Generic method to retrieve some data by specifying a listEltNode
+     * @param data
+     * @param marker
+     * @returns {null}
+     * @private
+     */
+
+  }, {
+    key: "_returnDataByListEltNode",
+    value: function _returnDataByListEltNode(data, listEltNode) {
+      var returnedData = null;
+
+      for (var i = 0; i < Object.keys(this.markersData).length; i++) {
+        var tempMarker = this.markersData[Object.keys(this.markersData)[i]];
+
+        if ((tempMarker === null || tempMarker === void 0 ? void 0 : tempMarker.listElt) === listEltNode) {
+          returnedData = tempMarker[data];
+          break;
+        }
+      }
+
+      return returnedData;
+    }
+    /**
+     * Returns whether an info window is currently opened
+     * @param infoWindow
+     * @returns {boolean}
+     * @private
+     */
+
+  }, {
+    key: "_isInfoWindowOpened",
+    value: function _isInfoWindowOpened(infoWindow) {
+      return infoWindow.getMap() ? true : false;
+    }
+    /**
+     * Close all loaded infoWindows
+     * @private
+     */
+
+  }, {
+    key: "_closeAllInfoWindows",
+    value: function _closeAllInfoWindows() {
+      var _this5 = this;
+
+      this.markersData.forEach(function (markerData) {
+        if (markerData !== null && markerData !== void 0 && markerData.infoWindow) {
+          if (_this5._isInfoWindowOpened(markerData.infoWindow)) {
+            markerData.infoWindow.close();
+          }
+        }
       });
     }
   }]);
