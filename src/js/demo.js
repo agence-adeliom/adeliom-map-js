@@ -53,5 +53,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         ],
         mapDisplayMarkers: true,
+        mapEnableZoomButtons: true, // Displays the + and - zoom buttons
+        mapEnableStreetView: true, // Displays the interactive StreetView button
+        mapEnableFullscreenButton: true, // Displays a button that allows the user to put the map in fullscreen
+        mapEnableTypeButtons: true, // Displays the buttons that allow the user to switch between map types
+        mapDisplayScale: false, // Displays a scale at the bottom of the map
     });
 });

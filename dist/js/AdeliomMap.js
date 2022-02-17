@@ -53,6 +53,13 @@ keys.map.displayMarkers = 'mapDisplayMarkers';
 keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
+keys.map.controls = {};
+keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
+keys.map.controls.streetViewButton = 'mapEnableStreetView';
+keys.map.controls.fullscreenButton = 'mapEnableFullscreenButton';
+keys.map.controls.mapTypeButtons = 'mapEnableTypeButtons';
+keys.map.controls.displayScale = 'mapDisplayScale';
+keys.map.controls.rotateControl = 'mapRotate';
 keys.list = {};
 keys.list.selector = 'mapListSelector';
 keys.list.eltTemplate = 'mapListEltTemplate';
@@ -72,6 +79,12 @@ defaultOptions[keys.map.provider] = 'google';
 defaultOptions[keys.map.displayMarkers] = false;
 defaultOptions[keys.map.infoWindowTemplate] = '';
 defaultOptions[keys.map.centerMarkerOnClick] = true;
+defaultOptions[keys.map.controls.zoomButtons] = false;
+defaultOptions[keys.map.controls.streetViewButton] = false;
+defaultOptions[keys.map.controls.fullscreenButton] = false;
+defaultOptions[keys.map.controls.mapTypeButtons] = false;
+defaultOptions[keys.map.controls.displayScale] = false;
+defaultOptions[keys.map.controls.rotateControl] = false;
 defaultOptions[keys.list.eltTemplate] = '';
 defaultOptions[keys.list.centerMarkerOnClick] = true;
 
@@ -201,7 +214,13 @@ var AdeliomMap = /*#__PURE__*/function () {
                 this.google = _context2.sent;
                 this.map = new this.google.maps.Map(container, {
                   center: this.options[keys.map.defaultCenter],
-                  zoom: this.options[keys.map.defaultZoom]
+                  zoom: this.options[keys.map.defaultZoom],
+                  zoomControl: this.options[keys.map.controls.zoomButtons],
+                  streetViewControl: this.options[keys.map.controls.streetViewButton],
+                  fullscreenControl: this.options[keys.map.controls.fullscreenButton],
+                  mapTypeControl: this.options[keys.map.controls.mapTypeButtons],
+                  scaleControl: this.options[keys.map.controls.displayScale],
+                  rotateControl: this.options[keys.map.controls.rotateControl]
                 });
 
               case 5:
