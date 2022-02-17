@@ -22,8 +22,10 @@ Dépendance de gestion de Google Maps / Store Locator Adeliom
 `mapDisplayScale (bool)` : afficher ou non une échelle graduée au bas de la map<br>
 
 ### Markers
-
+`mapMarkers (array)` : tableau des markers à afficher<br>
 `mapDisplayMarkers (bool)` : la map doit-elle afficher les marqueurs<br>
+`mapCenterMarkerOnClick (bool)` : centre la map sur le marqueur au clic<br>
+`mapAnimation (string)` : type d'animation de transition entre positions dans la map (smooth / default)<br> 
 
 ### Infobulles
 
@@ -32,4 +34,32 @@ Dépendance de gestion de Google Maps / Store Locator Adeliom
 `mapDisplayInfoWindows (bool)` : la map doit-elle afficher les infobulles<br>
 
 ### Liste de points
+
 `mapListEltTemplate (string)` : template HTML d'un élément de la liste des points<br>
+
+## Exemples de paramètres :
+
+```
+mapDefaultCenter: {
+    lat: 48.614782,
+    lng: 7.714012
+},
+mapMarkers: [
+    {
+        title: 'Agence Adeliom',
+        description: 'Agence Digitale',
+        coordinates: {
+            lat: 48.614782,
+            lng: 7.714012,
+        }
+    },
+    {
+        title: 'Cathédrale de Strasbourg',
+        description: 'Lieu touristique',
+        coordinates: {
+            lat: 48.581825,
+            lng: 7.75093,
+        }
+    }
+],
+```

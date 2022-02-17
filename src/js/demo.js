@@ -32,12 +32,14 @@ document.addEventListener("DOMContentLoaded", () => {
             lat: 48.614782,
             lng: 7.714012
         },
+        mapCenterMarkerOnClick: true,
         mapDefaultZoom: 12,
         mapProvider: 'google',
+        mapAnimation: 'smooth',
         mapMarkers: [
             {
                 title: 'Agence Adeliom',
-                description: 'Test de description',
+                description: 'Agence Digitale',
                 coordinates: {
                     lat: 48.614782,
                     lng: 7.714012,
@@ -45,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             {
                 title: 'Cathédrale de Strasbourg',
-                description: 'Second test de description',
+                description: 'Lieu touristique',
                 coordinates: {
                     lat: 48.581825,
                     lng: 7.75093,

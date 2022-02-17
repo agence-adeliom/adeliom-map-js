@@ -2,6 +2,9 @@ import {Loader} from 'google-maps';
 
 const mapCustomClass = 'adeliom-map-js';
 
+const smoothAnim = 'smooth';
+const defaultAnim = 'default';
+
 const keys = {};
 keys.apiKey = 'apiKey';
 keys.map = {};
@@ -16,6 +19,7 @@ keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
 keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
+keys.map.animation = 'mapAnimation';
 keys.map.controls = {};
 keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
 keys.map.controls.streetViewButton = 'mapEnableStreetView';
@@ -41,6 +45,7 @@ defaultOptions[keys.map.displayMarkers] = true;
 defaultOptions[keys.map.displayInfoWindows] = true;
 defaultOptions[keys.map.infoWindowTemplate] = '';
 defaultOptions[keys.map.centerMarkerOnClick] = true;
+defaultOptions[keys.map.animation] = smoothAnim;
 defaultOptions[keys.map.controls.zoomButtons] = false;
 defaultOptions[keys.map.controls.streetViewButton] = false;
 defaultOptions[keys.map.controls.fullscreenButton] = false;
@@ -275,17 +280,51 @@ export default class AdeliomMap {
         const infoWindow = this._getInfoWindowByMarker(marker);
 
         if (infoWindow) {
-            if (this._isInfoWindowOpened(infoWindow)) {
-                infoWindow.close();
-            } else {
-                if (!this.options[keys.map.allowMultipleInfoWindow]) {
-                    this._closeAllInfoWindows();
-                }
-
-                infoWindow.open(this.map, marker);
-            }
+            this._openInfoWindow(infoWindow);
         }
     };
+
+    _openInfoWindow(infoWindow) {
+        if (this._isInfoWindowOpened(infoWindow)) {
+            infoWindow.close();
+        } else {
+            if (!this.options[keys.map.allowMultipleInfoWindow]) {
+                this._closeAllInfoWindows();
+            }
+
+            const marker = this._getMarkerByInfoWindow(infoWindow);
+
+            if (marker) {
+                infoWindow.open(this.map, marker);
+
+                if (this.options[keys.map.centerMarkerOnClick]) {
+                    this._centerMapOnMarker(marker);
+                }
+            }
+        }
+    }
+
+    _getMarkerCoordinates(marker) {
+        return {
+            lat: marker.getPosition().lat(),
+            lng: marker.getPosition().lng(),
+        };
+    }
+
+    _centerMapOnMarker(marker) {
+        const coordinates = this._getMarkerCoordinates(marker);
+        const googleMapCoordinates = new this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+
+        if (this.options[keys.map.animation] === smoothAnim) {
+            this.map.panTo(googleMapCoordinates);
+        } else {
+            this.map.setCenter(googleMapCoordinates);
+        }
+    }
+
+    _getMarkerByInfoWindow(infoWindow) {
+        return this._returnDataByInfoWindow('marker', infoWindow);
+    }
 
     /**
      * Returns an existing infoWindow instance by providing a marker
@@ -347,6 +386,22 @@ export default class AdeliomMap {
 
         return returnedData;
     };
+
+    _returnDataByInfoWindow(data, infoWindow) {
+        let returnedData = null;
+
+        if (this.options[keys.map.displayInfoWindows]) {
+            for (let i = 0; i < Object.keys(this.markersData).length; i++) {
+                const tempMarker = this.markersData[Object.keys(this.markersData)[i]];
+                if (tempMarker?.infoWindow === infoWindow) {
+                    returnedData = tempMarker[data];
+                    break;
+                }
+            }
+        }
+
+        return returnedData;
+    }
 
     /**
      * Generic method to retrieve some data by specifying a listEltNode

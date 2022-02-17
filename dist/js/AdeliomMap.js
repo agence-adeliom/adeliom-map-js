@@ -40,6 +40,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 var mapCustomClass = 'adeliom-map-js';
+var smoothAnim = 'smooth';
+var defaultAnim = 'default';
 var keys = {};
 keys.apiKey = 'apiKey';
 keys.map = {};
@@ -54,6 +56,7 @@ keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
 keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
+keys.map.animation = 'mapAnimation';
 keys.map.controls = {};
 keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
 keys.map.controls.streetViewButton = 'mapEnableStreetView';
@@ -81,6 +84,7 @@ defaultOptions[keys.map.displayMarkers] = true;
 defaultOptions[keys.map.displayInfoWindows] = true;
 defaultOptions[keys.map.infoWindowTemplate] = '';
 defaultOptions[keys.map.centerMarkerOnClick] = true;
+defaultOptions[keys.map.animation] = smoothAnim;
 defaultOptions[keys.map.controls.zoomButtons] = false;
 defaultOptions[keys.map.controls.streetViewButton] = false;
 defaultOptions[keys.map.controls.fullscreenButton] = false;
@@ -397,27 +401,66 @@ var AdeliomMap = /*#__PURE__*/function () {
       var infoWindow = this._getInfoWindowByMarker(marker);
 
       if (infoWindow) {
-        if (this._isInfoWindowOpened(infoWindow)) {
-          infoWindow.close();
-        } else {
-          if (!this.options[keys.map.allowMultipleInfoWindow]) {
-            this._closeAllInfoWindows();
-          }
+        this._openInfoWindow(infoWindow);
+      }
+    }
+  }, {
+    key: "_openInfoWindow",
+    value: function _openInfoWindow(infoWindow) {
+      if (this._isInfoWindowOpened(infoWindow)) {
+        infoWindow.close();
+      } else {
+        if (!this.options[keys.map.allowMultipleInfoWindow]) {
+          this._closeAllInfoWindows();
+        }
 
+        var marker = this._getMarkerByInfoWindow(infoWindow);
+
+        if (marker) {
           infoWindow.open(this.map, marker);
+
+          if (this.options[keys.map.centerMarkerOnClick]) {
+            this._centerMapOnMarker(marker);
+          }
         }
       }
     }
   }, {
-    key: "_getInfoWindowByMarker",
-    value:
+    key: "_getMarkerCoordinates",
+    value: function _getMarkerCoordinates(marker) {
+      return {
+        lat: marker.getPosition().lat(),
+        lng: marker.getPosition().lng()
+      };
+    }
+  }, {
+    key: "_centerMapOnMarker",
+    value: function _centerMapOnMarker(marker) {
+      var coordinates = this._getMarkerCoordinates(marker);
+
+      var googleMapCoordinates = new this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+
+      if (this.options[keys.map.animation] === smoothAnim) {
+        this.map.panTo(googleMapCoordinates);
+      } else {
+        this.map.setCenter(googleMapCoordinates);
+      }
+    }
+  }, {
+    key: "_getMarkerByInfoWindow",
+    value: function _getMarkerByInfoWindow(infoWindow) {
+      return this._returnDataByInfoWindow('marker', infoWindow);
+    }
     /**
      * Returns an existing infoWindow instance by providing a marker
      * @param marker
      * @returns {null}
      * @private
      */
-    function _getInfoWindowByMarker(marker) {
+
+  }, {
+    key: "_getInfoWindowByMarker",
+    value: function _getInfoWindowByMarker(marker) {
       return this._returnDataByMarker('infoWindow', marker);
     }
   }, {
@@ -481,8 +524,23 @@ var AdeliomMap = /*#__PURE__*/function () {
       return returnedData;
     }
   }, {
-    key: "_returnDataByListEltNode",
-    value:
+    key: "_returnDataByInfoWindow",
+    value: function _returnDataByInfoWindow(data, infoWindow) {
+      var returnedData = null;
+
+      if (this.options[keys.map.displayInfoWindows]) {
+        for (var i = 0; i < Object.keys(this.markersData).length; i++) {
+          var tempMarker = this.markersData[Object.keys(this.markersData)[i]];
+
+          if ((tempMarker === null || tempMarker === void 0 ? void 0 : tempMarker.infoWindow) === infoWindow) {
+            returnedData = tempMarker[data];
+            break;
+          }
+        }
+      }
+
+      return returnedData;
+    }
     /**
      * Generic method to retrieve some data by specifying a listEltNode
      * @param data
@@ -490,7 +548,10 @@ var AdeliomMap = /*#__PURE__*/function () {
      * @returns {null}
      * @private
      */
-    function _returnDataByListEltNode(data, listEltNode) {
+
+  }, {
+    key: "_returnDataByListEltNode",
+    value: function _returnDataByListEltNode(data, listEltNode) {
       var returnedData = null;
 
       for (var i = 0; i < Object.keys(this.markersData).length; i++) {
