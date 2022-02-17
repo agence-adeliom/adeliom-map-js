@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         ],
         mapDisplayMarkers: true,
+        mapDisplayInfoWindows: true,
         mapEnableZoomButtons: true, // Displays the + and - zoom buttons
         mapEnableStreetView: true, // Displays the interactive StreetView button
         mapEnableFullscreenButton: true, // Displays a button that allows the user to put the map in fullscreen

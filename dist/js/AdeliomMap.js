@@ -50,6 +50,7 @@ keys.map.provider = 'mapProvider';
 keys.map.checkSize = 'checkMapSize';
 keys.map.markers = 'mapMarkers';
 keys.map.displayMarkers = 'mapDisplayMarkers';
+keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
 keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
@@ -76,7 +77,8 @@ defaultOptions[keys.map.defaultCenter] = {
 };
 defaultOptions[keys.map.defaultZoom] = 12;
 defaultOptions[keys.map.provider] = 'google';
-defaultOptions[keys.map.displayMarkers] = false;
+defaultOptions[keys.map.displayMarkers] = true;
+defaultOptions[keys.map.displayInfoWindows] = true;
 defaultOptions[keys.map.infoWindowTemplate] = '';
 defaultOptions[keys.map.centerMarkerOnClick] = true;
 defaultOptions[keys.map.controls.zoomButtons] = false;
@@ -288,10 +290,7 @@ var AdeliomMap = /*#__PURE__*/function () {
         map: this.map
       });
       markerData.marker = markerInstance;
-      var infoWindowInstance = new this.google.maps.InfoWindow({
-        content: this._replaceMarkerDataInString(markerRawData, this.options[keys.map.infoWindowTemplate])
-      });
-      markerData.infoWindow = infoWindowInstance;
+      markerData.infoWindow = this._createGoogleMapInfoWindow(markerRawData);
       var listElt = null;
 
       if (this.mapListContainer) {
@@ -305,12 +304,26 @@ var AdeliomMap = /*#__PURE__*/function () {
       this.markersData.push(markerData);
     }
   }, {
+    key: "_createGoogleMapInfoWindow",
+    value: function _createGoogleMapInfoWindow(markerRawData) {
+      if (this.options[keys.map.displayInfoWindows]) {
+        var infoWindowInstance = new this.google.maps.InfoWindow({
+          content: this._replaceMarkerDataInString(markerRawData, this.options[keys.map.infoWindowTemplate])
+        });
+        return infoWindowInstance;
+      }
+
+      return null;
+    }
+  }, {
     key: "_handleClickMarker",
     value: function _handleClickMarker(marker) {
-      if (this._isInfoWindowOpenedByMarker(marker)) {
-        this._closeInfoWindowByMarker(marker);
-      } else {
-        this._openInfoWindowByMarker(marker);
+      if (this.options[keys.map.displayInfoWindows]) {
+        if (this._isInfoWindowOpenedByMarker(marker)) {
+          this._closeInfoWindowByMarker(marker);
+        } else {
+          this._openInfoWindowByMarker(marker);
+        }
       }
     }
   }, {
@@ -319,7 +332,9 @@ var AdeliomMap = /*#__PURE__*/function () {
       var mapMarkerInstance = this._getMarkerByListEltNode(listElt);
 
       if (mapMarkerInstance) {
-        this._openInfoWindowByMarker(mapMarkerInstance);
+        if (this.options[keys.map.displayInfoWindows]) {
+          this._openInfoWindowByMarker(mapMarkerInstance);
+        }
       }
     }
   }, {

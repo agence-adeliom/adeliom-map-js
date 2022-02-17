@@ -12,6 +12,7 @@ keys.map.provider = 'mapProvider';
 keys.map.checkSize = 'checkMapSize';
 keys.map.markers = 'mapMarkers';
 keys.map.displayMarkers = 'mapDisplayMarkers';
+keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
 keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
@@ -36,7 +37,8 @@ defaultOptions[keys.map.allowMultipleInfoWindow] = true;
 defaultOptions[keys.map.defaultCenter] = {lat: 48.614782, lng: 7.714012};
 defaultOptions[keys.map.defaultZoom] = 12;
 defaultOptions[keys.map.provider] = 'google';
-defaultOptions[keys.map.displayMarkers] = false;
+defaultOptions[keys.map.displayMarkers] = true;
+defaultOptions[keys.map.displayInfoWindows] = true;
 defaultOptions[keys.map.infoWindowTemplate] = '';
 defaultOptions[keys.map.centerMarkerOnClick] = true;
 defaultOptions[keys.map.controls.zoomButtons] = false;
@@ -171,11 +173,7 @@ export default class AdeliomMap {
 
         markerData.marker = markerInstance;
 
-        const infoWindowInstance = new this.google.maps.InfoWindow({
-            content: this._replaceMarkerDataInString(markerRawData, this.options[keys.map.infoWindowTemplate]),
-        });
-
-        markerData.infoWindow = infoWindowInstance;
+        markerData.infoWindow = this._createGoogleMapInfoWindow(markerRawData);
 
         let listElt = null;
 
@@ -191,11 +189,25 @@ export default class AdeliomMap {
         this.markersData.push(markerData);
     };
 
+    _createGoogleMapInfoWindow(markerRawData) {
+        if (this.options[keys.map.displayInfoWindows]) {
+            const infoWindowInstance = new this.google.maps.InfoWindow({
+                content: this._replaceMarkerDataInString(markerRawData, this.options[keys.map.infoWindowTemplate]),
+            });
+
+            return infoWindowInstance;
+        }
+
+        return null;
+    }
+
     _handleClickMarker(marker) {
-        if (this._isInfoWindowOpenedByMarker(marker)) {
-            this._closeInfoWindowByMarker(marker);
-        } else {
-            this._openInfoWindowByMarker(marker);
+        if (this.options[keys.map.displayInfoWindows]) {
+            if (this._isInfoWindowOpenedByMarker(marker)) {
+                this._closeInfoWindowByMarker(marker);
+            } else {
+                this._openInfoWindowByMarker(marker);
+            }
         }
     };
 
@@ -203,7 +215,9 @@ export default class AdeliomMap {
         const mapMarkerInstance = this._getMarkerByListEltNode(listElt);
 
         if (mapMarkerInstance) {
-            this._openInfoWindowByMarker(mapMarkerInstance);
+            if (this.options[keys.map.displayInfoWindows]) {
+                this._openInfoWindowByMarker(mapMarkerInstance);
+            }
         }
     };
 
