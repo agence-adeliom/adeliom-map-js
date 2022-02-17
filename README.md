@@ -25,12 +25,13 @@ Dépendance de gestion de Google Maps / Store Locator Adeliom
 `mapMarkers (array)` : tableau des markers à afficher<br>
 `mapDisplayMarkers (bool)` : la map doit-elle afficher les marqueurs<br>
 `mapCenterMarkerOnClick (bool)` : centre la map sur le marqueur au clic<br>
-`mapAnimation (string)` : type d'animation de transition entre positions dans la map (smooth / default)<br> 
+`mapAnimation (string)` : type d'animation de transition entre positions dans la map (smooth / default)<br>
+`mapAllowMultipleMarkersSelected (bool)` : si plusieurs marqueurs peuvent être sélectionnés en simultané<br>
+`mapMarkerIcon (string)` : URL vers l'icône du marker<br>
+`mapMarkerSelectedIcon (string)` : URL vers l'icône sélectionnée du marker<br>
 
 ### Infobulles
-
 `mapInfoWindowTemplate (string)` : template HTML de l'infobulle d'un marqueur<br>
-`mapAllowMultipleInfoWindow (bool)` : si plusieurs infobulles peuvent être ouvertes en simultané<br>
 `mapDisplayInfoWindows (bool)` : la map doit-elle afficher les infobulles<br>
 
 ### Liste de points

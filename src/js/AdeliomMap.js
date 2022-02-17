@@ -14,9 +14,11 @@ keys.map.defaultZoom = 'mapDefaultZoom';
 keys.map.provider = 'mapProvider';
 keys.map.checkSize = 'checkMapSize';
 keys.map.markers = 'mapMarkers';
+keys.map.markerIcon = 'mapMarkerIcon';
+keys.map.markerSelectedIcon = 'mapMarkerSelectedIcon';
 keys.map.displayMarkers = 'mapDisplayMarkers';
 keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
-keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
+keys.map.allowMultipleMarkersSelected = 'mapAllowMultipleMarkersSelected';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
 keys.map.animation = 'mapAnimation';
@@ -37,7 +39,10 @@ defaultOptions[keys.map.selector] = null;
 defaultOptions[keys.list.selector] = null;
 defaultOptions[keys.apiKey] = null;
 defaultOptions[keys.map.checkSize] = false;
-defaultOptions[keys.map.allowMultipleInfoWindow] = true;
+defaultOptions[keys.map.markers] = [];
+defaultOptions[keys.map.markerIcon] = null;
+defaultOptions[keys.map.markerSelectedIcon] = null;
+defaultOptions[keys.map.allowMultipleMarkersSelected] = true;
 defaultOptions[keys.map.defaultCenter] = {lat: 48.614782, lng: 7.714012};
 defaultOptions[keys.map.defaultZoom] = 12;
 defaultOptions[keys.map.provider] = 'google';
@@ -166,15 +171,22 @@ export default class AdeliomMap {
 
     _createGoogleMapMarker(markerRawData) {
         const markerData = {};
+        markerData.selected = false;
 
         const markerPosition = new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
         const markerTitle = markerRawData?.title;
 
-        const markerInstance = new this.google.maps.Marker({
+        const markerConfig = {
             position: markerPosition,
             title: markerTitle,
             map: this.map,
-        });
+        };
+
+        if (this.options[keys.map.markerIcon]) {
+            markerConfig.icon = this.options[keys.map.markerIcon];
+        }
+
+        const markerInstance = new this.google.maps.Marker(markerConfig);
 
         markerData.marker = markerInstance;
 
@@ -208,20 +220,49 @@ export default class AdeliomMap {
 
     _handleClickMarker(marker) {
         if (this.options[keys.map.displayInfoWindows]) {
-            if (this._isInfoWindowOpenedByMarker(marker)) {
-                this._closeInfoWindowByMarker(marker);
+            if (this._isMarkerSelected(marker)) {
+                this._setMarkerAsSelected(marker, false);
             } else {
-                this._openInfoWindowByMarker(marker);
+                this._setMarkerAsSelected(marker, true);
             }
         }
     };
+
+    _setMarkerAsSelected(marker, isSelected = null) {
+        if (isSelected == 'toggle') {
+            isSelected = !this._getDataByProperty('marker', marker).selected;
+        }
+
+        if (isSelected === null) {
+            isSelected = true;
+        }
+
+        if (isSelected === true) {
+            if (!this.options[keys.map.allowMultipleMarkersSelected]) {
+                this._unselectAllMarkers();
+            }
+
+            this._openInfoWindowByMarker(marker);
+        } else if (isSelected === false) {
+            this._closeInfoWindowByMarker(marker);
+        }
+
+
+        this._setDataByProperty('marker', marker, 'selected', isSelected);
+
+        if (isSelected && this.options[keys.map.markerSelectedIcon]) {
+            marker.setIcon(this.options[keys.map.markerSelectedIcon]);
+        } else if (!isSelected, this.options[keys.map.markerSelectedIcon]) {
+            marker.setIcon(this.options[keys.map.markerIcon]);
+        }
+    }
 
     _handleClickListElt(listElt) {
         const mapMarkerInstance = this._getMarkerByListEltNode(listElt);
 
         if (mapMarkerInstance) {
             if (this.options[keys.map.displayInfoWindows]) {
-                this._openInfoWindowByMarker(mapMarkerInstance);
+                this._setMarkerAsSelected(mapMarkerInstance, 'toggle');
             }
         }
     };
@@ -288,8 +329,8 @@ export default class AdeliomMap {
         if (this._isInfoWindowOpened(infoWindow)) {
             infoWindow.close();
         } else {
-            if (!this.options[keys.map.allowMultipleInfoWindow]) {
-                this._closeAllInfoWindows();
+            if (!this.options[keys.map.allowMultipleMarkersSelected]) {
+                this._unselectAllMarkers();
             }
 
             const marker = this._getMarkerByInfoWindow(infoWindow);
@@ -374,33 +415,11 @@ export default class AdeliomMap {
      * @private
      */
     _returnDataByMarker(data, marker) {
-        let returnedData = null;
-
-        for (let i = 0; i < Object.keys(this.markersData).length; i++) {
-            const tempMarker = this.markersData[Object.keys(this.markersData)[i]];
-            if (tempMarker?.marker === marker) {
-                returnedData = tempMarker[data];
-                break;
-            }
-        }
-
-        return returnedData;
+        return this._getDataByProperty('marker', marker)[data];
     };
 
     _returnDataByInfoWindow(data, infoWindow) {
-        let returnedData = null;
-
-        if (this.options[keys.map.displayInfoWindows]) {
-            for (let i = 0; i < Object.keys(this.markersData).length; i++) {
-                const tempMarker = this.markersData[Object.keys(this.markersData)[i]];
-                if (tempMarker?.infoWindow === infoWindow) {
-                    returnedData = tempMarker[data];
-                    break;
-                }
-            }
-        }
-
-        return returnedData;
+        return this._getDataByProperty('infoWindow', infoWindow)[data];
     }
 
     /**
@@ -411,17 +430,7 @@ export default class AdeliomMap {
      * @private
      */
     _returnDataByListEltNode(data, listEltNode) {
-        let returnedData = null;
-
-        for (let i = 0; i < Object.keys(this.markersData).length; i++) {
-            const tempMarker = this.markersData[Object.keys(this.markersData)[i]];
-            if (tempMarker?.listElt === listEltNode) {
-                returnedData = tempMarker[data];
-                break;
-            }
-        }
-
-        return returnedData;
+        return this._getDataByProperty('listElt', listEltNode)[data];
     };
 
     /**
@@ -450,18 +459,52 @@ export default class AdeliomMap {
         return null;
     }
 
+    _isMarkerSelected(marker) {
+        const data = this._getDataByProperty('marker', marker);
+
+        return data?.selected;
+    }
+
     /**
-     * Close all loaded infoWindows
+     * Un-select all markers and close all infoWindows
      * @private
      */
-    _closeAllInfoWindows() {
+    _unselectAllMarkers() {
         this.markersData.forEach(markerData => {
+            if (markerData?.marker && markerData?.selected) {
+                this._setMarkerAsSelected(markerData.marker, false);
+            }
+
             if (markerData?.infoWindow) {
                 if (this._isInfoWindowOpened(markerData.infoWindow)) {
                     markerData.infoWindow.close();
                 }
             }
         });
-    };
+    }
+
+    _getDataByProperty(propertyName, property) {
+        let returnedData = null;
+
+        for (let i = 0; i < Object.keys(this.markersData).length; i++) {
+            const tempMarker = this.markersData[Object.keys(this.markersData)[i]];
+            if (tempMarker[propertyName] === property) {
+                returnedData = tempMarker;
+                break;
+            }
+        }
+
+        return returnedData;
+    }
+
+    _setDataByProperty(propertyName, property, key, value) {
+        for (let i = 0; i < Object.keys(this.markersData).length; i++) {
+            if (this.markersData[Object.keys(this.markersData)[i]][propertyName] === property) {
+                this.markersData[Object.keys(this.markersData)[i]][key] = value;
+            }
+        }
+
+        return;
+    }
 
 };

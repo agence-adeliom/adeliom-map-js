@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         apiKey: env.apiKey,
         mapSelector: '[js-map]',
         mapListSelector: '[js-map-list]',
-        mapAllowMultipleInfoWindow: false,
+        mapAllowMultipleMarkersSelected: false,
         mapInfoWindowTemplate: mapInfoWindowTemplate,
         mapListEltTemplate: mapListEltTemplate,
         checkMapSize: false,
@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
         mapDefaultZoom: 12,
         mapProvider: 'google',
         mapAnimation: 'smooth',
+        mapMarkerIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png',
+        mapMarkerSelectedIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/library_maps.png',
         mapMarkers: [
             {
                 title: 'Agence Adeliom',

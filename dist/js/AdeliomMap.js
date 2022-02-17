@@ -51,9 +51,11 @@ keys.map.defaultZoom = 'mapDefaultZoom';
 keys.map.provider = 'mapProvider';
 keys.map.checkSize = 'checkMapSize';
 keys.map.markers = 'mapMarkers';
+keys.map.markerIcon = 'mapMarkerIcon';
+keys.map.markerSelectedIcon = 'mapMarkerSelectedIcon';
 keys.map.displayMarkers = 'mapDisplayMarkers';
 keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
-keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
+keys.map.allowMultipleMarkersSelected = 'mapAllowMultipleMarkersSelected';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
 keys.map.animation = 'mapAnimation';
@@ -73,7 +75,10 @@ defaultOptions[keys.map.selector] = null;
 defaultOptions[keys.list.selector] = null;
 defaultOptions[keys.apiKey] = null;
 defaultOptions[keys.map.checkSize] = false;
-defaultOptions[keys.map.allowMultipleInfoWindow] = true;
+defaultOptions[keys.map.markers] = [];
+defaultOptions[keys.map.markerIcon] = null;
+defaultOptions[keys.map.markerSelectedIcon] = null;
+defaultOptions[keys.map.allowMultipleMarkersSelected] = true;
 defaultOptions[keys.map.defaultCenter] = {
   lat: 48.614782,
   lng: 7.714012
@@ -286,13 +291,20 @@ var AdeliomMap = /*#__PURE__*/function () {
       var _this3 = this;
 
       var markerData = {};
+      markerData.selected = false;
       var markerPosition = new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
       var markerTitle = markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.title;
-      var markerInstance = new this.google.maps.Marker({
+      var markerConfig = {
         position: markerPosition,
         title: markerTitle,
         map: this.map
-      });
+      };
+
+      if (this.options[keys.map.markerIcon]) {
+        markerConfig.icon = this.options[keys.map.markerIcon];
+      }
+
+      var markerInstance = new this.google.maps.Marker(markerConfig);
       markerData.marker = markerInstance;
       markerData.infoWindow = this._createGoogleMapInfoWindow(markerRawData);
       var listElt = null;
@@ -323,11 +335,42 @@ var AdeliomMap = /*#__PURE__*/function () {
     key: "_handleClickMarker",
     value: function _handleClickMarker(marker) {
       if (this.options[keys.map.displayInfoWindows]) {
-        if (this._isInfoWindowOpenedByMarker(marker)) {
-          this._closeInfoWindowByMarker(marker);
+        if (this._isMarkerSelected(marker)) {
+          this._setMarkerAsSelected(marker, false);
         } else {
-          this._openInfoWindowByMarker(marker);
+          this._setMarkerAsSelected(marker, true);
         }
+      }
+    }
+  }, {
+    key: "_setMarkerAsSelected",
+    value: function _setMarkerAsSelected(marker) {
+      var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (isSelected == 'toggle') {
+        isSelected = !this._getDataByProperty('marker', marker).selected;
+      }
+
+      if (isSelected === null) {
+        isSelected = true;
+      }
+
+      if (isSelected === true) {
+        if (!this.options[keys.map.allowMultipleMarkersSelected]) {
+          this._unselectAllMarkers();
+        }
+
+        this._openInfoWindowByMarker(marker);
+      } else if (isSelected === false) {
+        this._closeInfoWindowByMarker(marker);
+      }
+
+      this._setDataByProperty('marker', marker, 'selected', isSelected);
+
+      if (isSelected && this.options[keys.map.markerSelectedIcon]) {
+        marker.setIcon(this.options[keys.map.markerSelectedIcon]);
+      } else if (!isSelected, this.options[keys.map.markerSelectedIcon]) {
+        marker.setIcon(this.options[keys.map.markerIcon]);
       }
     }
   }, {
@@ -337,7 +380,7 @@ var AdeliomMap = /*#__PURE__*/function () {
 
       if (mapMarkerInstance) {
         if (this.options[keys.map.displayInfoWindows]) {
-          this._openInfoWindowByMarker(mapMarkerInstance);
+          this._setMarkerAsSelected(mapMarkerInstance, 'toggle');
         }
       }
     }
@@ -410,8 +453,8 @@ var AdeliomMap = /*#__PURE__*/function () {
       if (this._isInfoWindowOpened(infoWindow)) {
         infoWindow.close();
       } else {
-        if (!this.options[keys.map.allowMultipleInfoWindow]) {
-          this._closeAllInfoWindows();
+        if (!this.options[keys.map.allowMultipleMarkersSelected]) {
+          this._unselectAllMarkers();
         }
 
         var marker = this._getMarkerByInfoWindow(infoWindow);
@@ -510,36 +553,12 @@ var AdeliomMap = /*#__PURE__*/function () {
      * @private
      */
     function _returnDataByMarker(data, marker) {
-      var returnedData = null;
-
-      for (var i = 0; i < Object.keys(this.markersData).length; i++) {
-        var tempMarker = this.markersData[Object.keys(this.markersData)[i]];
-
-        if ((tempMarker === null || tempMarker === void 0 ? void 0 : tempMarker.marker) === marker) {
-          returnedData = tempMarker[data];
-          break;
-        }
-      }
-
-      return returnedData;
+      return this._getDataByProperty('marker', marker)[data];
     }
   }, {
     key: "_returnDataByInfoWindow",
     value: function _returnDataByInfoWindow(data, infoWindow) {
-      var returnedData = null;
-
-      if (this.options[keys.map.displayInfoWindows]) {
-        for (var i = 0; i < Object.keys(this.markersData).length; i++) {
-          var tempMarker = this.markersData[Object.keys(this.markersData)[i]];
-
-          if ((tempMarker === null || tempMarker === void 0 ? void 0 : tempMarker.infoWindow) === infoWindow) {
-            returnedData = tempMarker[data];
-            break;
-          }
-        }
-      }
-
-      return returnedData;
+      return this._getDataByProperty('infoWindow', infoWindow)[data];
     }
     /**
      * Generic method to retrieve some data by specifying a listEltNode
@@ -552,18 +571,7 @@ var AdeliomMap = /*#__PURE__*/function () {
   }, {
     key: "_returnDataByListEltNode",
     value: function _returnDataByListEltNode(data, listEltNode) {
-      var returnedData = null;
-
-      for (var i = 0; i < Object.keys(this.markersData).length; i++) {
-        var tempMarker = this.markersData[Object.keys(this.markersData)[i]];
-
-        if ((tempMarker === null || tempMarker === void 0 ? void 0 : tempMarker.listElt) === listEltNode) {
-          returnedData = tempMarker[data];
-          break;
-        }
-      }
-
-      return returnedData;
+      return this._getDataByProperty('listElt', listEltNode)[data];
     }
   }, {
     key: "_isInfoWindowOpened",
@@ -595,23 +603,61 @@ var AdeliomMap = /*#__PURE__*/function () {
 
       return null;
     }
+  }, {
+    key: "_isMarkerSelected",
+    value: function _isMarkerSelected(marker) {
+      var data = this._getDataByProperty('marker', marker);
+
+      return data === null || data === void 0 ? void 0 : data.selected;
+    }
     /**
-     * Close all loaded infoWindows
+     * Un-select all markers and close all infoWindows
      * @private
      */
 
   }, {
-    key: "_closeAllInfoWindows",
-    value: function _closeAllInfoWindows() {
+    key: "_unselectAllMarkers",
+    value: function _unselectAllMarkers() {
       var _this5 = this;
 
       this.markersData.forEach(function (markerData) {
+        if (markerData !== null && markerData !== void 0 && markerData.marker && markerData !== null && markerData !== void 0 && markerData.selected) {
+          _this5._setMarkerAsSelected(markerData.marker, false);
+        }
+
         if (markerData !== null && markerData !== void 0 && markerData.infoWindow) {
           if (_this5._isInfoWindowOpened(markerData.infoWindow)) {
             markerData.infoWindow.close();
           }
         }
       });
+    }
+  }, {
+    key: "_getDataByProperty",
+    value: function _getDataByProperty(propertyName, property) {
+      var returnedData = null;
+
+      for (var i = 0; i < Object.keys(this.markersData).length; i++) {
+        var tempMarker = this.markersData[Object.keys(this.markersData)[i]];
+
+        if (tempMarker[propertyName] === property) {
+          returnedData = tempMarker;
+          break;
+        }
+      }
+
+      return returnedData;
+    }
+  }, {
+    key: "_setDataByProperty",
+    value: function _setDataByProperty(propertyName, property, key, value) {
+      for (var i = 0; i < Object.keys(this.markersData).length; i++) {
+        if (this.markersData[Object.keys(this.markersData)[i]][propertyName] === property) {
+          this.markersData[Object.keys(this.markersData)[i]][key] = value;
+        }
+      }
+
+      return;
     }
   }]);
 
