@@ -50,9 +50,10 @@ keys.map.checkSize = 'checkMapSize';
 keys.map.markers = 'mapMarkers';
 keys.map.displayMarkers = 'mapDisplayMarkers';
 keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
+keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.list = {};
 keys.list.selector = 'mapListSelector';
-keys.list.eltHtml = 'mapListEltHtml';
+keys.list.eltTemplate = 'mapListEltTemplate';
 var defaultOptions = {};
 defaultOptions[keys.map.selector] = null;
 defaultOptions[keys.list.selector] = null;
@@ -66,6 +67,8 @@ defaultOptions[keys.map.defaultCenter] = {
 defaultOptions[keys.map.defaultZoom] = 12;
 defaultOptions[keys.map.provider] = 'google';
 defaultOptions[keys.map.displayMarkers] = false;
+defaultOptions[keys.map.infoWindowTemplate] = '';
+defaultOptions[keys.list.eltTemplate] = '';
 
 var AdeliomMap = /*#__PURE__*/function () {
   function AdeliomMap(options) {
@@ -81,9 +84,8 @@ var AdeliomMap = /*#__PURE__*/function () {
     this.map = null;
     this.mapListContainer = null;
     this.mapList = null;
-    this.mapListEltHtml = null;
+    this.mapListEltTemplate = null;
     this.options = Object.assign(this.defaultOptions, options);
-    console.log(this.options);
     this.markers = (_this$options$keys$ma = this.options[keys.map.markers]) !== null && _this$options$keys$ma !== void 0 ? _this$options$keys$ma : [];
     this.displayMarkers = (_this$options$keys$ma2 = this.options[keys.map.displayMarkers]) !== null && _this$options$keys$ma2 !== void 0 ? _this$options$keys$ma2 : false;
     this.markersData = [];
@@ -117,8 +119,8 @@ var AdeliomMap = /*#__PURE__*/function () {
                 if (this.options[keys.list.selector]) {
                   this.mapListContainer = document.querySelector(this.options[keys.list.selector]);
 
-                  if (this.options[keys.list.eltHtml]) {
-                    this.mapListEltHtml = this.options[keys.list.eltHtml];
+                  if (this.options[keys.list.eltTemplate]) {
+                    this.mapListEltTemplate = this.options[keys.list.eltTemplate];
                   }
                 }
 
@@ -211,7 +213,12 @@ var AdeliomMap = /*#__PURE__*/function () {
     }()
   }, {
     key: "_initMarkers",
-    value: function _initMarkers() {
+    value:
+    /**
+     * Init markers by its map provider (google, ...)
+     * @private
+     */
+    function _initMarkers() {
       switch (this.options[keys.map.provider]) {
         case 'google':
         default:
@@ -222,7 +229,12 @@ var AdeliomMap = /*#__PURE__*/function () {
     }
   }, {
     key: "_initGoogleMapMarkers",
-    value: function _initGoogleMapMarkers() {
+    value:
+    /**
+     * Loop to init Google Maps markers
+     * @private
+     */
+    function _initGoogleMapMarkers() {
       var _this2 = this;
 
       this.markers.forEach(function (marker) {
@@ -231,12 +243,12 @@ var AdeliomMap = /*#__PURE__*/function () {
     }
   }, {
     key: "_createGoogleMapMarker",
-    value: function _createGoogleMapMarker(marker) {
+    value: function _createGoogleMapMarker(markerRawData) {
       var _this3 = this;
 
       var markerData = {};
-      var markerPosition = new this.google.maps.LatLng(marker.coordinates.lat, marker.coordinates.lng);
-      var markerTitle = marker.title;
+      var markerPosition = new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
+      var markerTitle = markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.title;
       var markerInstance = new this.google.maps.Marker({
         position: markerPosition,
         title: markerTitle,
@@ -244,99 +256,143 @@ var AdeliomMap = /*#__PURE__*/function () {
       });
       markerData.marker = markerInstance;
       var infoWindowInstance = new this.google.maps.InfoWindow({
-        content: "<div>".concat(markerTitle, "</div>")
+        content: this._replaceMarkerDataInString(markerRawData, this.options[keys.map.infoWindowTemplate])
       });
       markerData.infoWindow = infoWindowInstance;
       var listElt = null;
 
       if (this.mapListContainer) {
-        listElt = this._createMapListInstance(marker, markerInstance, infoWindowInstance);
+        listElt = this._createMapListInstance(markerRawData, markerInstance);
         markerData.listElt = listElt;
       }
 
       this.google.maps.event.addListener(markerInstance, 'click', function () {
-        if (_this3._isInfoWindowOpened(infoWindowInstance)) {
-          infoWindowInstance.close();
+        if (_this3._isInfoWindowOpenedByMarker(markerInstance)) {
+          _this3._closeInfoWindowByMarker(markerInstance);
         } else {
-          if (!_this3.options[keys.map.allowMultipleInfoWindow]) {
-            _this3._closeAllInfoWindows();
-          }
-
-          infoWindowInstance.open(_this3.map, markerInstance);
-          console.log("Associated infoWindow", _this3._getInfoWindowByMarker(markerInstance));
-          console.log("Associated listEltNode", _this3._getListEltByMarker(markerInstance));
+          _this3._openInfoWindowByMarker(markerInstance);
         }
       });
       this.markersData.push(markerData);
     }
   }, {
     key: "_createMapListInstance",
-    value: function _createMapListInstance(markerData, mapMarkerInstance, infoWindowInstance) {
+    value:
+    /**
+     * Creates a map list instance (store locator instance)
+     * @param markerRawData
+     * @param mapMarkerInstance
+     * @returns {HTMLDivElement}
+     * @private
+     */
+    function _createMapListInstance(markerRawData, mapMarkerInstance) {
       var _this4 = this;
 
       var mapListInstance = document.createElement('div');
-      var listInstanceHtml = this.mapListEltHtml;
-      Object.keys(markerData).forEach(function (key) {
-        var search = "{{ ".concat(key, " }}");
-        listInstanceHtml = listInstanceHtml.replaceAll(search, markerData[key]);
-      });
+
+      var listInstanceHtml = this._replaceMarkerDataInString(markerRawData, this.mapListEltTemplate);
+
       mapListInstance.innerHTML = listInstanceHtml;
       mapListInstance.addEventListener('click', function () {
-        infoWindowInstance.open(_this4.map, mapMarkerInstance);
-        console.log("Associated marker", _this4._getMarkerByListEltNode(mapListInstance));
-        console.log("Associated infoWindow", _this4._getInfoWindowByListEltNode(mapListInstance));
+        _this4._openInfoWindowByMarker(mapMarkerInstance);
       });
       this.mapListContainer.appendChild(mapListInstance);
       return mapListInstance;
     }
+  }, {
+    key: "_replaceMarkerDataInString",
+    value: function _replaceMarkerDataInString(markerData, string) {
+      Object.keys(markerData).forEach(function (key) {
+        var search = "{{ ".concat(key, " }}");
+        string = string.replaceAll(search, markerData[key]);
+      });
+      return string;
+    }
+    /**
+     * Closes an infoWindow by specifying its associated marker
+     * @param marker
+     * @private
+     */
+
+  }, {
+    key: "_closeInfoWindowByMarker",
+    value: function _closeInfoWindowByMarker(marker) {
+      var infoWindow = this._getInfoWindowByMarker(marker);
+
+      if (infoWindow) {
+        infoWindow.close();
+      }
+    }
+  }, {
+    key: "_openInfoWindowByMarker",
+    value:
+    /**
+     * Opens an infoWindow by its associated marker
+     * @param marker
+     * @private
+     */
+    function _openInfoWindowByMarker(marker) {
+      var infoWindow = this._getInfoWindowByMarker(marker);
+
+      if (infoWindow) {
+        if (!this.options[keys.map.allowMultipleInfoWindow]) {
+          this._closeAllInfoWindows();
+        }
+
+        infoWindow.open(this.map, marker);
+      }
+    }
+  }, {
+    key: "_getInfoWindowByMarker",
+    value:
     /**
      * Returns an existing infoWindow instance by providing a marker
      * @param marker
      * @returns {null}
      * @private
      */
-
-  }, {
-    key: "_getInfoWindowByMarker",
-    value: function _getInfoWindowByMarker(marker) {
+    function _getInfoWindowByMarker(marker) {
       return this._returnDataByMarker('infoWindow', marker);
     }
+  }, {
+    key: "_getListEltByMarker",
+    value:
     /**
      * Returns an existing listElt node by providing a marker
      * @param marker
      * @returns {null}
      * @private
      */
-
-  }, {
-    key: "_getListEltByMarker",
-    value: function _getListEltByMarker(marker) {
+    function _getListEltByMarker(marker) {
       return this._returnDataByMarker('listElt', marker);
     }
+  }, {
+    key: "_getMarkerByListEltNode",
+    value:
     /**
      * Returns an existing marker node by providing a listEltNode
      * @param marker
      * @returns {null}
      * @private
      */
-
-  }, {
-    key: "_getMarkerByListEltNode",
-    value: function _getMarkerByListEltNode(listEltNode) {
+    function _getMarkerByListEltNode(listEltNode) {
       return this._returnDataByListEltNode('marker', listEltNode);
     }
+  }, {
+    key: "_getInfoWindowByListEltNode",
+    value:
     /**
      * Returns an existing infoWindow by providing a listEltNode
      * @param marker
      * @returns {null}
      * @private
      */
-
-  }, {
-    key: "_getInfoWindowByListEltNode",
-    value: function _getInfoWindowByListEltNode(listEltNode) {
+    function _getInfoWindowByListEltNode(listEltNode) {
       return this._returnDataByListEltNode('infoWindow', listEltNode);
     }
+  }, {
+    key: "_returnDataByMarker",
+    value:
     /**
      * Generic method to retrieve some data by specifying a marker
      * @param data
@@ -344,10 +400,7 @@ var AdeliomMap = /*#__PURE__*/function () {
      * @returns {null}
      * @private
      */
-
-  }, {
-    key: "_returnDataByMarker",
-    value: function _returnDataByMarker(data, marker) {
+    function _returnDataByMarker(data, marker) {
       var returnedData = null;
 
       for (var i = 0; i < Object.keys(this.markersData).length; i++) {
@@ -361,6 +414,9 @@ var AdeliomMap = /*#__PURE__*/function () {
 
       return returnedData;
     }
+  }, {
+    key: "_returnDataByListEltNode",
+    value:
     /**
      * Generic method to retrieve some data by specifying a listEltNode
      * @param data
@@ -368,10 +424,7 @@ var AdeliomMap = /*#__PURE__*/function () {
      * @returns {null}
      * @private
      */
-
-  }, {
-    key: "_returnDataByListEltNode",
-    value: function _returnDataByListEltNode(data, listEltNode) {
+    function _returnDataByListEltNode(data, listEltNode) {
       var returnedData = null;
 
       for (var i = 0; i < Object.keys(this.markersData).length; i++) {
@@ -385,17 +438,35 @@ var AdeliomMap = /*#__PURE__*/function () {
 
       return returnedData;
     }
+  }, {
+    key: "_isInfoWindowOpened",
+    value:
     /**
      * Returns whether an info window is currently opened
      * @param infoWindow
      * @returns {boolean}
      * @private
      */
-
-  }, {
-    key: "_isInfoWindowOpened",
-    value: function _isInfoWindowOpened(infoWindow) {
+    function _isInfoWindowOpened(infoWindow) {
       return infoWindow.getMap() ? true : false;
+    }
+  }, {
+    key: "_isInfoWindowOpenedByMarker",
+    value:
+    /**
+     * Returns whether an info window is currently opened by specifying its associated marker
+     * @param marker
+     * @returns {null|boolean}
+     * @private
+     */
+    function _isInfoWindowOpenedByMarker(marker) {
+      var infoWindow = this._getInfoWindowByMarker(marker);
+
+      if (infoWindow) {
+        return this._isInfoWindowOpened(infoWindow);
+      }
+
+      return null;
     }
     /**
      * Close all loaded infoWindows

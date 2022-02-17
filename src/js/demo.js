@@ -1,20 +1,23 @@
 import AdeliomMap from "./AdeliomMap";
 import {env} from "../../env";
 
+const mapListEltTemplate = '<div style="cursor: pointer;">' +
+    '<div>' +
+    '{{ title }}' +
+    '</div>' +
+    '<div>' +
+    '{{ description }}' +
+    '</div>' +
+    '</div>';
+
 document.addEventListener("DOMContentLoaded", () => {
     new AdeliomMap({
         apiKey: env.apiKey,
         mapSelector: '[js-map]',
         mapListSelector: '[js-map-list]',
         mapAllowMultipleInfoWindow: false,
-        mapListEltHtml: '<div>' +
-            '<div>' +
-            '{{ title }}' +
-            '</div>' +
-            '<div>' +
-            '{{ description }}' +
-            '</div>' +
-            '</div>',
+        mapInfoWindowTemplate: mapListEltTemplate,
+        mapListEltTemplate: mapListEltTemplate,
         checkMapSize: false,
         mapDefaultCenter: {
             lat: 48.614782,
