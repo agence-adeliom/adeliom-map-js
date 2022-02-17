@@ -1,5 +1,6 @@
 env.js
 dist/js/demo.js
+dist/css/demo.css
 
 .DS_Store
 

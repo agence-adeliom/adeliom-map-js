@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+
+  main {
+    [js-map] {
+      height: 500px;
+      width: 500px;
+      background-color: lightgrey;
+
+      .map-infowindow-elt {
+        background-color: #FFF;
+        padding: 8px;
+        border-radius: 4px;
+      }
+    }
+
+    [js-map-list] {
+      .map-list-elt {
+        cursor: pointer;
+      }
+    }
+  }
+}

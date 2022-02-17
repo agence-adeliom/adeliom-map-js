@@ -1,5 +1,7 @@
 import {Loader} from 'google-maps';
 
+const mapCustomClass = 'adeliom-map-js';
+
 const keys = {};
 keys.apiKey = 'apiKey';
 keys.map = {};
@@ -12,9 +14,11 @@ keys.map.markers = 'mapMarkers';
 keys.map.displayMarkers = 'mapDisplayMarkers';
 keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
+keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
 keys.list = {};
 keys.list.selector = 'mapListSelector';
 keys.list.eltTemplate = 'mapListEltTemplate';
+keys.list.centerMarkerOnClick = 'mapListCenterMarkerOnClick';
 
 const defaultOptions = {};
 defaultOptions[keys.map.selector] = null;
@@ -27,7 +31,9 @@ defaultOptions[keys.map.defaultZoom] = 12;
 defaultOptions[keys.map.provider] = 'google';
 defaultOptions[keys.map.displayMarkers] = false;
 defaultOptions[keys.map.infoWindowTemplate] = '';
+defaultOptions[keys.map.centerMarkerOnClick] = true;
 defaultOptions[keys.list.eltTemplate] = '';
+defaultOptions[keys.list.centerMarkerOnClick] = true;
 
 export default class AdeliomMap {
 
@@ -73,6 +79,8 @@ export default class AdeliomMap {
             }
 
             if (this.mapContainer) {
+                this._addMapCustomClass();
+
                 if (!this.options[keys.map.checkSize] || (this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
                     switch (this.options[keys.map.provider]) {
                         case 'google':
@@ -100,6 +108,12 @@ export default class AdeliomMap {
             zoom: this.options[keys.map.defaultZoom],
         });
     };
+
+    _addMapCustomClass() {
+        if (this.mapContainer) {
+            this.mapContainer.classList.add(mapCustomClass);
+        }
+    }
 
     /**
      * Init markers by its map provider (google, ...)
@@ -152,14 +166,26 @@ export default class AdeliomMap {
         }
 
         this.google.maps.event.addListener(markerInstance, 'click', () => {
-            if (this._isInfoWindowOpenedByMarker(markerInstance)) {
-                this._closeInfoWindowByMarker(markerInstance);
-            } else {
-                this._openInfoWindowByMarker(markerInstance);
-            }
+            this._handleClickMarker(markerInstance)
         });
 
         this.markersData.push(markerData);
+    };
+
+    _handleClickMarker(marker) {
+        if (this._isInfoWindowOpenedByMarker(marker)) {
+            this._closeInfoWindowByMarker(marker);
+        } else {
+            this._openInfoWindowByMarker(marker);
+        }
+    };
+
+    _handleClickListElt(listElt) {
+        const mapMarkerInstance = this._getMarkerByListEltNode(listElt);
+
+        if (mapMarkerInstance) {
+            this._openInfoWindowByMarker(mapMarkerInstance);
+        }
     };
 
     /**
@@ -177,7 +203,7 @@ export default class AdeliomMap {
         mapListInstance.innerHTML = listInstanceHtml;
 
         mapListInstance.addEventListener('click', () => {
-            this._openInfoWindowByMarker(mapMarkerInstance);
+            this._handleClickListElt(mapListInstance);
         });
 
         this.mapListContainer.appendChild(mapListInstance);
@@ -216,11 +242,15 @@ export default class AdeliomMap {
         const infoWindow = this._getInfoWindowByMarker(marker);
 
         if (infoWindow) {
-            if (!this.options[keys.map.allowMultipleInfoWindow]) {
-                this._closeAllInfoWindows();
-            }
+            if (this._isInfoWindowOpened(infoWindow)) {
+                infoWindow.close();
+            } else {
+                if (!this.options[keys.map.allowMultipleInfoWindow]) {
+                    this._closeAllInfoWindows();
+                }
 
-            infoWindow.open(this.map, marker);
+                infoWindow.open(this.map, marker);
+            }
         }
     };
 

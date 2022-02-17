@@ -39,6 +39,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
 
+var mapCustomClass = 'adeliom-map-js';
 var keys = {};
 keys.apiKey = 'apiKey';
 keys.map = {};
@@ -51,9 +52,11 @@ keys.map.markers = 'mapMarkers';
 keys.map.displayMarkers = 'mapDisplayMarkers';
 keys.map.allowMultipleInfoWindow = 'mapAllowMultipleInfoWindow';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
+keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
 keys.list = {};
 keys.list.selector = 'mapListSelector';
 keys.list.eltTemplate = 'mapListEltTemplate';
+keys.list.centerMarkerOnClick = 'mapListCenterMarkerOnClick';
 var defaultOptions = {};
 defaultOptions[keys.map.selector] = null;
 defaultOptions[keys.list.selector] = null;
@@ -68,7 +71,9 @@ defaultOptions[keys.map.defaultZoom] = 12;
 defaultOptions[keys.map.provider] = 'google';
 defaultOptions[keys.map.displayMarkers] = false;
 defaultOptions[keys.map.infoWindowTemplate] = '';
+defaultOptions[keys.map.centerMarkerOnClick] = true;
 defaultOptions[keys.list.eltTemplate] = '';
+defaultOptions[keys.list.centerMarkerOnClick] = true;
 
 var AdeliomMap = /*#__PURE__*/function () {
   function AdeliomMap(options) {
@@ -110,7 +115,7 @@ var AdeliomMap = /*#__PURE__*/function () {
             switch (_context.prev = _context.next) {
               case 0:
                 if (!this.options[keys.map.selector]) {
-                  _context.next = 18;
+                  _context.next = 19;
                   break;
                 }
 
@@ -125,45 +130,47 @@ var AdeliomMap = /*#__PURE__*/function () {
                 }
 
                 if (!this.mapContainer) {
-                  _context.next = 15;
+                  _context.next = 16;
                   break;
                 }
 
+                this._addMapCustomClass();
+
                 if (!(!this.options[keys.map.checkSize] || this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
-                  _context.next = 12;
+                  _context.next = 13;
                   break;
                 }
 
                 _context.t0 = this.options[keys.map.provider];
-                _context.next = _context.t0 === 'google' ? 8 : 8;
+                _context.next = _context.t0 === 'google' ? 9 : 9;
                 break;
 
-              case 8:
-                _context.next = 10;
+              case 9:
+                _context.next = 11;
                 return this._initGoogleMap(this.mapContainer);
 
-              case 10:
-                _context.next = 13;
+              case 11:
+                _context.next = 14;
                 break;
-
-              case 12:
-                console.error("".concat(this.options[keys.map.selector], " height and/or width is equal to 0"));
 
               case 13:
-                _context.next = 16;
-                break;
+                console.error("".concat(this.options[keys.map.selector], " height and/or width is equal to 0"));
 
-              case 15:
-                console.error("".concat(this.options[keys.map.selector], " not found"));
+              case 14:
+                _context.next = 17;
+                break;
 
               case 16:
-                _context.next = 19;
+                console.error("".concat(this.options[keys.map.selector], " not found"));
+
+              case 17:
+                _context.next = 20;
                 break;
 
-              case 18:
+              case 19:
                 console.error("Need to provide ".concat(keys.map.selector, " option"));
 
-              case 19:
+              case 20:
               case "end":
                 return _context.stop();
             }
@@ -212,13 +219,20 @@ var AdeliomMap = /*#__PURE__*/function () {
       return _initGoogleMap;
     }()
   }, {
-    key: "_initMarkers",
-    value:
+    key: "_addMapCustomClass",
+    value: function _addMapCustomClass() {
+      if (this.mapContainer) {
+        this.mapContainer.classList.add(mapCustomClass);
+      }
+    }
     /**
      * Init markers by its map provider (google, ...)
      * @private
      */
-    function _initMarkers() {
+
+  }, {
+    key: "_initMarkers",
+    value: function _initMarkers() {
       switch (this.options[keys.map.provider]) {
         case 'google':
         default:
@@ -267,13 +281,27 @@ var AdeliomMap = /*#__PURE__*/function () {
       }
 
       this.google.maps.event.addListener(markerInstance, 'click', function () {
-        if (_this3._isInfoWindowOpenedByMarker(markerInstance)) {
-          _this3._closeInfoWindowByMarker(markerInstance);
-        } else {
-          _this3._openInfoWindowByMarker(markerInstance);
-        }
+        _this3._handleClickMarker(markerInstance);
       });
       this.markersData.push(markerData);
+    }
+  }, {
+    key: "_handleClickMarker",
+    value: function _handleClickMarker(marker) {
+      if (this._isInfoWindowOpenedByMarker(marker)) {
+        this._closeInfoWindowByMarker(marker);
+      } else {
+        this._openInfoWindowByMarker(marker);
+      }
+    }
+  }, {
+    key: "_handleClickListElt",
+    value: function _handleClickListElt(listElt) {
+      var mapMarkerInstance = this._getMarkerByListEltNode(listElt);
+
+      if (mapMarkerInstance) {
+        this._openInfoWindowByMarker(mapMarkerInstance);
+      }
     }
   }, {
     key: "_createMapListInstance",
@@ -294,7 +322,7 @@ var AdeliomMap = /*#__PURE__*/function () {
 
       mapListInstance.innerHTML = listInstanceHtml;
       mapListInstance.addEventListener('click', function () {
-        _this4._openInfoWindowByMarker(mapMarkerInstance);
+        _this4._handleClickListElt(mapListInstance);
       });
       this.mapListContainer.appendChild(mapListInstance);
       return mapListInstance;
@@ -335,11 +363,15 @@ var AdeliomMap = /*#__PURE__*/function () {
       var infoWindow = this._getInfoWindowByMarker(marker);
 
       if (infoWindow) {
-        if (!this.options[keys.map.allowMultipleInfoWindow]) {
-          this._closeAllInfoWindows();
-        }
+        if (this._isInfoWindowOpened(infoWindow)) {
+          infoWindow.close();
+        } else {
+          if (!this.options[keys.map.allowMultipleInfoWindow]) {
+            this._closeAllInfoWindows();
+          }
 
-        infoWindow.open(this.map, marker);
+          infoWindow.open(this.map, marker);
+        }
       }
     }
   }, {
@@ -576,6 +608,19 @@ Loader.CALLBACK_NAME = '_dk_google_maps_loader_cb';
 /*!**********************************!*\
   !*** ./src/scss/AdeliomMap.scss ***!
   \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./src/scss/demo.scss":
+/*!****************************!*\
+  !*** ./src/scss/demo.scss ***!
+  \****************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1460,6 +1505,7 @@ try {
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			"/js/AdeliomMap": 0,
+/******/ 			"css/demo": 0,
 /******/ 			"css/AdeliomMap": 0
 /******/ 		};
 /******/ 		
@@ -1510,8 +1556,9 @@ try {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/AdeliomMap"], () => (__webpack_require__("./src/js/AdeliomMap.js")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/AdeliomMap"], () => (__webpack_require__("./src/scss/AdeliomMap.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/demo","css/AdeliomMap"], () => (__webpack_require__("./src/js/AdeliomMap.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/demo","css/AdeliomMap"], () => (__webpack_require__("./src/scss/AdeliomMap.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/demo","css/AdeliomMap"], () => (__webpack_require__("./src/scss/demo.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

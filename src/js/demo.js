@@ -1,7 +1,16 @@
 import AdeliomMap from "./AdeliomMap";
 import {env} from "../../env";
 
-const mapListEltTemplate = '<div style="cursor: pointer;">' +
+const mapListEltTemplate = '<div class="map-list-elt">' +
+    '<div>' +
+    '{{ title }}' +
+    '</div>' +
+    '<div>' +
+    '{{ description }}' +
+    '</div>' +
+    '</div>';
+
+const mapInfoWindowTemplate = '<div class="map-infowindow-elt">' +
     '<div>' +
     '{{ title }}' +
     '</div>' +
@@ -16,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mapSelector: '[js-map]',
         mapListSelector: '[js-map-list]',
         mapAllowMultipleInfoWindow: false,
-        mapInfoWindowTemplate: mapListEltTemplate,
+        mapInfoWindowTemplate: mapInfoWindowTemplate,
         mapListEltTemplate: mapListEltTemplate,
         checkMapSize: false,
         mapDefaultCenter: {
