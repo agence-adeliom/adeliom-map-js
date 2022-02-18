@@ -2,6 +2,8 @@
 
 Dépendance de gestion de Google Maps / Store Locator Adeliom
 
+## Initialisation
+
 ## Options disponibles
 
 ### Base
@@ -73,3 +75,22 @@ mapMarkers: [
     }
 ],
 ```
+
+## Événements
+
+Il est possible d'utiliser l'objet `AdeliomMapEvents` afin de récupérer les différents événements disponibles.
+
+### Marqueurs :
+
+`markerCreated` : Retourne l'instance d'un marqueur Google Maps lorsqu'il vient d'être créé.<br>
+`markerDataCreated` : Retourne les données d'un marqueur lorsqu'il vient d'être intégralement créé (marqueur, infobulle
+et élément de liste).<br>
+`markerClicked` : Retourne les données d'un marqueur lorsque l'on clique dessus.<br>
+
+### Infobulles :
+
+`markerInfoWindowCreated` : Retourne les données d'un marqueur lorsqu'une infobulle a été créée.<br>
+
+### Éléments de liste :
+
+`markerListEltCreated` : Retourne les données d'un marqueur lorsqu'un élément de liste vient d'être créé.<br>

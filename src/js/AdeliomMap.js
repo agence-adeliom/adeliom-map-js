@@ -1,4 +1,5 @@
 import {Loader} from 'google-maps';
+import Emitter from "dauphine-js/dist/emitter";
 
 const mapCustomClass = 'adeliom-map-js';
 
@@ -66,9 +67,25 @@ defaultOptions[keys.list.eltTemplate] = '';
 defaultOptions[keys.list.centerMarkerOnClick] = true;
 defaultOptions[keys.list.replaceWithMarkerData] = false;
 
-export default class AdeliomMap {
+export const AdeliomMapEvents = {
+    markers: {
+        created: 'markerCreated',
+        dataCreated: 'markerDataCreated',
+        clicked: 'markerClicked',
+    },
+    infoWindows: {
+        created: 'markerInfoWindowCreated',
+    },
+    listElements: {
+        created: 'markerListEltCreated',
+    }
+};
+
+export default class AdeliomMap extends Emitter {
 
     constructor(options) {
+        super();
+
         this.defaultOptions = defaultOptions;
 
         this.google = null;
@@ -187,7 +204,8 @@ export default class AdeliomMap {
      */
     _initGoogleMapMarkers() {
         this.markers.forEach(marker => {
-            this._createGoogleMapMarker(marker);
+            let markerData = this._createGoogleMapMarker(marker);
+            this.emit(AdeliomMapEvents.markers.dataCreated, markerData);
         });
     };
 
@@ -216,6 +234,7 @@ export default class AdeliomMap {
         }
 
         const markerInstance = new this.google.maps.Marker(markerConfig);
+        this.emit(AdeliomMapEvents.markers.created, markerInstance);
 
         markerData.marker = markerInstance;
 
@@ -233,6 +252,8 @@ export default class AdeliomMap {
         });
 
         this.markersData.push(markerData);
+
+        return markerData;
     };
 
     _createGoogleMapInfoWindow(markerRawData) {
@@ -255,6 +276,8 @@ export default class AdeliomMap {
                 content: content,
             });
 
+            this.emit(AdeliomMapEvents.infoWindows.created, infoWindowInstance);
+
             return infoWindowInstance;
         }
 
@@ -269,6 +292,10 @@ export default class AdeliomMap {
                 this._setMarkerAsSelected(marker, true);
             }
         }
+
+        const data = this._getDataByProperty('marker', marker);
+
+        this.emit(AdeliomMapEvents.markers.clicked, data);
     };
 
     _setMarkerAsSelected(marker, isSelected = null) {
@@ -367,6 +394,10 @@ export default class AdeliomMap {
         });
 
         this.mapListContainer.appendChild(mapListInstance);
+
+        if (mapListInstance) {
+            this.emit(AdeliomMapEvents.listElements.created, mapListInstance);
+        }
 
         return mapListInstance;
     };
