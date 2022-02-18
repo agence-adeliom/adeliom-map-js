@@ -79,6 +79,15 @@ mapMarkers: [
 ## Événements
 
 Il est possible d'utiliser l'objet `AdeliomMapEvents` afin de récupérer les différents événements disponibles.
+```javascript
+// Instanciation de l'AdeliomMap
+const adeliomMap = new AdeliomMap({});
+
+// Catch d'un événement et exécution de code
+adeliomMap.on('eventName', (data) => {
+    console.log(data);
+});
+```
 
 ### Marqueurs :
 
