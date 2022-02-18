@@ -27,6 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
         mapAllowMultipleMarkersSelected: false,
         mapInfoWindowTemplate: mapInfoWindowTemplate,
         mapListEltTemplate: mapListEltTemplate,
+        mapInfoWindowReplaceWithMarkerData: true,
+        mapListReplaceWithMarkerData: true,
         checkMapSize: false,
         mapDefaultCenter: {
             lat: 48.614782,

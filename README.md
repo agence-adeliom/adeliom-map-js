@@ -34,10 +34,14 @@ Dépendance de gestion de Google Maps / Store Locator Adeliom
 ### Infobulles
 `mapInfoWindowTemplate (string)` : template HTML de l'infobulle d'un marqueur<br>
 `mapDisplayInfoWindows (bool)` : la map doit-elle afficher les infobulles<br>
+`mapInfoWindowReplaceWithMarkerData (bool)` : permet de remplacer les données du template par des données du marqueur (si le
+marqueur contient une propriété `title`, mettre des balises `{{ title }}` dans le template)<br>
 
 ### Liste de points
 
 `mapListEltTemplate (string)` : template HTML d'un élément de la liste des points<br>
+`mapListReplaceWithMarkerData (bool)` : permet de remplacer les données du template par des données du marqueur (si le
+marqueur contient une propriété `title`, mettre des balises `{{ title }}` dans le template)<br>
 
 ## Exemples de paramètres :
 

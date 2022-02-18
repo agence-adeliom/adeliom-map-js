@@ -23,6 +23,7 @@ keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
 keys.map.animation = 'mapAnimation';
 keys.map.showPlaces = 'mapShowPlaces';
+keys.map.replaceInfoWindowContentWithMarkerData = 'mapInfoWindowReplaceWithMarkerData';
 keys.map.controls = {};
 keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
 keys.map.controls.streetViewButton = 'mapEnableStreetView';
@@ -34,6 +35,7 @@ keys.list = {};
 keys.list.selector = 'mapListSelector';
 keys.list.eltTemplate = 'mapListEltTemplate';
 keys.list.centerMarkerOnClick = 'mapListCenterMarkerOnClick';
+keys.list.replaceWithMarkerData = 'mapListReplaceWithMarkerData';
 
 const defaultOptions = {};
 defaultOptions[keys.map.selector] = null;
@@ -53,6 +55,7 @@ defaultOptions[keys.map.infoWindowTemplate] = '';
 defaultOptions[keys.map.centerMarkerOnClick] = true;
 defaultOptions[keys.map.animation] = smoothAnim;
 defaultOptions[keys.map.showPlaces] = false;
+defaultOptions[keys.map.replaceInfoWindowContentWithMarkerData] = false;
 defaultOptions[keys.map.controls.zoomButtons] = false;
 defaultOptions[keys.map.controls.streetViewButton] = false;
 defaultOptions[keys.map.controls.fullscreenButton] = false;
@@ -61,6 +64,7 @@ defaultOptions[keys.map.controls.displayScale] = false;
 defaultOptions[keys.map.controls.rotateControl] = false;
 defaultOptions[keys.list.eltTemplate] = '';
 defaultOptions[keys.list.centerMarkerOnClick] = true;
+defaultOptions[keys.list.replaceWithMarkerData] = false;
 
 export default class AdeliomMap {
 
@@ -226,8 +230,15 @@ export default class AdeliomMap {
 
     _createGoogleMapInfoWindow(markerRawData) {
         if (this.options[keys.map.displayInfoWindows]) {
+
+            let content = this.options[keys.map.infoWindowTemplate];
+
+            if (this.options[keys.map.replaceInfoWindowContentWithMarkerData]) {
+                content = this._replaceMarkerDataInString(markerRawData, content)
+            }
+
             const infoWindowInstance = new this.google.maps.InfoWindow({
-                content: this._replaceMarkerDataInString(markerRawData, this.options[keys.map.infoWindowTemplate]),
+                content: content,
             });
 
             return infoWindowInstance;
@@ -295,7 +306,11 @@ export default class AdeliomMap {
     _createMapListInstance(markerRawData, mapMarkerInstance) {
         const mapListInstance = document.createElement('div');
 
-        let listInstanceHtml = this._replaceMarkerDataInString(markerRawData, this.mapListEltTemplate);
+        let listInstanceHtml = this.mapListEltTemplate;
+
+        if (this.options[keys.list.replaceWithMarkerData]) {
+            listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
+        }
 
         mapListInstance.innerHTML = listInstanceHtml;
 
