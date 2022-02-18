@@ -57,7 +57,9 @@ mapMarkers: [
         coordinates: {
             lat: 48.614782,
             lng: 7.714012,
-        }
+        },
+        icon: 'https://...', // override l'icon par défaut
+        selectedIcon: 'https://...', // override l'icon selected par défaut
     },
     {
         title: 'Cathédrale de Strasbourg',

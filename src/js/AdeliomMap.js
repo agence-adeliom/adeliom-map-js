@@ -204,8 +204,15 @@ export default class AdeliomMap {
             map: this.map,
         };
 
-        if (this.options[keys.map.markerIcon]) {
+        if (markerRawData?.icon) {
+            markerConfig.icon = markerRawData.icon;
+            markerData.icon = markerRawData.icon;
+        } else if (this.options[keys.map.markerIcon]) {
             markerConfig.icon = this.options[keys.map.markerIcon];
+        }
+
+        if (markerRawData?.selectedIcon) {
+            markerData.selectedIcon = markerRawData.selectedIcon;
         }
 
         const markerInstance = new this.google.maps.Marker(markerConfig);
@@ -279,11 +286,35 @@ export default class AdeliomMap {
 
         this._setDataByProperty('marker', marker, 'selected', isSelected);
 
-        if (isSelected && this.options[keys.map.markerSelectedIcon]) {
-            marker.setIcon(this.options[keys.map.markerSelectedIcon]);
-        } else if (!isSelected, this.options[keys.map.markerSelectedIcon]) {
-            marker.setIcon(this.options[keys.map.markerIcon]);
+        if (!isSelected) {
+            marker.setIcon(this._getIdleIconForMarker(marker));
+        } else {
+            marker.setIcon(this._getSelectedIconForMarker(marker));
         }
+    }
+
+    _getIdleIconForMarker(marker) {
+        const data = this._getDataByProperty('marker', marker);
+
+        if (data?.icon) {
+            return data.icon;
+        } else if (this.options[keys.map.markerIcon]) {
+            return this.options[keys.map.markerIcon];
+        }
+
+        return null;
+    }
+
+    _getSelectedIconForMarker(marker) {
+        const data = this._getDataByProperty('marker', marker);
+
+        if (data?.selectedIcon) {
+            return data.selectedIcon;
+        } else if (this.options[keys.map.markerSelectedIcon]) {
+            return this.options[keys.map.markerSelectedIcon];
+        }
+
+        return null;
     }
 
     _handleClickListElt(listElt) {

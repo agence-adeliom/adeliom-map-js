@@ -318,8 +318,15 @@ var AdeliomMap = /*#__PURE__*/function () {
         map: this.map
       };
 
-      if (this.options[keys.map.markerIcon]) {
+      if (markerRawData !== null && markerRawData !== void 0 && markerRawData.icon) {
+        markerConfig.icon = markerRawData.icon;
+        markerData.icon = markerRawData.icon;
+      } else if (this.options[keys.map.markerIcon]) {
         markerConfig.icon = this.options[keys.map.markerIcon];
+      }
+
+      if (markerRawData !== null && markerRawData !== void 0 && markerRawData.selectedIcon) {
+        markerData.selectedIcon = markerRawData.selectedIcon;
       }
 
       var markerInstance = new this.google.maps.Marker(markerConfig);
@@ -391,11 +398,37 @@ var AdeliomMap = /*#__PURE__*/function () {
 
       this._setDataByProperty('marker', marker, 'selected', isSelected);
 
-      if (isSelected && this.options[keys.map.markerSelectedIcon]) {
-        marker.setIcon(this.options[keys.map.markerSelectedIcon]);
-      } else if (!isSelected, this.options[keys.map.markerSelectedIcon]) {
-        marker.setIcon(this.options[keys.map.markerIcon]);
+      if (!isSelected) {
+        marker.setIcon(this._getIdleIconForMarker(marker));
+      } else {
+        marker.setIcon(this._getSelectedIconForMarker(marker));
       }
+    }
+  }, {
+    key: "_getIdleIconForMarker",
+    value: function _getIdleIconForMarker(marker) {
+      var data = this._getDataByProperty('marker', marker);
+
+      if (data !== null && data !== void 0 && data.icon) {
+        return data.icon;
+      } else if (this.options[keys.map.markerIcon]) {
+        return this.options[keys.map.markerIcon];
+      }
+
+      return null;
+    }
+  }, {
+    key: "_getSelectedIconForMarker",
+    value: function _getSelectedIconForMarker(marker) {
+      var data = this._getDataByProperty('marker', marker);
+
+      if (data !== null && data !== void 0 && data.selectedIcon) {
+        return data.selectedIcon;
+      } else if (this.options[keys.map.markerSelectedIcon]) {
+        return this.options[keys.map.markerSelectedIcon];
+      }
+
+      return null;
     }
   }, {
     key: "_handleClickListElt",

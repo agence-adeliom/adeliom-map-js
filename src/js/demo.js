@@ -48,7 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 coordinates: {
                     lat: 48.614782,
                     lng: 7.714012,
-                }
+                },
+                icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+                selectedIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png',
             },
             {
                 title: 'Cathédrale de Strasbourg',
