@@ -59,6 +59,7 @@ keys.map.allowMultipleMarkersSelected = 'mapAllowMultipleMarkersSelected';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
 keys.map.animation = 'mapAnimation';
+keys.map.showPlaces = 'mapShowPlaces';
 keys.map.controls = {};
 keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
 keys.map.controls.streetViewButton = 'mapEnableStreetView';
@@ -90,6 +91,7 @@ defaultOptions[keys.map.displayInfoWindows] = true;
 defaultOptions[keys.map.infoWindowTemplate] = '';
 defaultOptions[keys.map.centerMarkerOnClick] = true;
 defaultOptions[keys.map.animation] = smoothAnim;
+defaultOptions[keys.map.showPlaces] = false;
 defaultOptions[keys.map.controls.zoomButtons] = false;
 defaultOptions[keys.map.controls.streetViewButton] = false;
 defaultOptions[keys.map.controls.fullscreenButton] = false;
@@ -231,7 +233,8 @@ var AdeliomMap = /*#__PURE__*/function () {
                   fullscreenControl: this.options[keys.map.controls.fullscreenButton],
                   mapTypeControl: this.options[keys.map.controls.mapTypeButtons],
                   scaleControl: this.options[keys.map.controls.displayScale],
-                  rotateControl: this.options[keys.map.controls.rotateControl]
+                  rotateControl: this.options[keys.map.controls.rotateControl],
+                  styles: this._getGoogleMapStyles()
                 });
 
               case 5:
@@ -248,6 +251,17 @@ var AdeliomMap = /*#__PURE__*/function () {
 
       return _initGoogleMap;
     }()
+  }, {
+    key: "_getGoogleMapStyles",
+    value: function _getGoogleMapStyles() {
+      var poiStyle = {
+        featureType: 'poi',
+        stylers: [{
+          visibility: this.options[keys.map.showPlaces] ? 'on' : 'off'
+        }]
+      };
+      return [poiStyle];
+    }
   }, {
     key: "_addMapCustomClass",
     value: function _addMapCustomClass() {

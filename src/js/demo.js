@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mapDefaultZoom: 12,
         mapProvider: 'google',
         mapAnimation: 'smooth',
+        mapShowPlaces: false,
         mapMarkerIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png',
         mapMarkerSelectedIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/library_maps.png',
         mapMarkers: [

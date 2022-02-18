@@ -22,6 +22,7 @@ keys.map.allowMultipleMarkersSelected = 'mapAllowMultipleMarkersSelected';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
 keys.map.animation = 'mapAnimation';
+keys.map.showPlaces = 'mapShowPlaces';
 keys.map.controls = {};
 keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
 keys.map.controls.streetViewButton = 'mapEnableStreetView';
@@ -51,6 +52,7 @@ defaultOptions[keys.map.displayInfoWindows] = true;
 defaultOptions[keys.map.infoWindowTemplate] = '';
 defaultOptions[keys.map.centerMarkerOnClick] = true;
 defaultOptions[keys.map.animation] = smoothAnim;
+defaultOptions[keys.map.showPlaces] = false;
 defaultOptions[keys.map.controls.zoomButtons] = false;
 defaultOptions[keys.map.controls.streetViewButton] = false;
 defaultOptions[keys.map.controls.fullscreenButton] = false;
@@ -137,8 +139,24 @@ export default class AdeliomMap {
             mapTypeControl: this.options[keys.map.controls.mapTypeButtons],
             scaleControl: this.options[keys.map.controls.displayScale],
             rotateControl: this.options[keys.map.controls.rotateControl],
+            styles: this._getGoogleMapStyles(),
         });
     };
+
+    _getGoogleMapStyles() {
+        const poiStyle = {
+            featureType: 'poi',
+            stylers: [
+                {
+                    visibility: this.options[keys.map.showPlaces] ? 'on' : 'off',
+                }
+            ]
+        };
+
+        return [
+            poiStyle,
+        ];
+    }
 
     _addMapCustomClass() {
         if (this.mapContainer) {

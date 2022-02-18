@@ -13,6 +13,7 @@ Dépendance de gestion de Google Maps / Store Locator Adeliom
 `mapDefaultCenter ({lat: x, lng: y})` : centre par défaut de la map<br>
 `mapDefaultZoom (int)` : zoom par défaut de la map<br>
 `mapProvider (string)` : fournisseur de la map (seulement `google` pour le moment)<br>
+`mapShowPlaces (bool)` : afficher ou non les marqueurs de lieux<br>
 
 ### Contrôles
 `mapEnableZoomButtons (bool)` : afficher ou non les boutons de zoom<br>
