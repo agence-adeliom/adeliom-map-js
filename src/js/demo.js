@@ -50,7 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     lng: 7.714012,
                 },
                 icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
-                selectedIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png',
+                selectedIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/info-i_maps.png',
+                infoWindowTemplate: '<div class="map-infowindow-elt">Test template</div>',
+                listEltTemplate: 'Test 2',
             },
             {
                 title: 'Cathédrale de Strasbourg',

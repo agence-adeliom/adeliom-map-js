@@ -238,10 +238,17 @@ export default class AdeliomMap {
     _createGoogleMapInfoWindow(markerRawData) {
         if (this.options[keys.map.displayInfoWindows]) {
 
-            let content = this.options[keys.map.infoWindowTemplate];
+            let content;
 
-            if (this.options[keys.map.replaceInfoWindowContentWithMarkerData]) {
-                content = this._replaceMarkerDataInString(markerRawData, content)
+            // If an infoWindow template is defined for this specific marker
+            if (markerRawData?.infoWindowTemplate) {
+                content = markerRawData.infoWindowTemplate;
+            } else {
+                content = this.options[keys.map.infoWindowTemplate];
+
+                if (this.options[keys.map.replaceInfoWindowContentWithMarkerData]) {
+                    content = this._replaceMarkerDataInString(markerRawData, content)
+                }
             }
 
             const infoWindowInstance = new this.google.maps.InfoWindow({
@@ -336,11 +343,21 @@ export default class AdeliomMap {
      */
     _createMapListInstance(markerRawData, mapMarkerInstance) {
         const mapListInstance = document.createElement('div');
+        const selectorWithout = this.options[keys.list.selector].replace('[', '').replace(']', '');
 
-        let listInstanceHtml = this.mapListEltTemplate;
+        mapListInstance.setAttribute(selectorWithout + '-elt', '');
 
-        if (this.options[keys.list.replaceWithMarkerData]) {
-            listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
+        let listInstanceHtml;
+
+        // If a list elt template is defined for this specific marker
+        if (markerRawData?.listEltTemplate) {
+            listInstanceHtml = markerRawData.listEltTemplate;
+        } else {
+            listInstanceHtml = this.mapListEltTemplate;
+
+            if (this.options[keys.list.replaceWithMarkerData]) {
+                listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
+            }
         }
 
         mapListInstance.innerHTML = listInstanceHtml;

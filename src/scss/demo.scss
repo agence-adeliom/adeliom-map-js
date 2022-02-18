@@ -2,21 +2,38 @@ body {
   margin: 0;
 
   main {
-    [js-map] {
-      height: 500px;
-      width: 500px;
-      background-color: lightgrey;
+    .container {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-gap: 16px;
 
-      .map-infowindow-elt {
-        background-color: #FFF;
-        padding: 8px;
-        border-radius: 4px;
+      [js-map] {
+        grid-column: 1/7;
+        grid-row: 1;
+        height: 500px;
+        background-color: lightgrey;
+
+        .map-infowindow-elt {
+          background-color: #FFF;
+          padding: 8px;
+          border-radius: 4px;
+        }
       }
-    }
 
-    [js-map-list] {
-      .map-list-elt {
-        cursor: pointer;
+      [js-map-list] {
+        grid-row: 1;
+        grid-column: 7/13;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+
+        [js-map-list-elt] {
+          grid-column: 1/13;
+          grid-auto-rows: minmax(30px, auto);
+
+          .map-list-elt {
+            cursor: pointer;
+          }
+        }
       }
     }
   }

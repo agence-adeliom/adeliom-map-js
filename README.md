@@ -60,6 +60,8 @@ mapMarkers: [
         },
         icon: 'https://...', // override l'icon par défaut
         selectedIcon: 'https://...', // override l'icon selected par défaut
+        infoWindowTemplate: '<div class="map-infowindow-elt">Test template</div>',
+        listEltTemplate: 'Test 2',
     },
     {
         title: 'Cathédrale de Strasbourg',
