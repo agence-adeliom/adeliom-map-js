@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
             lng: 7.714012
         },
         mapCenterMarkerOnClick: true,
+        mapZoomMarkerOnClick: 12,
         mapDefaultZoom: 12,
         mapProvider: 'google',
         mapAnimation: 'smooth',
@@ -54,8 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     lat: 48.614782,
                     lng: 7.714012,
                 },
-                icon: 'http://127.0.0.1:8080/dist/img/adeliom-logo.png',
-                selectedIcon: 'http://127.0.0.1:8080/dist/img/adeliom-logo-blue.png',
+                icon: '/dist/img/adeliom-logo.png',
+                selectedIcon: '/dist/img/adeliom-logo-blue.png',
                 infoWindowTemplate: '<div class="map-infowindow-elt">Test template</div>',
                 listEltTemplate: 'Test 2',
             },

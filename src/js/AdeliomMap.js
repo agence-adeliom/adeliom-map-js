@@ -22,6 +22,7 @@ keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
 keys.map.allowMultipleMarkersSelected = 'mapAllowMultipleMarkersSelected';
 keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
 keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
+keys.map.zoomMarkerOnClick = 'mapZoomMarkerOnClick';
 keys.map.animation = 'mapAnimation';
 keys.map.showPlaces = 'mapShowPlaces';
 keys.map.replaceInfoWindowContentWithMarkerData = 'mapInfoWindowReplaceWithMarkerData';
@@ -54,6 +55,7 @@ defaultOptions[keys.map.displayMarkers] = true;
 defaultOptions[keys.map.displayInfoWindows] = true;
 defaultOptions[keys.map.infoWindowTemplate] = '';
 defaultOptions[keys.map.centerMarkerOnClick] = true;
+defaultOptions[keys.map.zoomMarkerOnClick] = 12;
 defaultOptions[keys.map.animation] = smoothAnim;
 defaultOptions[keys.map.showPlaces] = false;
 defaultOptions[keys.map.replaceInfoWindowContentWithMarkerData] = false;
@@ -472,6 +474,10 @@ export default class AdeliomMap extends Emitter {
             this.map.panTo(googleMapCoordinates);
         } else {
             this.map.setCenter(googleMapCoordinates);
+        }
+
+        if (this.options[keys.map.zoomMarkerOnClick]) {
+            this.map.setZoom(this.options[keys.map.zoomMarkerOnClick]);
         }
     }
 

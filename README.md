@@ -28,6 +28,7 @@ Dépendance de gestion de Google Maps / Store Locator Adeliom
 `mapMarkers (array)` : tableau des markers à afficher<br>
 `mapDisplayMarkers (bool)` : la map doit-elle afficher les marqueurs<br>
 `mapCenterMarkerOnClick (bool)` : centre la map sur le marqueur au clic<br>
+`mapZoomMarkerOnClick (int|bool)` : zoom la map au clic sur un marqueur<br>
 `mapAnimation (string)` : type d'animation de transition entre positions dans la map (smooth / default)<br>
 `mapAllowMultipleMarkersSelected (bool)` : si plusieurs marqueurs peuvent être sélectionnés en simultané<br>
 `mapMarkerIcon (string)` : URL vers l'icône du marker<br>
