@@ -76,7 +76,20 @@ document.addEventListener("DOMContentLoaded", () => {
         mapEnableFullscreenButton: true, // Displays a button that allows the user to put the map in fullscreen
         mapEnableTypeButtons: true, // Displays the buttons that allow the user to switch between map types
         mapDisplayScale: false, // Displays a scale at the bottom of the map
+        mapAskForConsent: true,
     });
+
+    const disableMapButton = document.querySelector(`[js-disable-map]`);
+
+    if (disableMapButton) {
+        if (adeliomMap.options['mapAskForConsent']) {
+            disableMapButton.addEventListener('click', () => {
+                adeliomMap._setConsent(false);
+            });
+        } else {
+            disableMapButton.style.display = 'none';
+        }
+    }
 
     adeliomMap.on(AdeliomMapEvents.markers.created, (data) => {
         if (params.logAllEvents) {
@@ -106,5 +119,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (params.logAllEvents || params.logClickEvents) {
             console.log('Marker clicked :', data);
         }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.rgpd.consentButtonClicked, (AdeliomMapInstance) => {
+        AdeliomMapInstance._setConsent(true);
     });
 });

@@ -2,6 +2,8 @@ import {Loader} from 'google-maps';
 import Emitter from "dauphine-js/dist/emitter";
 
 const mapCustomClass = 'adeliom-map-js';
+const consentScreenContainerAttribute = 'adeliom-map-js-consent-screen';
+const consentButtonAttribute = 'adeliom-map-js-consent-button';
 
 const smoothAnim = 'smooth';
 const defaultAnim = 'default';
@@ -38,6 +40,10 @@ keys.list.selector = 'mapListSelector';
 keys.list.eltTemplate = 'mapListEltTemplate';
 keys.list.centerMarkerOnClick = 'mapListCenterMarkerOnClick';
 keys.list.replaceWithMarkerData = 'mapListReplaceWithMarkerData';
+keys.rgpd = {};
+keys.rgpd.askForConsent = 'mapAskForConsent';
+keys.rgpd.defaultConsentValue = 'mapConsentDefaultValue';
+keys.rgpd.buttonMessage = 'mapConsentButtonMessage';
 
 const defaultOptions = {};
 defaultOptions[keys.map.selector] = null;
@@ -68,6 +74,9 @@ defaultOptions[keys.map.controls.rotateControl] = false;
 defaultOptions[keys.list.eltTemplate] = '';
 defaultOptions[keys.list.centerMarkerOnClick] = true;
 defaultOptions[keys.list.replaceWithMarkerData] = false;
+defaultOptions[keys.rgpd.askForConsent] = false;
+defaultOptions[keys.rgpd.defaultConsentValue] = false;
+defaultOptions[keys.rgpd.buttonMessage] = 'Activer la carte';
 
 export const AdeliomMapEvents = {
     markers: {
@@ -80,6 +89,9 @@ export const AdeliomMapEvents = {
     },
     listElements: {
         created: 'markerListEltCreated',
+    },
+    rgpd: {
+        consentButtonClicked: 'consentButtonClicked',
     }
 };
 
@@ -89,28 +101,26 @@ export default class AdeliomMap extends Emitter {
         super();
 
         this.defaultOptions = defaultOptions;
+        this.options = Object.assign(this.defaultOptions, options);
 
         this.google = null;
 
         this.mapContainer = null;
         this.map = null;
 
+        this.hasConsent = this.options[keys.rgpd.defaultConsentValue];
+
+        this.mapContainer = document.querySelector(this.options[keys.map.selector]);
         this.mapListContainer = null;
         this.mapList = null;
         this.mapListEltTemplate = null;
-
-        this.options = Object.assign(this.defaultOptions, options);
 
         this.markers = this.options[keys.map.markers] ?? [];
         this.displayMarkers = this.options[keys.map.displayMarkers] ?? false;
         this.markersData = [];
 
         if (this.options[keys.apiKey]) {
-            this._initMap().then(() => {
-                if (this.displayMarkers) {
-                    this._initMarkers();
-                }
-            });
+            this._setMap();
         } else {
             console.error(`${keys.apiKey} not provided`);
         }
@@ -118,8 +128,6 @@ export default class AdeliomMap extends Emitter {
 
     async _initMap() {
         if (this.options[keys.map.selector]) {
-            this.mapContainer = document.querySelector(this.options[keys.map.selector]);
-
             if (this.options[keys.list.selector]) {
                 this.mapListContainer = document.querySelector(this.options[keys.list.selector]);
 
@@ -131,27 +139,108 @@ export default class AdeliomMap extends Emitter {
             if (this.mapContainer) {
                 this._addMapCustomClass();
 
-                if (!this.options[keys.map.checkSize] || (this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
-                    switch (this.options[keys.map.provider]) {
-                        case 'google':
-                        default:
-                            await this._initGoogleMap(this.mapContainer);
-                    }
-                } else {
-                    console.error(`${this.options[keys.map.selector]} height and/or width is equal to 0`);
-                }
+                return await this._handleConsent();
             } else {
                 console.error(`${this.options[keys.map.selector]} not found`);
             }
         } else {
             console.error(`Need to provide ${keys.map.selector} option`);
         }
+
+        return false;
     };
 
-    async _initGoogleMap(container) {
-        const loader = new Loader(this.options.apiKey);
+    async _handleConsent() {
+        if ((this.options[keys.rgpd.askForConsent] && !this.hasConsent)) {
+            this._setConsentScreen();
+            return false;
+        } else {
+            if (!this.options[keys.map.checkSize] || (this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
+                switch (this.options[keys.map.provider]) {
+                    case 'google':
+                    default:
+                        await this._initGoogleMap(this.mapContainer);
+                }
 
-        this.google = await loader.load();
+                return true;
+            } else {
+                console.error(`${this.options[keys.map.selector]} height and/or width is equal to 0`);
+
+                return false;
+            }
+        }
+    }
+
+    /**
+     *Removes the consent screen and displays the map
+     * @private
+     */
+    _setMap() {
+        if (this.mapContainer) {
+            this.mapContainer.innerHTML = '';
+
+            this._initMap().then((isInit) => {
+                if (isInit && this.displayMarkers) {
+                    this._initMarkers();
+                }
+            });
+        }
+    }
+
+    /**
+     * Removes the displayed map and sets the consent screen
+     * @private
+     */
+    _setConsentScreen() {
+        if (this.mapContainer) {
+            this.mapContainer.innerHTML = '';
+
+            if (this.mapListContainer) {
+                this.mapListContainer.innerHTML = '';
+            }
+
+            if (this.map) {
+                this.map = null;
+            }
+
+            const consentScreen = document.createElement('div');
+            consentScreen.setAttribute(consentScreenContainerAttribute, '');
+
+            const consentButton = document.createElement('button');
+            consentButton.innerText = this.options[keys.rgpd.buttonMessage];
+            consentButton.setAttribute(consentButtonAttribute, '');
+
+            consentButton.addEventListener('click', () => {
+                this.emit(AdeliomMapEvents.rgpd.consentButtonClicked, this);
+            });
+
+            consentScreen.appendChild(consentButton);
+
+            this.mapContainer.appendChild(consentScreen);
+        }
+    }
+
+    /**
+     * Dynamically sets the consent value to display consent screen or map depending on passed value
+     * @param consent
+     * @private
+     */
+    _setConsent(consent) {
+        this.hasConsent = consent;
+
+        if (consent) {
+            this._setMap();
+        } else {
+            this._setConsentScreen();
+        }
+    }
+
+    async _initGoogleMap(container) {
+        if (!this.google) {
+            const loader = new Loader(this.options.apiKey);
+
+            this.google = await loader.load();
+        }
 
         this.map = new this.google.maps.Map(container, {
             center: this.options[keys.map.defaultCenter],
@@ -575,13 +664,13 @@ export default class AdeliomMap extends Emitter {
         }
 
         return null;
-    }
+    };
 
     _isMarkerSelected(marker) {
         const data = this._getDataByProperty('marker', marker);
 
         return data?.selected;
-    }
+    };
 
     /**
      * Un-select all markers and close all infoWindows
@@ -599,7 +688,7 @@ export default class AdeliomMap extends Emitter {
                 }
             }
         });
-    }
+    };
 
     _getDataByProperty(propertyName, property) {
         let returnedData = null;
@@ -613,7 +702,7 @@ export default class AdeliomMap extends Emitter {
         }
 
         return returnedData;
-    }
+    };
 
     _setDataByProperty(propertyName, property, key, value) {
         for (let i = 0; i < Object.keys(this.markersData).length; i++) {
@@ -623,6 +712,6 @@ export default class AdeliomMap extends Emitter {
         }
 
         return;
-    }
+    };
 
 };

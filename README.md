@@ -3,7 +3,14 @@
 Dépendance de gestion de Google Maps / Store Locator Adeliom
 
 ## Initialisation
+```javascript
+import AdeliomMap from "./AdeliomMap"
 
+document.addEventListener('DOMContentLoaded', () => {
+    const paramsArray = {...};
+    const adeliomMap = new AdeliomMap(paramsArray);
+});
+```
 ## Options disponibles
 
 ### Base
@@ -35,16 +42,24 @@ Dépendance de gestion de Google Maps / Store Locator Adeliom
 `mapMarkerSelectedIcon (string)` : URL vers l'icône sélectionnée du marker<br>
 
 ### Infobulles
+
 `mapInfoWindowTemplate (string)` : template HTML de l'infobulle d'un marqueur<br>
 `mapDisplayInfoWindows (bool)` : la map doit-elle afficher les infobulles<br>
-`mapInfoWindowReplaceWithMarkerData (bool)` : permet de remplacer les données du template par des données du marqueur (si le
-marqueur contient une propriété `title`, mettre des balises `{{ title }}` dans le template)<br>
+`mapInfoWindowReplaceWithMarkerData (bool)` : permet de remplacer les données du template par des données du marqueur (
+si le marqueur contient une propriété `title`, mettre des balises `{{ title }}` dans le template)<br>
 
 ### Liste de points
 
 `mapListEltTemplate (string)` : template HTML d'un élément de la liste des points<br>
 `mapListReplaceWithMarkerData (bool)` : permet de remplacer les données du template par des données du marqueur (si le
 marqueur contient une propriété `title`, mettre des balises `{{ title }}` dans le template)<br>
+
+### Consentement RGPD
+
+`mapAskForConsent (bool)` : indique si la map doit demander le consentement de l'utilisateur<br>
+`mapConsentDefaultValue (bool)` : valeur par défaut pour le consentement _(permet d'initialiser directement la map si
+consentement déjà donné)_<br>
+`mapConsentButtonMessage (string)` : message affiché dans le bouton de consentement<br>
 
 ## Exemples de paramètres :
 
@@ -78,7 +93,6 @@ mapMarkers: [
 ```
 
 ## Événements
-
 Il est possible d'utiliser l'objet `AdeliomMapEvents` afin de récupérer les différents événements disponibles.
 ```javascript
 // Instanciation de l'AdeliomMap
@@ -104,3 +118,7 @@ et élément de liste).<br>
 ### Éléments de liste :
 
 `markerListEltCreated` : Retourne les données d'un marqueur lorsqu'un élément de liste vient d'être créé.<br>
+
+## Fonctions
+
+`_setConsent (bool)` : Permet d'indiquer dynamiquement l'état de consentement de l'utilisateur<br>
