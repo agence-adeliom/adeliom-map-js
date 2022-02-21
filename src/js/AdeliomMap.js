@@ -1,82 +1,13 @@
 import {Loader} from 'google-maps';
-import Emitter from "dauphine-js/dist/emitter";
+import AdeliomMapFunctions from "./AdeliomMapFunctions";
+import keys from "./optionKeys";
+import errors from "./errors";
 
 const mapCustomClass = 'adeliom-map-js';
 const consentScreenContainerAttribute = 'adeliom-map-js-consent-screen';
 const consentButtonAttribute = 'adeliom-map-js-consent-button';
 
 const smoothAnim = 'smooth';
-const defaultAnim = 'default';
-
-const keys = {};
-keys.apiKey = 'apiKey';
-keys.map = {};
-keys.map.selector = 'mapSelector';
-keys.map.defaultCenter = 'mapDefaultCenter';
-keys.map.defaultZoom = 'mapDefaultZoom';
-keys.map.provider = 'mapProvider';
-keys.map.checkSize = 'checkMapSize';
-keys.map.markers = 'mapMarkers';
-keys.map.markerIcon = 'mapMarkerIcon';
-keys.map.markerSelectedIcon = 'mapMarkerSelectedIcon';
-keys.map.displayMarkers = 'mapDisplayMarkers';
-keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
-keys.map.allowMultipleMarkersSelected = 'mapAllowMultipleMarkersSelected';
-keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
-keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
-keys.map.zoomMarkerOnClick = 'mapZoomMarkerOnClick';
-keys.map.animation = 'mapAnimation';
-keys.map.showPlaces = 'mapShowPlaces';
-keys.map.replaceInfoWindowContentWithMarkerData = 'mapInfoWindowReplaceWithMarkerData';
-keys.map.controls = {};
-keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
-keys.map.controls.streetViewButton = 'mapEnableStreetView';
-keys.map.controls.fullscreenButton = 'mapEnableFullscreenButton';
-keys.map.controls.mapTypeButtons = 'mapEnableTypeButtons';
-keys.map.controls.displayScale = 'mapDisplayScale';
-keys.map.controls.rotateControl = 'mapRotate';
-keys.list = {};
-keys.list.selector = 'mapListSelector';
-keys.list.eltTemplate = 'mapListEltTemplate';
-keys.list.centerMarkerOnClick = 'mapListCenterMarkerOnClick';
-keys.list.replaceWithMarkerData = 'mapListReplaceWithMarkerData';
-keys.rgpd = {};
-keys.rgpd.askForConsent = 'mapAskForConsent';
-keys.rgpd.defaultConsentValue = 'mapConsentDefaultValue';
-keys.rgpd.buttonMessage = 'mapConsentButtonMessage';
-
-const defaultOptions = {};
-defaultOptions[keys.map.selector] = null;
-defaultOptions[keys.list.selector] = null;
-defaultOptions[keys.apiKey] = null;
-defaultOptions[keys.map.checkSize] = false;
-defaultOptions[keys.map.markers] = [];
-defaultOptions[keys.map.markerIcon] = null;
-defaultOptions[keys.map.markerSelectedIcon] = null;
-defaultOptions[keys.map.allowMultipleMarkersSelected] = true;
-defaultOptions[keys.map.defaultCenter] = {lat: 48.614782, lng: 7.714012};
-defaultOptions[keys.map.defaultZoom] = 12;
-defaultOptions[keys.map.provider] = 'google';
-defaultOptions[keys.map.displayMarkers] = true;
-defaultOptions[keys.map.displayInfoWindows] = true;
-defaultOptions[keys.map.infoWindowTemplate] = '';
-defaultOptions[keys.map.centerMarkerOnClick] = true;
-defaultOptions[keys.map.zoomMarkerOnClick] = 12;
-defaultOptions[keys.map.animation] = smoothAnim;
-defaultOptions[keys.map.showPlaces] = false;
-defaultOptions[keys.map.replaceInfoWindowContentWithMarkerData] = false;
-defaultOptions[keys.map.controls.zoomButtons] = false;
-defaultOptions[keys.map.controls.streetViewButton] = false;
-defaultOptions[keys.map.controls.fullscreenButton] = false;
-defaultOptions[keys.map.controls.mapTypeButtons] = false;
-defaultOptions[keys.map.controls.displayScale] = false;
-defaultOptions[keys.map.controls.rotateControl] = false;
-defaultOptions[keys.list.eltTemplate] = '';
-defaultOptions[keys.list.centerMarkerOnClick] = true;
-defaultOptions[keys.list.replaceWithMarkerData] = false;
-defaultOptions[keys.rgpd.askForConsent] = false;
-defaultOptions[keys.rgpd.defaultConsentValue] = false;
-defaultOptions[keys.rgpd.buttonMessage] = 'Activer la carte';
 
 export const AdeliomMapEvents = {
     markers: {
@@ -95,34 +26,25 @@ export const AdeliomMapEvents = {
     }
 };
 
-export default class AdeliomMap extends Emitter {
+export default class AdeliomMap extends AdeliomMapFunctions {
 
     constructor(options) {
         super();
 
-        this.defaultOptions = defaultOptions;
         this.options = Object.assign(this.defaultOptions, options);
-
-        this.google = null;
-
-        this.mapContainer = null;
-        this.map = null;
 
         this.hasConsent = this.options[keys.rgpd.defaultConsentValue];
 
         this.mapContainer = document.querySelector(this.options[keys.map.selector]);
-        this.mapListContainer = null;
-        this.mapList = null;
         this.mapListEltTemplate = null;
 
         this.markers = this.options[keys.map.markers] ?? [];
         this.displayMarkers = this.options[keys.map.displayMarkers] ?? false;
-        this.markersData = [];
 
         if (this.options[keys.apiKey]) {
             this._setMap();
         } else {
-            console.error(`${keys.apiKey} not provided`);
+            console.error(errors.apiKey.notProvided);
         }
     };
 
@@ -141,10 +63,10 @@ export default class AdeliomMap extends Emitter {
 
                 return await this._handleConsent();
             } else {
-                console.error(`${this.options[keys.map.selector]} not found`);
+                console.error(errors.selectors.map.notFound);
             }
         } else {
-            console.error(`Need to provide ${keys.map.selector} option`);
+            console.error(errors.selectors.map.notProvided);
         }
 
         return false;
@@ -164,7 +86,7 @@ export default class AdeliomMap extends Emitter {
 
                 return true;
             } else {
-                console.error(`${this.options[keys.map.selector]} height and/or width is equal to 0`);
+                console.error(errors.selectors.map.tooSmall);
 
                 return false;
             }
@@ -377,77 +299,24 @@ export default class AdeliomMap extends Emitter {
 
     _handleClickMarker(marker) {
         if (this.options[keys.map.displayInfoWindows]) {
-            if (this._isMarkerSelected(marker)) {
-                this._setMarkerAsSelected(marker, false);
+            if (this.helpers.markers._isMarkerSelected(marker)) {
+                this.helpers.markers._setMarkerAsSelected(marker, false);
             } else {
-                this._setMarkerAsSelected(marker, true);
+                this.helpers.markers._setMarkerAsSelected(marker, true);
             }
         }
 
-        const data = this._getDataByProperty('marker', marker);
+        const data = this.helpers.markersData._getDataByProperty('marker', marker);
 
         this.emit(AdeliomMapEvents.markers.clicked, data);
     };
 
-    _setMarkerAsSelected(marker, isSelected = null) {
-        if (isSelected == 'toggle') {
-            isSelected = !this._getDataByProperty('marker', marker).selected;
-        }
-
-        if (isSelected === null) {
-            isSelected = true;
-        }
-
-        if (isSelected === true) {
-            if (!this.options[keys.map.allowMultipleMarkersSelected]) {
-                this._unselectAllMarkers();
-            }
-
-            this._openInfoWindowByMarker(marker);
-        } else if (isSelected === false) {
-            this._closeInfoWindowByMarker(marker);
-        }
-
-
-        this._setDataByProperty('marker', marker, 'selected', isSelected);
-
-        if (!isSelected) {
-            marker.setIcon(this._getIdleIconForMarker(marker));
-        } else {
-            marker.setIcon(this._getSelectedIconForMarker(marker));
-        }
-    }
-
-    _getIdleIconForMarker(marker) {
-        const data = this._getDataByProperty('marker', marker);
-
-        if (data?.icon) {
-            return data.icon;
-        } else if (this.options[keys.map.markerIcon]) {
-            return this.options[keys.map.markerIcon];
-        }
-
-        return null;
-    }
-
-    _getSelectedIconForMarker(marker) {
-        const data = this._getDataByProperty('marker', marker);
-
-        if (data?.selectedIcon) {
-            return data.selectedIcon;
-        } else if (this.options[keys.map.markerSelectedIcon]) {
-            return this.options[keys.map.markerSelectedIcon];
-        }
-
-        return null;
-    }
-
     _handleClickListElt(listElt) {
-        const mapMarkerInstance = this._getMarkerByListEltNode(listElt);
+        const mapMarkerInstance = this.helpers.markers._getMarkerByListEltNode(listElt);
 
         if (mapMarkerInstance) {
             if (this.options[keys.map.displayInfoWindows]) {
-                this._setMarkerAsSelected(mapMarkerInstance, 'toggle');
+                this.helpers.markers._setMarkerAsSelected(mapMarkerInstance, 'toggle');
             }
         }
     };
@@ -508,210 +377,11 @@ export default class AdeliomMap extends Emitter {
      * @private
      */
     _closeInfoWindowByMarker(marker) {
-        const infoWindow = this._getInfoWindowByMarker(marker);
+        const infoWindow = this.helpers.infoWindows._getInfoWindowByMarker(marker);
 
         if (infoWindow) {
             infoWindow.close();
         }
-    };
-
-    /**
-     * Opens an infoWindow by its associated marker
-     * @param marker
-     * @private
-     */
-    _openInfoWindowByMarker(marker) {
-        const infoWindow = this._getInfoWindowByMarker(marker);
-
-        if (infoWindow) {
-            this._openInfoWindow(infoWindow);
-        }
-    };
-
-    _openInfoWindow(infoWindow) {
-        if (this._isInfoWindowOpened(infoWindow)) {
-            infoWindow.close();
-        } else {
-            if (!this.options[keys.map.allowMultipleMarkersSelected]) {
-                this._unselectAllMarkers();
-            }
-
-            const marker = this._getMarkerByInfoWindow(infoWindow);
-
-            if (marker) {
-                infoWindow.open(this.map, marker);
-
-                if (this.options[keys.map.centerMarkerOnClick]) {
-                    this._centerMapOnMarker(marker);
-                }
-            }
-        }
-    }
-
-    _getMarkerCoordinates(marker) {
-        return {
-            lat: marker.getPosition().lat(),
-            lng: marker.getPosition().lng(),
-        };
-    }
-
-    _centerMapOnMarker(marker) {
-        const coordinates = this._getMarkerCoordinates(marker);
-        const googleMapCoordinates = new this.google.maps.LatLng(coordinates.lat, coordinates.lng);
-
-        if (this.options[keys.map.animation] === smoothAnim) {
-            this.map.panTo(googleMapCoordinates);
-        } else {
-            this.map.setCenter(googleMapCoordinates);
-        }
-
-        if (this.options[keys.map.zoomMarkerOnClick]) {
-            this.map.setZoom(this.options[keys.map.zoomMarkerOnClick]);
-        }
-    }
-
-    _getMarkerByInfoWindow(infoWindow) {
-        return this._returnDataByInfoWindow('marker', infoWindow);
-    }
-
-    /**
-     * Returns an existing infoWindow instance by providing a marker
-     * @param marker
-     * @returns {null}
-     * @private
-     */
-    _getInfoWindowByMarker(marker) {
-        return this._returnDataByMarker('infoWindow', marker);
-    };
-
-    /**
-     * Returns an existing listElt node by providing a marker
-     * @param marker
-     * @returns {null}
-     * @private
-     */
-    _getListEltByMarker(marker) {
-        return this._returnDataByMarker('listElt', marker);
-    };
-
-    /**
-     * Returns an existing marker node by providing a listEltNode
-     * @param marker
-     * @returns {null}
-     * @private
-     */
-    _getMarkerByListEltNode(listEltNode) {
-        return this._returnDataByListEltNode('marker', listEltNode);
-    };
-
-    /**
-     * Returns an existing infoWindow by providing a listEltNode
-     * @param marker
-     * @returns {null}
-     * @private
-     */
-    _getInfoWindowByListEltNode(listEltNode) {
-        return this._returnDataByListEltNode('infoWindow', listEltNode);
-    };
-
-    /**
-     * Generic method to retrieve some data by specifying a marker
-     * @param data
-     * @param marker
-     * @returns {null}
-     * @private
-     */
-    _returnDataByMarker(data, marker) {
-        return this._getDataByProperty('marker', marker)[data];
-    };
-
-    _returnDataByInfoWindow(data, infoWindow) {
-        return this._getDataByProperty('infoWindow', infoWindow)[data];
-    }
-
-    /**
-     * Generic method to retrieve some data by specifying a listEltNode
-     * @param data
-     * @param marker
-     * @returns {null}
-     * @private
-     */
-    _returnDataByListEltNode(data, listEltNode) {
-        return this._getDataByProperty('listElt', listEltNode)[data];
-    };
-
-    /**
-     * Returns whether an info window is currently opened
-     * @param infoWindow
-     * @returns {boolean}
-     * @private
-     */
-    _isInfoWindowOpened(infoWindow) {
-        return infoWindow.getMap() ? true : false;
-    };
-
-    /**
-     * Returns whether an info window is currently opened by specifying its associated marker
-     * @param marker
-     * @returns {null|boolean}
-     * @private
-     */
-    _isInfoWindowOpenedByMarker(marker) {
-        const infoWindow = this._getInfoWindowByMarker(marker);
-
-        if (infoWindow) {
-            return this._isInfoWindowOpened(infoWindow);
-        }
-
-        return null;
-    };
-
-    _isMarkerSelected(marker) {
-        const data = this._getDataByProperty('marker', marker);
-
-        return data?.selected;
-    };
-
-    /**
-     * Un-select all markers and close all infoWindows
-     * @private
-     */
-    _unselectAllMarkers() {
-        this.markersData.forEach(markerData => {
-            if (markerData?.marker && markerData?.selected) {
-                this._setMarkerAsSelected(markerData.marker, false);
-            }
-
-            if (markerData?.infoWindow) {
-                if (this._isInfoWindowOpened(markerData.infoWindow)) {
-                    markerData.infoWindow.close();
-                }
-            }
-        });
-    };
-
-    _getDataByProperty(propertyName, property) {
-        let returnedData = null;
-
-        for (let i = 0; i < Object.keys(this.markersData).length; i++) {
-            const tempMarker = this.markersData[Object.keys(this.markersData)[i]];
-            if (tempMarker[propertyName] === property) {
-                returnedData = tempMarker;
-                break;
-            }
-        }
-
-        return returnedData;
-    };
-
-    _setDataByProperty(propertyName, property, key, value) {
-        for (let i = 0; i < Object.keys(this.markersData).length; i++) {
-            if (this.markersData[Object.keys(this.markersData)[i]][propertyName] === property) {
-                this.markersData[Object.keys(this.markersData)[i]][key] = value;
-            }
-        }
-
-        return;
     };
 
 };
