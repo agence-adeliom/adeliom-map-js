@@ -33,7 +33,7 @@
 .adeliom-map-js [aria-roledescription=map] [role=dialog] .gm-style-iw-d + button[aria-label] {
   display: none !important;
 }
-.adeliom-map-js [adeliom-map-js-consent-screen] {
+.adeliom-map-js [adeliom-map-consent-screen] {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,7 +43,7 @@
   width: 100%;
   height: 100%;
 }
-.adeliom-map-js [adeliom-map-js-consent-screen] [adeliom-map-js-consent-button] {
+.adeliom-map-js [adeliom-map-consent-screen] [adeliom-map-consent-button] {
   cursor: pointer;
   border: none;
 }

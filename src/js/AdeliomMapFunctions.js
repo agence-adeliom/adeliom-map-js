@@ -4,9 +4,17 @@ import defaultOptions, {mapAnims} from "./defaultOptions";
 import {AdeliomMapEvents} from "./AdeliomMap";
 import {Loader} from "google-maps";
 
-const consentScreenContainerAttribute = 'adeliom-map-js-consent-screen';
-const consentButtonAttribute = 'adeliom-map-js-consent-button';
-const openedMarkerListEltAttribute = 'js-map-list-elt-opened';
+const mapAttribute = 'adeliom-map';
+const listAttribute = `${mapAttribute}-list`;
+
+const consentScreenContainerAttribute = `${mapAttribute}-consent-screen`;
+const consentButtonAttribute = `${mapAttribute}-consent-button`;
+const openedMarkerListEltAttribute = `${listAttribute}-elt-opened`;
+
+const notConsentMapAttribute = `${mapAttribute}-no-consent`;
+const notConsentListAttribute = `${listAttribute}-no-consent`;
+
+const availableProviders = ['google'];
 
 export default class AdeliomMapFunctions extends Emitter {
     constructor() {
@@ -27,6 +35,11 @@ export default class AdeliomMapFunctions extends Emitter {
     }
 
     helpers = {
+        providers: {
+            _isProviderAvailable: (provider) => {
+                return availableProviders.findIndex(prov => prov === provider) !== -1;
+            },
+        },
         infoWindows: {
             /**
              * Returns whether an info window is currently opened
@@ -341,6 +354,11 @@ export default class AdeliomMapFunctions extends Emitter {
             _getListNodeByMarker: (marker) => {
                 return this.helpers.markersData._returnDataByMarker('listElt', marker);
             },
+            _commonInit: () => {
+                if (this.mapListContainer) {
+                    this.mapListContainer.setAttribute(listAttribute, '');
+                }
+            },
         },
         map: {
             /**
@@ -350,6 +368,12 @@ export default class AdeliomMapFunctions extends Emitter {
             _setMap: () => {
                 if (this.mapContainer) {
                     this.mapContainer.innerHTML = '';
+                    this.mapContainer.removeAttribute(notConsentMapAttribute);
+
+                    if (this.mapListContainer) {
+                        this.mapListContainer.innerHTML = '';
+                        this.mapListContainer.removeAttribute(notConsentListAttribute);
+                    }
 
                     this._initMap().then((isInit) => {
                         if (isInit && this.displayMarkers) {
@@ -377,6 +401,37 @@ export default class AdeliomMapFunctions extends Emitter {
                     this.map.setZoom(this.options[keys.map.zoomMarkerOnClick]);
                 }
             },
+            /**
+             * Adds classes to the map container
+             * @param array classes
+             * @private
+             */
+            _addClassesToMapContainer: (classes) => {
+                if (this.mapContainer) {
+                    for (let singleClass in classes) {
+                        this.mapContainer.classList.add(classes[singleClass]);
+                    }
+                }
+            },
+            /**
+             * Removes classes to the map container
+             * @param array classes
+             * @private
+             */
+            _removeClassesToMapContainer: (classes) => {
+                if (this.mapContainer) {
+                    for (let singleClass in classes) {
+                        if (this.mapContainer.classList.contains(classes[singleClass])) {
+                            this.mapContainer.classList.remove(classes[singleClass]);
+                        }
+                    }
+                }
+            },
+            _commonInit: () => {
+                if (this.mapContainer) {
+                    this.mapContainer.setAttribute(mapAttribute, '');
+                }
+            },
         },
         consentScreen: {
             /**
@@ -386,9 +441,12 @@ export default class AdeliomMapFunctions extends Emitter {
             _setConsentScreen: () => {
                 if (this.mapContainer) {
                     this.mapContainer.innerHTML = '';
+                    this.mapContainer.setAttribute(notConsentMapAttribute, '');
+                    this.mapContainer.removeAttribute('style');
 
                     if (this.mapListContainer) {
                         this.mapListContainer.innerHTML = '';
+                        this.mapListContainer.setAttribute(notConsentListAttribute, '');
                     }
 
                     if (this.map) {

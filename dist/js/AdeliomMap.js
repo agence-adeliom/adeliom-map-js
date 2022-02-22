@@ -68,10 +68,11 @@ var AdeliomMapEvents = {
     clicked: 'markerClicked'
   },
   infoWindows: {
-    created: 'markerInfoWindowCreated'
+    created: 'infoWindowCreated'
   },
   listElements: {
-    created: 'markerListEltCreated'
+    created: 'listEltCreated',
+    clicked: 'listEltClicked'
   },
   rgpd: {
     consentButtonClicked: 'consentButtonClicked'
@@ -94,7 +95,21 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
     _this.options = Object.assign(_this.defaultOptions, options);
     _this.hasConsent = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].rgpd.defaultConsentValue];
     _this.mapContainer = document.querySelector(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.selector]);
+
+    _this.helpers.map._commonInit();
+
     _this.mapListEltTemplate = null;
+
+    if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector]) {
+      _this.mapListContainer = document.querySelector(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector]);
+
+      _this.helpers.listNodes._commonInit();
+
+      if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.eltTemplate]) {
+        _this.mapListEltTemplate = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.eltTemplate];
+      }
+    }
+
     _this.markers = (_this$options$keys$ma = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markers]) !== null && _this$options$keys$ma !== void 0 ? _this$options$keys$ma : [];
     _this.displayMarkers = (_this$options$keys$ma2 = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayMarkers]) !== null && _this$options$keys$ma2 !== void 0 ? _this$options$keys$ma2 : false;
 
@@ -116,45 +131,37 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
             switch (_context.prev = _context.next) {
               case 0:
                 if (!this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.selector]) {
-                  _context.next = 12;
+                  _context.next = 11;
                   break;
-                }
-
-                if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector]) {
-                  this.mapListContainer = document.querySelector(this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector]);
-
-                  if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.eltTemplate]) {
-                    this.mapListEltTemplate = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.eltTemplate];
-                  }
                 }
 
                 if (!this.mapContainer) {
-                  _context.next = 9;
+                  _context.next = 8;
                   break;
                 }
 
-                this._addMapCustomClass();
+                this.helpers.map._addClassesToMapContainer([mapCustomClass]);
 
-                _context.next = 6;
+                _context.next = 5;
                 return this._handleConsent();
 
-              case 6:
+              case 5:
                 return _context.abrupt("return", _context.sent);
 
-              case 9:
+              case 8:
                 console.error(_errors__WEBPACK_IMPORTED_MODULE_3__["default"].selectors.map.notFound);
 
-              case 10:
-                _context.next = 13;
+              case 9:
+                _context.next = 12;
                 break;
 
-              case 12:
+              case 11:
                 console.error(_errors__WEBPACK_IMPORTED_MODULE_3__["default"].selectors.map.notProvided);
 
-              case 13:
+              case 12:
                 return _context.abrupt("return", false);
 
-              case 14:
+              case 13:
               case "end":
                 return _context.stop();
             }
@@ -172,6 +179,7 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
     key: "_handleConsent",
     value: function () {
       var _handleConsent2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var provider;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -187,26 +195,44 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
 
               case 5:
                 if (!(!this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.checkSize] || this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
-                  _context2.next = 14;
+                  _context2.next = 21;
+                  break;
+                }
+
+                provider = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider];
+
+                if (!provider) {
+                  _context2.next = 18;
+                  break;
+                }
+
+                if (!this.helpers.providers._isProviderAvailable(provider)) {
+                  _context2.next = 17;
                   break;
                 }
 
                 _context2.t0 = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider];
-                _context2.next = _context2.t0 === 'google' ? 9 : 9;
+                _context2.next = _context2.t0 === 'google' ? 12 : 12;
                 break;
 
-              case 9:
-                _context2.next = 11;
+              case 12:
+                _context2.next = 14;
                 return this.helpers.google.map._initMap(this.mapContainer);
 
-              case 11:
+              case 14:
                 return _context2.abrupt("return", true);
 
-              case 14:
+              case 17:
+                console.error("The provider \"".concat(provider, "\" is not available."));
+
+              case 18:
+                return _context2.abrupt("return", false);
+
+              case 21:
                 console.error(_errors__WEBPACK_IMPORTED_MODULE_3__["default"].selectors.map.tooSmall);
                 return _context2.abrupt("return", false);
 
-              case 16:
+              case 23:
               case "end":
                 return _context2.stop();
             }
@@ -223,7 +249,7 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
     /**
      * Dynamically sets the consent value to display consent screen or map depending on passed value
      * @param consent
-     * @private
+     * @public
      */
 
   }, {
@@ -235,13 +261,6 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
         this.helpers.map._setMap();
       } else {
         this.helpers.consentScreen._setConsentScreen();
-      }
-    }
-  }, {
-    key: "_addMapCustomClass",
-    value: function _addMapCustomClass() {
-      if (this.mapContainer) {
-        this.mapContainer.classList.add(mapCustomClass);
       }
     }
   }, {
@@ -269,6 +288,10 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
           this.helpers.markers._setMarkerState(mapMarkerInstance, 'toggle');
         }
       }
+
+      var data = this.helpers.markersData._getDataByProperty('listElt', listElt);
+
+      this.emit(AdeliomMapEvents.listElements.clicked, data);
     }
   }, {
     key: "_createMapListInstance",
@@ -313,10 +336,13 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
   }, {
     key: "_replaceMarkerDataInString",
     value: function _replaceMarkerDataInString(markerData, string) {
-      Object.keys(markerData).forEach(function (key) {
-        var search = "{{ ".concat(key, " }}");
-        string = string.replaceAll(search, markerData[key]);
-      });
+      if (string) {
+        Object.keys(markerData).forEach(function (key) {
+          var search = "{{ ".concat(key, " }}");
+          string = string.replaceAll(search, markerData[key]);
+        });
+      }
+
       return string;
     }
   }]);
@@ -383,9 +409,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-var consentScreenContainerAttribute = 'adeliom-map-js-consent-screen';
-var consentButtonAttribute = 'adeliom-map-js-consent-button';
-var openedMarkerListEltAttribute = 'js-map-list-elt-opened';
+var mapAttribute = 'adeliom-map';
+var listAttribute = "".concat(mapAttribute, "-list");
+var consentScreenContainerAttribute = "".concat(mapAttribute, "-consent-screen");
+var consentButtonAttribute = "".concat(mapAttribute, "-consent-button");
+var openedMarkerListEltAttribute = "".concat(listAttribute, "-elt-opened");
+var notConsentMapAttribute = "".concat(mapAttribute, "-no-consent");
+var notConsentListAttribute = "".concat(listAttribute, "-no-consent");
+var availableProviders = ['google'];
 
 var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
   _inherits(AdeliomMapFunctions, _Emitter);
@@ -400,6 +431,13 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
     _this = _super.call(this);
 
     _defineProperty(_assertThisInitialized(_this), "helpers", {
+      providers: {
+        _isProviderAvailable: function _isProviderAvailable(provider) {
+          return availableProviders.findIndex(function (prov) {
+            return prov === provider;
+          }) !== -1;
+        }
+      },
       infoWindows: {
         /**
          * Returns whether an info window is currently opened
@@ -735,6 +773,11 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          */
         _getListNodeByMarker: function _getListNodeByMarker(marker) {
           return _this.helpers.markersData._returnDataByMarker('listElt', marker);
+        },
+        _commonInit: function _commonInit() {
+          if (_this.mapListContainer) {
+            _this.mapListContainer.setAttribute(listAttribute, '');
+          }
         }
       },
       map: {
@@ -745,6 +788,14 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
         _setMap: function _setMap() {
           if (_this.mapContainer) {
             _this.mapContainer.innerHTML = '';
+
+            _this.mapContainer.removeAttribute(notConsentMapAttribute);
+
+            if (_this.mapListContainer) {
+              _this.mapListContainer.innerHTML = '';
+
+              _this.mapListContainer.removeAttribute(notConsentListAttribute);
+            }
 
             _this._initMap().then(function (isInit) {
               if (isInit && _this.displayMarkers) {
@@ -773,6 +824,39 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]) {
             _this.map.setZoom(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]);
           }
+        },
+
+        /**
+         * Adds classes to the map container
+         * @param array classes
+         * @private
+         */
+        _addClassesToMapContainer: function _addClassesToMapContainer(classes) {
+          if (_this.mapContainer) {
+            for (var singleClass in classes) {
+              _this.mapContainer.classList.add(classes[singleClass]);
+            }
+          }
+        },
+
+        /**
+         * Removes classes to the map container
+         * @param array classes
+         * @private
+         */
+        _removeClassesToMapContainer: function _removeClassesToMapContainer(classes) {
+          if (_this.mapContainer) {
+            for (var singleClass in classes) {
+              if (_this.mapContainer.classList.contains(classes[singleClass])) {
+                _this.mapContainer.classList.remove(classes[singleClass]);
+              }
+            }
+          }
+        },
+        _commonInit: function _commonInit() {
+          if (_this.mapContainer) {
+            _this.mapContainer.setAttribute(mapAttribute, '');
+          }
         }
       },
       consentScreen: {
@@ -784,8 +868,14 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           if (_this.mapContainer) {
             _this.mapContainer.innerHTML = '';
 
+            _this.mapContainer.setAttribute(notConsentMapAttribute, '');
+
+            _this.mapContainer.removeAttribute('style');
+
             if (_this.mapListContainer) {
               _this.mapListContainer.innerHTML = '';
+
+              _this.mapListContainer.setAttribute(notConsentListAttribute, '');
             }
 
             if (_this.map) {

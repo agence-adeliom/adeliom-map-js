@@ -113,11 +113,16 @@ et élément de liste).<br>
 
 ### Infobulles :
 
-`markerInfoWindowCreated` : Retourne les données d'un marqueur lorsqu'une infobulle a été créée.<br>
+`infoWindowCreated` : Retourne les données d'un marqueur lorsqu'une infobulle a été créée.<br>
 
 ### Éléments de liste :
 
-`markerListEltCreated` : Retourne les données d'un marqueur lorsqu'un élément de liste vient d'être créé.<br>
+`listEltCreated` : Retourne les données d'un marqueur lorsqu'un élément de liste vient d'être créé.<br>
+`listEltClicked` : Retourne les données d'un marqueur lorsque l'on clique sur un élément de liste.<br>
+
+### RGPD :
+
+`consentButtonClicked` : Est émit lorsque le bouton de consentement de la map est cliqué.<br>
 
 ## Fonctions
 

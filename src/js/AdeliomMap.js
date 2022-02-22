@@ -11,10 +11,11 @@ export const AdeliomMapEvents = {
         clicked: 'markerClicked',
     },
     infoWindows: {
-        created: 'markerInfoWindowCreated',
+        created: 'infoWindowCreated',
     },
     listElements: {
-        created: 'markerListEltCreated',
+        created: 'listEltCreated',
+        clicked: 'listEltClicked',
     },
     rgpd: {
         consentButtonClicked: 'consentButtonClicked',
@@ -31,7 +32,18 @@ export default class AdeliomMap extends AdeliomMapFunctions {
         this.hasConsent = this.options[keys.rgpd.defaultConsentValue];
 
         this.mapContainer = document.querySelector(this.options[keys.map.selector]);
+        this.helpers.map._commonInit();
         this.mapListEltTemplate = null;
+
+        if (this.options[keys.list.selector]) {
+            this.mapListContainer = document.querySelector(this.options[keys.list.selector]);
+            this.helpers.listNodes._commonInit();
+
+            if (this.options[keys.list.eltTemplate]) {
+                this.mapListEltTemplate = this.options[keys.list.eltTemplate];
+            }
+        }
+
 
         this.markers = this.options[keys.map.markers] ?? [];
         this.displayMarkers = this.options[keys.map.displayMarkers] ?? false;
@@ -45,16 +57,8 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
     async _initMap() {
         if (this.options[keys.map.selector]) {
-            if (this.options[keys.list.selector]) {
-                this.mapListContainer = document.querySelector(this.options[keys.list.selector]);
-
-                if (this.options[keys.list.eltTemplate]) {
-                    this.mapListEltTemplate = this.options[keys.list.eltTemplate];
-                }
-            }
-
             if (this.mapContainer) {
-                this._addMapCustomClass();
+                this.helpers.map._addClassesToMapContainer([mapCustomClass]);
 
                 return await this._handleConsent();
             } else {
@@ -73,13 +77,22 @@ export default class AdeliomMap extends AdeliomMapFunctions {
             return false;
         } else {
             if (!this.options[keys.map.checkSize] || (this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
-                switch (this.options[keys.map.provider]) {
-                    case 'google':
-                    default:
-                        await this.helpers.google.map._initMap(this.mapContainer);
+                const provider = this.options[keys.map.provider];
+                if (provider) {
+                    if (this.helpers.providers._isProviderAvailable(provider)) {
+                        switch (this.options[keys.map.provider]) {
+                            case 'google':
+                            default:
+                                await this.helpers.google.map._initMap(this.mapContainer);
+                        }
+
+                        return true;
+                    } else {
+                        console.error(`The provider "${provider}" is not available.`);
+                    }
                 }
 
-                return true;
+                return false;
             } else {
                 console.error(errors.selectors.map.tooSmall);
 
@@ -91,7 +104,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
     /**
      * Dynamically sets the consent value to display consent screen or map depending on passed value
      * @param consent
-     * @private
+     * @public
      */
     _setConsent(consent) {
         this.hasConsent = consent;
@@ -100,12 +113,6 @@ export default class AdeliomMap extends AdeliomMapFunctions {
             this.helpers.map._setMap();
         } else {
             this.helpers.consentScreen._setConsentScreen();
-        }
-    }
-
-    _addMapCustomClass() {
-        if (this.mapContainer) {
-            this.mapContainer.classList.add(mapCustomClass);
         }
     }
 
@@ -131,6 +138,10 @@ export default class AdeliomMap extends AdeliomMapFunctions {
                 this.helpers.markers._setMarkerState(mapMarkerInstance, 'toggle');
             }
         }
+
+        const data = this.helpers.markersData._getDataByProperty('listElt', listElt);
+
+        this.emit(AdeliomMapEvents.listElements.clicked, data);
     };
 
     /**
@@ -175,10 +186,12 @@ export default class AdeliomMap extends AdeliomMapFunctions {
     };
 
     _replaceMarkerDataInString(markerData, string) {
-        Object.keys(markerData).forEach(key => {
-            const search = `{{ ${key} }}`;
-            string = string.replaceAll(search, markerData[key]);
-        });
+        if (string) {
+            Object.keys(markerData).forEach(key => {
+                const search = `{{ ${key} }}`;
+                string = string.replaceAll(search, markerData[key]);
+            });
+        }
 
         return string;
     }

@@ -3,7 +3,7 @@ import {env} from "../../env";
 
 const params = {
     logAllEvents: false,
-    logClickEvents: false,
+    logClickEvents: true,
 };
 
 const mapListEltTemplate = '<div class="map-list-elt">' +
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 icon: '/dist/img/adeliom-logo.png',
                 selectedIcon: '/dist/img/adeliom-logo-blue.png',
                 infoWindowTemplate: '<div class="map-infowindow-elt">Test template</div>',
-                listEltTemplate: 'Test 2',
+                listEltTemplate: 'Test de template personnalisé pour le marqueur',
             },
             {
                 title: 'Cathédrale de Strasbourg',
@@ -121,7 +121,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    adeliomMap.on(AdeliomMapEvents.listElements.clicked, (data) => {
+        if (params.logAllEvents || params.logClickEvents) {
+            console.log('List element clicked :', data);
+        }
+    })
+
     adeliomMap.on(AdeliomMapEvents.rgpd.consentButtonClicked, (AdeliomMapInstance) => {
+        if (params.logAllEvents || params.logClickEvents) {
+            console.log('Consent button clicked');
+        }
+
         AdeliomMapInstance._setConsent(true);
     });
 });
