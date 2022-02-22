@@ -1,13 +1,8 @@
-import {Loader} from 'google-maps';
 import AdeliomMapFunctions from "./AdeliomMapFunctions";
 import keys from "./optionKeys";
 import errors from "./errors";
 
 const mapCustomClass = 'adeliom-map-js';
-const consentScreenContainerAttribute = 'adeliom-map-js-consent-screen';
-const consentButtonAttribute = 'adeliom-map-js-consent-button';
-
-const smoothAnim = 'smooth';
 
 export const AdeliomMapEvents = {
     markers: {
@@ -42,7 +37,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
         this.displayMarkers = this.options[keys.map.displayMarkers] ?? false;
 
         if (this.options[keys.apiKey]) {
-            this._setMap();
+            this.helpers.map._setMap();
         } else {
             console.error(errors.apiKey.notProvided);
         }
@@ -74,14 +69,14 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
     async _handleConsent() {
         if ((this.options[keys.rgpd.askForConsent] && !this.hasConsent)) {
-            this._setConsentScreen();
+            this.helpers.consentScreen._setConsentScreen();
             return false;
         } else {
             if (!this.options[keys.map.checkSize] || (this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
                 switch (this.options[keys.map.provider]) {
                     case 'google':
                     default:
-                        await this._initGoogleMap(this.mapContainer);
+                        await this.helpers.google.map._initMap(this.mapContainer);
                 }
 
                 return true;
@@ -94,55 +89,6 @@ export default class AdeliomMap extends AdeliomMapFunctions {
     }
 
     /**
-     *Removes the consent screen and displays the map
-     * @private
-     */
-    _setMap() {
-        if (this.mapContainer) {
-            this.mapContainer.innerHTML = '';
-
-            this._initMap().then((isInit) => {
-                if (isInit && this.displayMarkers) {
-                    this._initMarkers();
-                }
-            });
-        }
-    }
-
-    /**
-     * Removes the displayed map and sets the consent screen
-     * @private
-     */
-    _setConsentScreen() {
-        if (this.mapContainer) {
-            this.mapContainer.innerHTML = '';
-
-            if (this.mapListContainer) {
-                this.mapListContainer.innerHTML = '';
-            }
-
-            if (this.map) {
-                this.map = null;
-            }
-
-            const consentScreen = document.createElement('div');
-            consentScreen.setAttribute(consentScreenContainerAttribute, '');
-
-            const consentButton = document.createElement('button');
-            consentButton.innerText = this.options[keys.rgpd.buttonMessage];
-            consentButton.setAttribute(consentButtonAttribute, '');
-
-            consentButton.addEventListener('click', () => {
-                this.emit(AdeliomMapEvents.rgpd.consentButtonClicked, this);
-            });
-
-            consentScreen.appendChild(consentButton);
-
-            this.mapContainer.appendChild(consentScreen);
-        }
-    }
-
-    /**
      * Dynamically sets the consent value to display consent screen or map depending on passed value
      * @param consent
      * @private
@@ -151,150 +97,16 @@ export default class AdeliomMap extends AdeliomMapFunctions {
         this.hasConsent = consent;
 
         if (consent) {
-            this._setMap();
+            this.helpers.map._setMap();
         } else {
-            this._setConsentScreen();
+            this.helpers.consentScreen._setConsentScreen();
         }
-    }
-
-    async _initGoogleMap(container) {
-        if (!this.google) {
-            const loader = new Loader(this.options.apiKey);
-
-            this.google = await loader.load();
-        }
-
-        this.map = new this.google.maps.Map(container, {
-            center: this.options[keys.map.defaultCenter],
-            zoom: this.options[keys.map.defaultZoom],
-            zoomControl: this.options[keys.map.controls.zoomButtons],
-            streetViewControl: this.options[keys.map.controls.streetViewButton],
-            fullscreenControl: this.options[keys.map.controls.fullscreenButton],
-            mapTypeControl: this.options[keys.map.controls.mapTypeButtons],
-            scaleControl: this.options[keys.map.controls.displayScale],
-            rotateControl: this.options[keys.map.controls.rotateControl],
-            styles: this._getGoogleMapStyles(),
-        });
-    };
-
-    _getGoogleMapStyles() {
-        const poiStyle = {
-            featureType: 'poi',
-            stylers: [
-                {
-                    visibility: this.options[keys.map.showPlaces] ? 'on' : 'off',
-                }
-            ]
-        };
-
-        return [
-            poiStyle,
-        ];
     }
 
     _addMapCustomClass() {
         if (this.mapContainer) {
             this.mapContainer.classList.add(mapCustomClass);
         }
-    }
-
-    /**
-     * Init markers by its map provider (google, ...)
-     * @private
-     */
-    _initMarkers() {
-        switch (this.options[keys.map.provider]) {
-            case 'google':
-            default:
-                this._initGoogleMapMarkers();
-                break;
-        }
-    };
-
-    /**
-     * Loop to init Google Maps markers
-     * @private
-     */
-    _initGoogleMapMarkers() {
-        this.markers.forEach(marker => {
-            let markerData = this._createGoogleMapMarker(marker);
-            this.emit(AdeliomMapEvents.markers.dataCreated, markerData);
-        });
-    };
-
-    _createGoogleMapMarker(markerRawData) {
-        const markerData = {};
-        markerData.selected = false;
-
-        const markerPosition = new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
-        const markerTitle = markerRawData?.title;
-
-        const markerConfig = {
-            position: markerPosition,
-            title: markerTitle,
-            map: this.map,
-        };
-
-        if (markerRawData?.icon) {
-            markerConfig.icon = markerRawData.icon;
-            markerData.icon = markerRawData.icon;
-        } else if (this.options[keys.map.markerIcon]) {
-            markerConfig.icon = this.options[keys.map.markerIcon];
-        }
-
-        if (markerRawData?.selectedIcon) {
-            markerData.selectedIcon = markerRawData.selectedIcon;
-        }
-
-        const markerInstance = new this.google.maps.Marker(markerConfig);
-        this.emit(AdeliomMapEvents.markers.created, markerInstance);
-
-        markerData.marker = markerInstance;
-
-        markerData.infoWindow = this._createGoogleMapInfoWindow(markerRawData);
-
-        let listElt = null;
-
-        if (this.mapListContainer) {
-            listElt = this._createMapListInstance(markerRawData, markerInstance);
-            markerData.listElt = listElt;
-        }
-
-        this.google.maps.event.addListener(markerInstance, 'click', () => {
-            this._handleClickMarker(markerInstance)
-        });
-
-        this.markersData.push(markerData);
-
-        return markerData;
-    };
-
-    _createGoogleMapInfoWindow(markerRawData) {
-        if (this.options[keys.map.displayInfoWindows]) {
-
-            let content;
-
-            // If an infoWindow template is defined for this specific marker
-            if (markerRawData?.infoWindowTemplate) {
-                content = markerRawData.infoWindowTemplate;
-            } else {
-                content = this.options[keys.map.infoWindowTemplate];
-
-                if (this.options[keys.map.replaceInfoWindowContentWithMarkerData]) {
-                    content = this._replaceMarkerDataInString(markerRawData, content)
-                }
-            }
-
-            const infoWindowInstance = new this.google.maps.InfoWindow({
-                content: content,
-            });
-
-            this.emit(AdeliomMapEvents.infoWindows.created, infoWindowInstance);
-
-            return infoWindowInstance;
-        }
-
-        return null;
     }
 
     _handleClickMarker(marker) {
@@ -370,18 +182,5 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
         return string;
     }
-
-    /**
-     * Closes an infoWindow by specifying its associated marker
-     * @param marker
-     * @private
-     */
-    _closeInfoWindowByMarker(marker) {
-        const infoWindow = this.helpers.infoWindows._getInfoWindowByMarker(marker);
-
-        if (infoWindow) {
-            infoWindow.close();
-        }
-    };
 
 };

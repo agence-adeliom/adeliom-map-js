@@ -26,7 +26,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var google_maps__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! google-maps */ "./node_modules/google-maps/lib/esm/loader.js");
 /* harmony import */ var _AdeliomMapFunctions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AdeliomMapFunctions */ "./src/js/AdeliomMapFunctions.js");
 /* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.js");
 /* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./errors */ "./src/js/errors.js");
@@ -61,11 +60,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
-
 var mapCustomClass = 'adeliom-map-js';
-var consentScreenContainerAttribute = 'adeliom-map-js-consent-screen';
-var consentButtonAttribute = 'adeliom-map-js-consent-button';
-var smoothAnim = 'smooth';
 var AdeliomMapEvents = {
   markers: {
     created: 'markerCreated',
@@ -104,7 +99,7 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
     _this.displayMarkers = (_this$options$keys$ma2 = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayMarkers]) !== null && _this$options$keys$ma2 !== void 0 ? _this$options$keys$ma2 : false;
 
     if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].apiKey]) {
-      _this._setMap();
+      _this.helpers.map._setMap();
     } else {
       console.error(_errors__WEBPACK_IMPORTED_MODULE_3__["default"].apiKey.notProvided);
     }
@@ -186,7 +181,7 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
                   break;
                 }
 
-                this._setConsentScreen();
+                this.helpers.consentScreen._setConsentScreen();
 
                 return _context2.abrupt("return", false);
 
@@ -202,7 +197,7 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
 
               case 9:
                 _context2.next = 11;
-                return this._initGoogleMap(this.mapContainer);
+                return this.helpers.google.map._initMap(this.mapContainer);
 
               case 11:
                 return _context2.abrupt("return", true);
@@ -226,59 +221,6 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
       return _handleConsent;
     }()
     /**
-     *Removes the consent screen and displays the map
-     * @private
-     */
-
-  }, {
-    key: "_setMap",
-    value: function _setMap() {
-      var _this2 = this;
-
-      if (this.mapContainer) {
-        this.mapContainer.innerHTML = '';
-
-        this._initMap().then(function (isInit) {
-          if (isInit && _this2.displayMarkers) {
-            _this2._initMarkers();
-          }
-        });
-      }
-    }
-    /**
-     * Removes the displayed map and sets the consent screen
-     * @private
-     */
-
-  }, {
-    key: "_setConsentScreen",
-    value: function _setConsentScreen() {
-      var _this3 = this;
-
-      if (this.mapContainer) {
-        this.mapContainer.innerHTML = '';
-
-        if (this.mapListContainer) {
-          this.mapListContainer.innerHTML = '';
-        }
-
-        if (this.map) {
-          this.map = null;
-        }
-
-        var consentScreen = document.createElement('div');
-        consentScreen.setAttribute(consentScreenContainerAttribute, '');
-        var consentButton = document.createElement('button');
-        consentButton.innerText = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].rgpd.buttonMessage];
-        consentButton.setAttribute(consentButtonAttribute, '');
-        consentButton.addEventListener('click', function () {
-          _this3.emit(AdeliomMapEvents.rgpd.consentButtonClicked, _this3);
-        });
-        consentScreen.appendChild(consentButton);
-        this.mapContainer.appendChild(consentScreen);
-      }
-    }
-    /**
      * Dynamically sets the consent value to display consent screen or map depending on passed value
      * @param consent
      * @private
@@ -290,69 +232,10 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
       this.hasConsent = consent;
 
       if (consent) {
-        this._setMap();
+        this.helpers.map._setMap();
       } else {
-        this._setConsentScreen();
+        this.helpers.consentScreen._setConsentScreen();
       }
-    }
-  }, {
-    key: "_initGoogleMap",
-    value: function () {
-      var _initGoogleMap2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(container) {
-        var loader;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                if (this.google) {
-                  _context3.next = 5;
-                  break;
-                }
-
-                loader = new google_maps__WEBPACK_IMPORTED_MODULE_4__.Loader(this.options.apiKey);
-                _context3.next = 4;
-                return loader.load();
-
-              case 4:
-                this.google = _context3.sent;
-
-              case 5:
-                this.map = new this.google.maps.Map(container, {
-                  center: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.defaultCenter],
-                  zoom: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.defaultZoom],
-                  zoomControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.zoomButtons],
-                  streetViewControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.streetViewButton],
-                  fullscreenControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.fullscreenButton],
-                  mapTypeControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.mapTypeButtons],
-                  scaleControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.displayScale],
-                  rotateControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.rotateControl],
-                  styles: this._getGoogleMapStyles()
-                });
-
-              case 6:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      function _initGoogleMap(_x) {
-        return _initGoogleMap2.apply(this, arguments);
-      }
-
-      return _initGoogleMap;
-    }()
-  }, {
-    key: "_getGoogleMapStyles",
-    value: function _getGoogleMapStyles() {
-      var poiStyle = {
-        featureType: 'poi',
-        stylers: [{
-          visibility: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.showPlaces] ? 'on' : 'off'
-        }]
-      };
-      return [poiStyle];
     }
   }, {
     key: "_addMapCustomClass",
@@ -360,106 +243,6 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
       if (this.mapContainer) {
         this.mapContainer.classList.add(mapCustomClass);
       }
-    }
-    /**
-     * Init markers by its map provider (google, ...)
-     * @private
-     */
-
-  }, {
-    key: "_initMarkers",
-    value: function _initMarkers() {
-      switch (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
-        case 'google':
-        default:
-          this._initGoogleMapMarkers();
-
-          break;
-      }
-    }
-  }, {
-    key: "_initGoogleMapMarkers",
-    value:
-    /**
-     * Loop to init Google Maps markers
-     * @private
-     */
-    function _initGoogleMapMarkers() {
-      var _this4 = this;
-
-      this.markers.forEach(function (marker) {
-        var markerData = _this4._createGoogleMapMarker(marker);
-
-        _this4.emit(AdeliomMapEvents.markers.dataCreated, markerData);
-      });
-    }
-  }, {
-    key: "_createGoogleMapMarker",
-    value: function _createGoogleMapMarker(markerRawData) {
-      var _this5 = this;
-
-      var markerData = {};
-      markerData.selected = false;
-      var markerPosition = new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
-      var markerTitle = markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.title;
-      var markerConfig = {
-        position: markerPosition,
-        title: markerTitle,
-        map: this.map
-      };
-
-      if (markerRawData !== null && markerRawData !== void 0 && markerRawData.icon) {
-        markerConfig.icon = markerRawData.icon;
-        markerData.icon = markerRawData.icon;
-      } else if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon]) {
-        markerConfig.icon = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon];
-      }
-
-      if (markerRawData !== null && markerRawData !== void 0 && markerRawData.selectedIcon) {
-        markerData.selectedIcon = markerRawData.selectedIcon;
-      }
-
-      var markerInstance = new this.google.maps.Marker(markerConfig);
-      this.emit(AdeliomMapEvents.markers.created, markerInstance);
-      markerData.marker = markerInstance;
-      markerData.infoWindow = this._createGoogleMapInfoWindow(markerRawData);
-      var listElt = null;
-
-      if (this.mapListContainer) {
-        listElt = this._createMapListInstance(markerRawData, markerInstance);
-        markerData.listElt = listElt;
-      }
-
-      this.google.maps.event.addListener(markerInstance, 'click', function () {
-        _this5._handleClickMarker(markerInstance);
-      });
-      this.markersData.push(markerData);
-      return markerData;
-    }
-  }, {
-    key: "_createGoogleMapInfoWindow",
-    value: function _createGoogleMapInfoWindow(markerRawData) {
-      if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayInfoWindows]) {
-        var content; // If an infoWindow template is defined for this specific marker
-
-        if (markerRawData !== null && markerRawData !== void 0 && markerRawData.infoWindowTemplate) {
-          content = markerRawData.infoWindowTemplate;
-        } else {
-          content = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.infoWindowTemplate];
-
-          if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.replaceInfoWindowContentWithMarkerData]) {
-            content = this._replaceMarkerDataInString(markerRawData, content);
-          }
-        }
-
-        var infoWindowInstance = new this.google.maps.InfoWindow({
-          content: content
-        });
-        this.emit(AdeliomMapEvents.infoWindows.created, infoWindowInstance);
-        return infoWindowInstance;
-      }
-
-      return null;
     }
   }, {
     key: "_handleClickMarker",
@@ -498,7 +281,7 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
      * @private
      */
     function _createMapListInstance(markerRawData, mapMarkerInstance) {
-      var _this6 = this;
+      var _this2 = this;
 
       var mapListInstance = document.createElement('div');
       var selectorWithout = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector].replace('[', '').replace(']', '');
@@ -517,7 +300,7 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
 
       mapListInstance.innerHTML = listInstanceHtml;
       mapListInstance.addEventListener('click', function () {
-        _this6._handleClickListElt(mapListInstance);
+        _this2._handleClickListElt(mapListInstance);
       });
       this.mapListContainer.appendChild(mapListInstance);
 
@@ -535,21 +318,6 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
         string = string.replaceAll(search, markerData[key]);
       });
       return string;
-    }
-    /**
-     * Closes an infoWindow by specifying its associated marker
-     * @param marker
-     * @private
-     */
-
-  }, {
-    key: "_closeInfoWindowByMarker",
-    value: function _closeInfoWindowByMarker(marker) {
-      var infoWindow = this.helpers.infoWindows._getInfoWindowByMarker(marker);
-
-      if (infoWindow) {
-        infoWindow.close();
-      }
     }
   }]);
 
@@ -572,11 +340,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ AdeliomMapFunctions)
 /* harmony export */ });
-/* harmony import */ var dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dauphine-js/dist/emitter */ "./node_modules/dauphine-js/dist/emitter.js");
-/* harmony import */ var dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.js");
-/* harmony import */ var _defaultOptions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./defaultOptions */ "./src/js/defaultOptions.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dauphine-js/dist/emitter */ "./node_modules/dauphine-js/dist/emitter.js");
+/* harmony import */ var dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.js");
+/* harmony import */ var _defaultOptions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./defaultOptions */ "./src/js/defaultOptions.js");
+/* harmony import */ var _AdeliomMap__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./AdeliomMap */ "./src/js/AdeliomMap.js");
+/* harmony import */ var google_maps__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! google-maps */ "./node_modules/google-maps/lib/esm/loader.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -603,6 +381,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
+
+var consentScreenContainerAttribute = 'adeliom-map-js-consent-screen';
+var consentButtonAttribute = 'adeliom-map-js-consent-button';
 
 var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
   _inherits(AdeliomMapFunctions, _Emitter);
@@ -658,7 +440,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           if (_this.helpers.infoWindows._isInfoWindowOpened(infoWindow)) {
             infoWindow.close();
           } else {
-            if (!_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.allowMultipleMarkersSelected]) {
+            if (!_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.allowMultipleMarkersSelected]) {
               _this.helpers.markers._unselectAllMarkers();
             }
 
@@ -667,7 +449,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             if (marker) {
               infoWindow.open(_this.map, marker);
 
-              if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.centerMarkerOnClick]) {
+              if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.centerMarkerOnClick]) {
                 _this.helpers.map._centerMapOnMarker(marker);
               }
             }
@@ -685,9 +467,36 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           if (infoWindow) {
             _this.helpers.infoWindows._openInfoWindow(infoWindow);
           }
+        },
+
+        /**
+         * Closes an infoWindow by specifying its associated marker
+         * @param marker
+         * @private
+         */
+        _closeInfoWindowByMarker: function _closeInfoWindowByMarker(marker) {
+          var infoWindow = _this.helpers.infoWindows._getInfoWindowByMarker(marker);
+
+          if (infoWindow) {
+            infoWindow.close();
+          }
         }
       },
       markers: {
+        /**
+         * Init markers by its map provider (google, ...)
+         * @private
+         */
+        _initMarkers: function _initMarkers(markers) {
+          switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
+            case 'google':
+            default:
+              _this.helpers.google.markers._initMapMarkers(markers);
+
+              break;
+          }
+        },
+
         /**
          * Returns whether a marker is selected or not
          * @param marker
@@ -769,13 +578,13 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           }
 
           if (isSelected === true) {
-            if (!_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.allowMultipleMarkersSelected]) {
+            if (!_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.allowMultipleMarkersSelected]) {
               _this.helpers.markers._unselectAllMarkers();
             }
 
             _this.helpers.infoWindows._openInfoWindowByMarker(marker);
           } else if (isSelected === false) {
-            _this._closeInfoWindowByMarker(marker);
+            _this.helpers.infoWindows._closeInfoWindowByMarker(marker);
           }
 
           _this.helpers.markersData._setDataByProperty('marker', marker, 'selected', isSelected);
@@ -798,8 +607,8 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
           if (data !== null && data !== void 0 && data.icon) {
             return data.icon;
-          } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.markerIcon]) {
-            return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.markerIcon];
+          } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon]) {
+            return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon];
           }
 
           return null;
@@ -816,8 +625,8 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
           if (data !== null && data !== void 0 && data.selectedIcon) {
             return data.selectedIcon;
-          } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.markerSelectedIcon]) {
-            return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.markerSelectedIcon];
+          } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerSelectedIcon]) {
+            return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerSelectedIcon];
           }
 
           return null;
@@ -889,6 +698,22 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
       },
       map: {
         /**
+         *Removes the consent screen and displays the map
+         * @private
+         */
+        _setMap: function _setMap() {
+          if (_this.mapContainer) {
+            _this.mapContainer.innerHTML = '';
+
+            _this._initMap().then(function (isInit) {
+              if (isInit && _this.displayMarkers) {
+                _this.helpers.markers._initMarkers(_this.markers);
+              }
+            });
+          }
+        },
+
+        /**
          * Centers the map on the provided marker
          * @param marker
          * @private
@@ -898,20 +723,212 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
           var googleMapCoordinates = new _this.google.maps.LatLng(coordinates.lat, coordinates.lng);
 
-          if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.animation] === _defaultOptions__WEBPACK_IMPORTED_MODULE_2__.mapAnims.smooth) {
+          if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.animation] === _defaultOptions__WEBPACK_IMPORTED_MODULE_3__.mapAnims.smooth) {
             _this.map.panTo(googleMapCoordinates);
           } else {
             _this.map.setCenter(googleMapCoordinates);
           }
 
-          if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.zoomMarkerOnClick]) {
-            _this.map.setZoom(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.zoomMarkerOnClick]);
+          if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]) {
+            _this.map.setZoom(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]);
+          }
+        }
+      },
+      consentScreen: {
+        /**
+         * Removes the displayed map and sets the consent screen
+         * @private
+         */
+        _setConsentScreen: function _setConsentScreen() {
+          if (_this.mapContainer) {
+            _this.mapContainer.innerHTML = '';
+
+            if (_this.mapListContainer) {
+              _this.mapListContainer.innerHTML = '';
+            }
+
+            if (_this.map) {
+              _this.map = null;
+            }
+
+            var consentScreen = document.createElement('div');
+            consentScreen.setAttribute(consentScreenContainerAttribute, '');
+            var consentButton = document.createElement('button');
+            consentButton.innerText = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].rgpd.buttonMessage];
+            consentButton.setAttribute(consentButtonAttribute, '');
+            consentButton.addEventListener('click', function () {
+              _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.rgpd.consentButtonClicked, _assertThisInitialized(_this));
+            });
+            consentScreen.appendChild(consentButton);
+
+            _this.mapContainer.appendChild(consentScreen);
+          }
+        }
+      },
+      google: {
+        markers: {
+          /**
+           * Loop to init Google Maps markers
+           * @private
+           */
+          _initMapMarkers: function _initMapMarkers(markers) {
+            markers.forEach(function (marker) {
+              var markerData = _this.helpers.google.markers._createMapMarker(marker);
+
+              _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.markers.dataCreated, markerData);
+            });
+          },
+
+          /**
+           * Create a Google Map marker by passing marker raw data
+           * @param markerRawData
+           * @returns {{}}
+           * @private
+           */
+          _createMapMarker: function _createMapMarker(markerRawData) {
+            var markerData = {};
+            markerData.selected = false;
+            var markerPosition = new _this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
+            var markerTitle = markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.title;
+            var markerConfig = {
+              position: markerPosition,
+              title: markerTitle,
+              map: _this.map
+            };
+
+            if (markerRawData !== null && markerRawData !== void 0 && markerRawData.icon) {
+              markerConfig.icon = markerRawData.icon;
+              markerData.icon = markerRawData.icon;
+            } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon]) {
+              markerConfig.icon = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon];
+            }
+
+            if (markerRawData !== null && markerRawData !== void 0 && markerRawData.selectedIcon) {
+              markerData.selectedIcon = markerRawData.selectedIcon;
+            }
+
+            var markerInstance = new _this.google.maps.Marker(markerConfig);
+
+            _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.markers.created, markerInstance);
+
+            markerData.marker = markerInstance;
+            markerData.infoWindow = _this.helpers.google.infoWindows._createMapInfoWindow(markerRawData);
+            var listElt = null;
+
+            if (_this.mapListContainer) {
+              listElt = _this._createMapListInstance(markerRawData, markerInstance);
+              markerData.listElt = listElt;
+            }
+
+            _this.google.maps.event.addListener(markerInstance, 'click', function () {
+              _this._handleClickMarker(markerInstance);
+            });
+
+            _this.markersData.push(markerData);
+
+            return markerData;
+          }
+        },
+        infoWindows: {
+          /**
+           * Create a Google Map marker infoWindow by passing marker raw data
+           * @param markerRawData
+           * @returns {null|*}
+           * @private
+           */
+          _createMapInfoWindow: function _createMapInfoWindow(markerRawData) {
+            if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayInfoWindows]) {
+              var content; // If an infoWindow template is defined for this specific marker
+
+              if (markerRawData !== null && markerRawData !== void 0 && markerRawData.infoWindowTemplate) {
+                content = markerRawData.infoWindowTemplate;
+              } else {
+                content = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.infoWindowTemplate];
+
+                if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.replaceInfoWindowContentWithMarkerData]) {
+                  content = _this._replaceMarkerDataInString(markerRawData, content);
+                }
+              }
+
+              var infoWindowInstance = new _this.google.maps.InfoWindow({
+                content: content
+              });
+
+              _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.infoWindows.created, infoWindowInstance);
+
+              return infoWindowInstance;
+            }
+
+            return null;
+          }
+        },
+        map: {
+          _initMap: function () {
+            var _initMap2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(container) {
+              var loader;
+              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      if (_this.google) {
+                        _context.next = 5;
+                        break;
+                      }
+
+                      loader = new google_maps__WEBPACK_IMPORTED_MODULE_5__.Loader(_this.options.apiKey);
+                      _context.next = 4;
+                      return loader.load();
+
+                    case 4:
+                      _this.google = _context.sent;
+
+                    case 5:
+                      _this.map = new _this.google.maps.Map(container, {
+                        center: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.defaultCenter],
+                        zoom: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.defaultZoom],
+                        zoomControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.zoomButtons],
+                        streetViewControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.streetViewButton],
+                        fullscreenControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.fullscreenButton],
+                        mapTypeControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.mapTypeButtons],
+                        scaleControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.displayScale],
+                        rotateControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.rotateControl],
+                        styles: _this.helpers.google.map._getMapStyles()
+                      });
+
+                    case 6:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, _callee);
+            }));
+
+            function _initMap(_x) {
+              return _initMap2.apply(this, arguments);
+            }
+
+            return _initMap;
+          }(),
+
+          /**
+           * Returns the style array required to define Google Maps style
+           * @returns {[{featureType: string, stylers: [{visibility: string}]}]}
+           * @private
+           */
+          _getMapStyles: function _getMapStyles() {
+            var poiStyle = {
+              featureType: 'poi',
+              stylers: [{
+                visibility: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.showPlaces] ? 'on' : 'off'
+              }]
+            };
+            return [poiStyle];
           }
         }
       }
     });
 
-    _this.defaultOptions = _defaultOptions__WEBPACK_IMPORTED_MODULE_2__["default"];
+    _this.defaultOptions = _defaultOptions__WEBPACK_IMPORTED_MODULE_3__["default"];
     _this.map = null;
     _this.mapContainer = null;
     _this.mapListContainer = null;
@@ -923,7 +940,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
   }
 
   return _createClass(AdeliomMapFunctions);
-}((dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_0___default()));
+}((dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_1___default()));
 
 
 
