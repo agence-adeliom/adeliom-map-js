@@ -249,9 +249,9 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
     value: function _handleClickMarker(marker) {
       if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayInfoWindows]) {
         if (this.helpers.markers._isMarkerSelected(marker)) {
-          this.helpers.markers._setMarkerAsSelected(marker, false);
+          this.helpers.markers._setMarkerState(marker, false);
         } else {
-          this.helpers.markers._setMarkerAsSelected(marker, true);
+          this.helpers.markers._setMarkerState(marker, true);
         }
       }
 
@@ -266,7 +266,7 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
 
       if (mapMarkerInstance) {
         if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayInfoWindows]) {
-          this.helpers.markers._setMarkerAsSelected(mapMarkerInstance, 'toggle');
+          this.helpers.markers._setMarkerState(mapMarkerInstance, 'toggle');
         }
       }
     }
@@ -385,6 +385,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var consentScreenContainerAttribute = 'adeliom-map-js-consent-screen';
 var consentButtonAttribute = 'adeliom-map-js-consent-button';
+var openedMarkerListEltAttribute = 'js-map-list-elt-opened';
 
 var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
   _inherits(AdeliomMapFunctions, _Emitter);
@@ -526,7 +527,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
         _unselectAllMarkers: function _unselectAllMarkers() {
           _this.markersData.forEach(function (markerData) {
             if (markerData !== null && markerData !== void 0 && markerData.marker && markerData !== null && markerData !== void 0 && markerData.selected) {
-              _this.helpers.markers._setMarkerAsSelected(markerData.marker, false);
+              _this.helpers.markers._setMarkerState(markerData.marker, false);
             }
 
             if (markerData !== null && markerData !== void 0 && markerData.infoWindow) {
@@ -566,7 +567,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          * @param isSelected
          * @private
          */
-        _setMarkerAsSelected: function _setMarkerAsSelected(marker) {
+        _setMarkerState: function _setMarkerState(marker) {
           var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
           if (isSelected == 'toggle') {
@@ -578,13 +579,9 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           }
 
           if (isSelected === true) {
-            if (!_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.allowMultipleMarkersSelected]) {
-              _this.helpers.markers._unselectAllMarkers();
-            }
-
-            _this.helpers.infoWindows._openInfoWindowByMarker(marker);
+            _this.helpers.markers._openMarker(marker);
           } else if (isSelected === false) {
-            _this.helpers.infoWindows._closeInfoWindowByMarker(marker);
+            _this.helpers.markers._closeMarker(marker);
           }
 
           _this.helpers.markersData._setDataByProperty('marker', marker, 'selected', isSelected);
@@ -593,6 +590,40 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             marker.setIcon(_this.helpers.markers._getIdleIconForMarker(marker));
           } else {
             marker.setIcon(_this.helpers.markers._getSelectedIconForMarker(marker));
+          }
+        },
+
+        /**
+         * Opens the passed marker
+         * @param marker
+         * @private
+         */
+        _openMarker: function _openMarker(marker) {
+          if (!_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.allowMultipleMarkersSelected]) {
+            _this.helpers.markers._unselectAllMarkers();
+          }
+
+          _this.helpers.infoWindows._openInfoWindowByMarker(marker);
+
+          var listNode = _this.helpers.listNodes._getListNodeByMarker(marker);
+
+          if (listNode) {
+            listNode.setAttribute(openedMarkerListEltAttribute, '');
+          }
+        },
+
+        /**
+         * Closes the passed marker
+         * @param marker
+         * @private
+         */
+        _closeMarker: function _closeMarker(marker) {
+          _this.helpers.infoWindows._closeInfoWindowByMarker(marker);
+
+          var listNode = _this.helpers.listNodes._getListNodeByMarker(marker);
+
+          if (listNode) {
+            listNode.removeAttribute(openedMarkerListEltAttribute);
           }
         },
 
@@ -694,6 +725,16 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          */
         _returnDataByListEltNode: function _returnDataByListEltNode(data, listEltNode) {
           return _this.helpers.markersData._getDataByProperty('listElt', listEltNode)[data];
+        },
+
+        /**
+         * Returns a listNode associated to the provided marker
+         * @param marker
+         * @returns {*}
+         * @private
+         */
+        _getListNodeByMarker: function _getListNodeByMarker(marker) {
+          return _this.helpers.markersData._returnDataByMarker('listElt', marker);
         }
       },
       map: {

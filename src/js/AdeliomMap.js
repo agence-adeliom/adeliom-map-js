@@ -112,9 +112,9 @@ export default class AdeliomMap extends AdeliomMapFunctions {
     _handleClickMarker(marker) {
         if (this.options[keys.map.displayInfoWindows]) {
             if (this.helpers.markers._isMarkerSelected(marker)) {
-                this.helpers.markers._setMarkerAsSelected(marker, false);
+                this.helpers.markers._setMarkerState(marker, false);
             } else {
-                this.helpers.markers._setMarkerAsSelected(marker, true);
+                this.helpers.markers._setMarkerState(marker, true);
             }
         }
 
@@ -128,7 +128,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
         if (mapMarkerInstance) {
             if (this.options[keys.map.displayInfoWindows]) {
-                this.helpers.markers._setMarkerAsSelected(mapMarkerInstance, 'toggle');
+                this.helpers.markers._setMarkerState(mapMarkerInstance, 'toggle');
             }
         }
     };

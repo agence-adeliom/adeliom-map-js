@@ -6,6 +6,7 @@ import {Loader} from "google-maps";
 
 const consentScreenContainerAttribute = 'adeliom-map-js-consent-screen';
 const consentButtonAttribute = 'adeliom-map-js-consent-button';
+const openedMarkerListEltAttribute = 'js-map-list-elt-opened';
 
 export default class AdeliomMapFunctions extends Emitter {
     constructor() {
@@ -144,7 +145,7 @@ export default class AdeliomMapFunctions extends Emitter {
             _unselectAllMarkers: () => {
                 this.markersData.forEach(markerData => {
                     if (markerData?.marker && markerData?.selected) {
-                        this.helpers.markers._setMarkerAsSelected(markerData.marker, false);
+                        this.helpers.markers._setMarkerState(markerData.marker, false);
                     }
 
                     if (markerData?.infoWindow) {
@@ -181,7 +182,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param isSelected
              * @private
              */
-            _setMarkerAsSelected: (marker, isSelected = null) => {
+            _setMarkerState: (marker, isSelected = null) => {
                 if (isSelected == 'toggle') {
                     isSelected = !this.helpers.markersData._getDataByProperty('marker', marker).selected;
                 }
@@ -191,15 +192,10 @@ export default class AdeliomMapFunctions extends Emitter {
                 }
 
                 if (isSelected === true) {
-                    if (!this.options[keys.map.allowMultipleMarkersSelected]) {
-                        this.helpers.markers._unselectAllMarkers();
-                    }
-
-                    this.helpers.infoWindows._openInfoWindowByMarker(marker);
+                    this.helpers.markers._openMarker(marker);
                 } else if (isSelected === false) {
-                    this.helpers.infoWindows._closeInfoWindowByMarker(marker);
+                    this.helpers.markers._closeMarker(marker);
                 }
-
 
                 this.helpers.markersData._setDataByProperty('marker', marker, 'selected', isSelected);
 
@@ -207,6 +203,38 @@ export default class AdeliomMapFunctions extends Emitter {
                     marker.setIcon(this.helpers.markers._getIdleIconForMarker(marker));
                 } else {
                     marker.setIcon(this.helpers.markers._getSelectedIconForMarker(marker));
+                }
+            },
+            /**
+             * Opens the passed marker
+             * @param marker
+             * @private
+             */
+            _openMarker: (marker) => {
+                if (!this.options[keys.map.allowMultipleMarkersSelected]) {
+                    this.helpers.markers._unselectAllMarkers();
+                }
+
+                this.helpers.infoWindows._openInfoWindowByMarker(marker);
+
+                const listNode = this.helpers.listNodes._getListNodeByMarker(marker);
+
+                if (listNode) {
+                    listNode.setAttribute(openedMarkerListEltAttribute, '');
+                }
+            },
+            /**
+             * Closes the passed marker
+             * @param marker
+             * @private
+             */
+            _closeMarker: (marker) => {
+                this.helpers.infoWindows._closeInfoWindowByMarker(marker);
+
+                const listNode = this.helpers.listNodes._getListNodeByMarker(marker);
+
+                if (listNode) {
+                    listNode.removeAttribute(openedMarkerListEltAttribute);
                 }
             },
             /**
@@ -303,6 +331,15 @@ export default class AdeliomMapFunctions extends Emitter {
              */
             _returnDataByListEltNode: (data, listEltNode) => {
                 return this.helpers.markersData._getDataByProperty('listElt', listEltNode)[data];
+            },
+            /**
+             * Returns a listNode associated to the provided marker
+             * @param marker
+             * @returns {*}
+             * @private
+             */
+            _getListNodeByMarker: (marker) => {
+                return this.helpers.markersData._returnDataByMarker('listElt', marker);
             },
         },
         map: {
