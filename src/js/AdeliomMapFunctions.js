@@ -3,6 +3,7 @@ import keys from "./optionKeys";
 import defaultOptions, {mapAnims} from "./defaultOptions";
 import {AdeliomMapEvents} from "./AdeliomMap";
 import {Loader} from "google-maps";
+import {MarkerClusterer} from "@googlemaps/markerclusterer";
 
 const mapAttribute = 'adeliom-map';
 const listAttribute = `${mapAttribute}-list`;
@@ -289,7 +290,19 @@ export default class AdeliomMapFunctions extends Emitter {
                 }
 
                 return null;
-            }
+            },
+            /**
+             * Returns all map marker instances already created
+             * @returns {marker[]}
+             * @private
+             */
+            _getAllMarkerInstances: () => {
+                return this.markersData.map(data => {
+                    if (data?.marker) {
+                        return data.marker;
+                    }
+                });
+            },
         },
         markersData: {
             /**
@@ -404,7 +417,10 @@ export default class AdeliomMapFunctions extends Emitter {
                 }
 
                 if (this.options[keys.map.zoomMarkerOnClick]) {
-                    this.map.setZoom(this.options[keys.map.zoomMarkerOnClick]);
+                    // Only zoom if less zoomed than zoom value
+                    if (this.map.getZoom() < this.options[keys.map.zoomMarkerOnClick]) {
+                        this.map.setZoom(this.options[keys.map.zoomMarkerOnClick]);
+                    }
                 }
             },
             /**
@@ -487,6 +503,16 @@ export default class AdeliomMapFunctions extends Emitter {
                         let markerData = this.helpers.google.markers._createMapMarker(marker);
                         this.emit(AdeliomMapEvents.markers.dataCreated, markerData);
                     });
+
+                    this.helpers.google.markers._initMapClusters();
+                },
+                _initMapClusters: () => {
+                    if (this.options && this.map && this.options[keys.map.useClusters]) {
+                        new MarkerClusterer({
+                            markers: this.helpers.markers._getAllMarkerInstances(),
+                            map: this.map,
+                        });
+                    }
                 },
                 /**
                  * Create a Google Map marker by passing marker raw data

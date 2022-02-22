@@ -19,6 +19,7 @@
     "dauphine-js": "https://bitbucket.org/adeliomgit/dauphine-js.git"
   },
   "devDependencies": {
+    "@googlemaps/markerclusterer": "^1.0.24",
     "cross-env": "^7.0.3",
     "event-emitter": "^0.3.5",
     "google-maps": "^4.3.3",

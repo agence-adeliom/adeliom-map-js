@@ -2,8 +2,8 @@ import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
 import {env} from "../../env";
 
 const params = {
-    logAllEvents: true,
-    logClickEvents: true,
+    logAllEvents: false,
+    logClickEvents: false,
 };
 
 const mapListEltTemplate = '<div class="map-list-elt">' +
@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mapProvider: 'google',
         mapAnimation: 'smooth',
         mapShowPlaces: false,
+        mapUseClusters: true,
         mapMarkerIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png',
         mapMarkerSelectedIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/library_maps.png',
         mapMarkers: [

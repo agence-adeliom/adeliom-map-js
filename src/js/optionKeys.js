@@ -6,6 +6,7 @@ keys.map.defaultCenter = 'mapDefaultCenter';
 keys.map.defaultZoom = 'mapDefaultZoom';
 keys.map.provider = 'mapProvider';
 keys.map.checkSize = 'checkMapSize';
+keys.map.useClusters = 'mapUseClusters';
 keys.map.markers = 'mapMarkers';
 keys.map.markerIcon = 'mapMarkerIcon';
 keys.map.markerSelectedIcon = 'mapMarkerSelectedIcon';

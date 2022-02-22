@@ -10,6 +10,7 @@ defaultOptions[keys.map.selector] = null;
 defaultOptions[keys.list.selector] = null;
 defaultOptions[keys.apiKey] = null;
 defaultOptions[keys.map.checkSize] = false;
+defaultOptions[keys.map.useClusters] = false;
 defaultOptions[keys.map.markers] = [];
 defaultOptions[keys.map.markerIcon] = null;
 defaultOptions[keys.map.markerSelectedIcon] = null;

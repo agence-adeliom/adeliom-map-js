@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 `mapDisplayScale (bool)` : afficher ou non une échelle graduée au bas de la map<br>
 
 ### Markers
+
 `mapMarkers (array)` : tableau des markers à afficher<br>
 `mapDisplayMarkers (bool)` : la map doit-elle afficher les marqueurs<br>
 `mapCenterMarkerOnClick (bool)` : centre la map sur le marqueur au clic<br>
@@ -40,6 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
 `mapAllowMultipleMarkersSelected (bool)` : si plusieurs marqueurs peuvent être sélectionnés en simultané<br>
 `mapMarkerIcon (string)` : URL vers l'icône du marker<br>
 `mapMarkerSelectedIcon (string)` : URL vers l'icône sélectionnée du marker<br>
+
+### Clusters de markers
+
+`mapUseClusters (bool)` : indique si la map doit générer des clusters lorsque les points sont suffisamment rapprochés
 
 ### Infobulles
 
