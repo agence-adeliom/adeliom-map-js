@@ -39,12 +39,16 @@ document.addEventListener('DOMContentLoaded', () => {
 `mapZoomMarkerOnClick (int|bool)` : zoom la map au clic sur un marqueur<br>
 `mapAnimation (string)` : type d'animation de transition entre positions dans la map (smooth / default)<br>
 `mapAllowMultipleMarkersSelected (bool)` : si plusieurs marqueurs peuvent être sélectionnés en simultané<br>
-`mapMarkerIcon (string)` : URL vers l'icône du marker<br>
-`mapMarkerSelectedIcon (string)` : URL vers l'icône sélectionnée du marker<br>
+`mapMarkerIconUrl (string)` : URL vers l'icône du marker<br>
+`mapMarkerIconSize (int)` : Taille des icônes de marqueurs<br>
+`mapMarkerSelectedIconUrl (string)` : URL vers l'icône sélectionnée du marker<br>
 
 ### Clusters de markers
 
-`mapUseClusters (bool)` : indique si la map doit générer des clusters lorsque les points sont suffisamment rapprochés
+`mapUseClusters (bool)` : indique si la map doit générer des clusters lorsque les points sont suffisamment
+rapprochés<br>
+`mapClusterIconUrl (string)` : URL vers l'icône des clusters<br>
+`mapClusterIconSize (int)` : Taille des icônes des clusters<br>
 
 ### Infobulles
 

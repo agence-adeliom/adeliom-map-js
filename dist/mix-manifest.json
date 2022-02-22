@@ -4,5 +4,9 @@
     "/css/demo.css": "/css/demo.css",
     "/css/AdeliomMap.css": "/css/AdeliomMap.css",
     "/img/adeliom-logo-blue.png": "/img/adeliom-logo-blue.png",
-    "/img/adeliom-logo.png": "/img/adeliom-logo.png"
+    "/img/adeliom-logo.png": "/img/adeliom-logo.png",
+    "/img/cluster.png": "/img/cluster.png",
+    "/img/google-maps-api-icon-10.jpeg": "/img/google-maps-api-icon-10.jpeg",
+    "/img/marker.png": "/img/marker.png",
+    "/img/marker-selected.png": "/img/marker-selected.png"
 }

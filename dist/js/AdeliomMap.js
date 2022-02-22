@@ -1230,6 +1230,106 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
 
 /***/ }),
 
+/***/ "./src/js/AdeliomMapClusterRenderer.js":
+/*!*********************************************!*\
+  !*** ./src/js/AdeliomMapClusterRenderer.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AdeliomMapClusterRenderer)
+/* harmony export */ });
+/* harmony import */ var _googlemaps_markerclusterer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @googlemaps/markerclusterer */ "./node_modules/@googlemaps/markerclusterer/dist/index.esm.js");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
+  _inherits(AdeliomMapClusterRenderer, _DefaultRenderer);
+
+  var _super = _createSuper(AdeliomMapClusterRenderer);
+
+  function AdeliomMapClusterRenderer() {
+    var _this;
+
+    var icon = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 75;
+
+    _classCallCheck(this, AdeliomMapClusterRenderer);
+
+    _this = _super.call(this);
+    _this.icon = icon;
+    _this.size = size;
+    return _this;
+  }
+
+  _createClass(AdeliomMapClusterRenderer, [{
+    key: "getSvg",
+    value: function getSvg(color) {
+      return window.btoa("\n  <svg fill=\"".concat(color, "\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 240\">\n    <circle cx=\"120\" cy=\"120\" opacity=\".6\" r=\"70\" />\n    <circle cx=\"120\" cy=\"120\" opacity=\".3\" r=\"90\" />\n    <circle cx=\"120\" cy=\"120\" opacity=\".2\" r=\"110\" />\n  </svg>"));
+    }
+  }, {
+    key: "render",
+    value: function render(_ref, stats) {
+      var count = _ref.count,
+          position = _ref.position;
+      var color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
+      var svg = this.getSvg(color);
+      var options = {
+        position: position,
+        label: {
+          text: String(count),
+          color: "rgba(255,255,255,0.9)",
+          fontSize: "12px"
+        },
+        zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count
+      };
+
+      if (this.icon) {
+        options.icon = {
+          url: "".concat(this.icon),
+          scaledSize: new google.maps.Size(this.size, this.size)
+        };
+      } else {
+        options.icon = {
+          url: "data:image/svg+xml;base64,".concat(svg),
+          scaledSize: new google.maps.Size(this.size, this.size)
+        };
+      }
+
+      return new google.maps.Marker(options);
+    }
+  }]);
+
+  return AdeliomMapClusterRenderer;
+}(_googlemaps_markerclusterer__WEBPACK_IMPORTED_MODULE_0__.DefaultRenderer);
+
+
+
+/***/ }),
+
 /***/ "./src/js/AdeliomMapFunctions.js":
 /*!***************************************!*\
   !*** ./src/js/AdeliomMapFunctions.js ***!
@@ -1248,8 +1348,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.js");
 /* harmony import */ var _defaultOptions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./defaultOptions */ "./src/js/defaultOptions.js");
 /* harmony import */ var _AdeliomMap__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./AdeliomMap */ "./src/js/AdeliomMap.js");
-/* harmony import */ var google_maps__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! google-maps */ "./node_modules/google-maps/lib/esm/loader.js");
+/* harmony import */ var google_maps__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! google-maps */ "./node_modules/google-maps/lib/esm/loader.js");
 /* harmony import */ var _googlemaps_markerclusterer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @googlemaps/markerclusterer */ "./node_modules/@googlemaps/markerclusterer/dist/index.esm.js");
+/* harmony import */ var _AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./AdeliomMapClusterRenderer */ "./src/js/AdeliomMapClusterRenderer.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 
@@ -1279,6 +1380,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -1507,10 +1609,20 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
           _this.helpers.markersData._setDataByProperty('marker', marker, 'selected', isSelected);
 
-          if (!isSelected) {
-            marker.setIcon(_this.helpers.markers._getIdleIconForMarker(marker));
-          } else {
-            marker.setIcon(_this.helpers.markers._getSelectedIconForMarker(marker));
+          if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
+            if (!isSelected) {
+              switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
+                case 'google':
+                  marker.setIcon(_this.helpers.google.markers._getIconConfig(_this.helpers.markers._getIdleIconForMarker(marker)));
+                  break;
+              }
+            } else {
+              switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
+                case 'google':
+                  marker.setIcon(_this.helpers.google.markers._getIconConfig(_this.helpers.markers._getSelectedIconForMarker(marker)));
+                  break;
+              }
+            }
           }
         },
 
@@ -1559,8 +1671,8 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
           if (data !== null && data !== void 0 && data.icon) {
             return data.icon;
-          } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon]) {
-            return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon];
+          } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl]) {
+            return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl];
           }
 
           return null;
@@ -1577,8 +1689,8 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
           if (data !== null && data !== void 0 && data.selectedIcon) {
             return data.selectedIcon;
-          } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerSelectedIcon]) {
-            return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerSelectedIcon];
+          } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerSelectedIconUrl]) {
+            return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerSelectedIconUrl];
           }
 
           return null;
@@ -1796,6 +1908,15 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
         }
       },
       google: {
+        clusters: {
+          _getRenderer: function _getRenderer() {
+            var renderer = new _AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_6__["default"](_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.clusterIconUrl], _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.clusterIconSize]);
+            return renderer;
+          },
+          _handleClusterClick: function _handleClusterClick(e, cluster, map) {
+            map.fitBounds(cluster.bounds);
+          }
+        },
         markers: {
           /**
            * Loop to init Google Maps markers
@@ -1812,11 +1933,20 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           },
           _initMapClusters: function _initMapClusters() {
             if (_this.options && _this.map && _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.useClusters]) {
-              new _googlemaps_markerclusterer__WEBPACK_IMPORTED_MODULE_5__.MarkerClusterer({
+              var clusterer = new _googlemaps_markerclusterer__WEBPACK_IMPORTED_MODULE_5__.MarkerClusterer({
                 markers: _this.helpers.markers._getAllMarkerInstances(),
-                map: _this.map
+                map: _this.map,
+                onClusterClick: _this.helpers.google.clusters._handleClusterClick,
+                renderer: _this.helpers.google.clusters._getRenderer()
               });
             }
+          },
+          _getIconConfig: function _getIconConfig(url) {
+            var size = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconSize];
+            return {
+              url: url,
+              scaledSize: new _this.google.maps.Size(size, size)
+            };
           },
 
           /**
@@ -1837,10 +1967,10 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             };
 
             if (markerRawData !== null && markerRawData !== void 0 && markerRawData.icon) {
-              markerConfig.icon = markerRawData.icon;
+              markerConfig.icon = _this.helpers.google.markers._getIconConfig(markerRawData.icon);
               markerData.icon = markerRawData.icon;
-            } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon]) {
-              markerConfig.icon = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIcon];
+            } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl]) {
+              markerConfig.icon = _this.helpers.google.markers._getIconConfig(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl]);
             }
 
             if (markerRawData !== null && markerRawData !== void 0 && markerRawData.selectedIcon) {
@@ -1921,7 +2051,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
                         break;
                       }
 
-                      loader = new google_maps__WEBPACK_IMPORTED_MODULE_6__.Loader(_this.options.apiKey);
+                      loader = new google_maps__WEBPACK_IMPORTED_MODULE_7__.Loader(_this.options.apiKey);
                       _context.next = 4;
                       return loader.load();
 
@@ -2016,9 +2146,12 @@ defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].list.selector
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].apiKey] = null;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.checkSize] = false;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.useClusters] = false;
+defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.clusterIconUrl] = null;
+defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.clusterIconSize] = 56;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markers] = [];
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerIcon] = null;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerSelectedIcon] = null;
+defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerIconSize] = 56;
+defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerIconUrl] = null;
+defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerSelectedIconUrl] = null;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.allowMultipleMarkersSelected] = true;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.defaultCenter] = {
   lat: 48.614782,
@@ -2095,9 +2228,12 @@ keys.map.defaultZoom = 'mapDefaultZoom';
 keys.map.provider = 'mapProvider';
 keys.map.checkSize = 'checkMapSize';
 keys.map.useClusters = 'mapUseClusters';
+keys.map.clusterIconUrl = 'mapClusterIconUrl';
+keys.map.clusterIconSize = 'mapClusterIconSize';
 keys.map.markers = 'mapMarkers';
-keys.map.markerIcon = 'mapMarkerIcon';
-keys.map.markerSelectedIcon = 'mapMarkerSelectedIcon';
+keys.map.markerIconUrl = 'mapMarkerIconUrl';
+keys.map.markerIconSize = 'mapMarkerIconSize';
+keys.map.markerSelectedIconUrl = 'mapMarkerSelectedIconUrl';
 keys.map.displayMarkers = 'mapDisplayMarkers';
 keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
 keys.map.allowMultipleMarkersSelected = 'mapAllowMultipleMarkersSelected';

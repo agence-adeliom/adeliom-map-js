@@ -41,13 +41,16 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         mapCenterMarkerOnClick: true,
         mapZoomMarkerOnClick: 12,
-        mapDefaultZoom: 12,
+        mapDefaultZoom: 6,
         mapProvider: 'google',
         mapAnimation: 'smooth',
         mapShowPlaces: false,
         mapUseClusters: true,
-        mapMarkerIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png',
-        mapMarkerSelectedIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/library_maps.png',
+        mapClusterIconUrl: '/dist/img/cluster.png',
+        mapMarkerIconUrl: '/dist/img/marker.png',
+        mapMarkerIconSize: 40,
+        mapClusterIconSize: 40,
+        mapMarkerSelectedIconUrl: '/dist/img/marker-selected.png',
         mapMarkers: [
             {
                 title: 'Agence Adeliom',
@@ -67,6 +70,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 coordinates: {
                     lat: 48.581825,
                     lng: 7.75093,
+                }
+            },
+            {
+                title: 'Tour Eiffel',
+                description: 'Monument',
+                coordinates: {
+                    lat: 48.858370,
+                    lng: 2.294481
                 }
             }
         ],

@@ -4,6 +4,7 @@ import defaultOptions, {mapAnims} from "./defaultOptions";
 import {AdeliomMapEvents} from "./AdeliomMap";
 import {Loader} from "google-maps";
 import {MarkerClusterer} from "@googlemaps/markerclusterer";
+import AdeliomMapClusterRenderer from "./AdeliomMapClusterRenderer";
 
 const mapAttribute = 'adeliom-map';
 const listAttribute = `${mapAttribute}-list`;
@@ -219,10 +220,20 @@ export default class AdeliomMapFunctions extends Emitter {
 
                 this.helpers.markersData._setDataByProperty('marker', marker, 'selected', isSelected);
 
-                if (!isSelected) {
-                    marker.setIcon(this.helpers.markers._getIdleIconForMarker(marker));
-                } else {
-                    marker.setIcon(this.helpers.markers._getSelectedIconForMarker(marker));
+                if (this.options[keys.map.provider]) {
+                    if (!isSelected) {
+                        switch (this.options[keys.map.provider]) {
+                            case 'google':
+                                marker.setIcon(this.helpers.google.markers._getIconConfig(this.helpers.markers._getIdleIconForMarker(marker)));
+                                break;
+                        }
+                    } else {
+                        switch (this.options[keys.map.provider]) {
+                            case 'google':
+                                marker.setIcon(this.helpers.google.markers._getIconConfig(this.helpers.markers._getSelectedIconForMarker(marker)));
+                                break;
+                        }
+                    }
                 }
             },
             /**
@@ -268,8 +279,8 @@ export default class AdeliomMapFunctions extends Emitter {
 
                 if (data?.icon) {
                     return data.icon;
-                } else if (this.options[keys.map.markerIcon]) {
-                    return this.options[keys.map.markerIcon];
+                } else if (this.options[keys.map.markerIconUrl]) {
+                    return this.options[keys.map.markerIconUrl];
                 }
 
                 return null;
@@ -285,8 +296,8 @@ export default class AdeliomMapFunctions extends Emitter {
 
                 if (data?.selectedIcon) {
                     return data.selectedIcon;
-                } else if (this.options[keys.map.markerSelectedIcon]) {
-                    return this.options[keys.map.markerSelectedIcon];
+                } else if (this.options[keys.map.markerSelectedIconUrl]) {
+                    return this.options[keys.map.markerSelectedIconUrl];
                 }
 
                 return null;
@@ -493,6 +504,19 @@ export default class AdeliomMapFunctions extends Emitter {
             }
         },
         google: {
+            clusters: {
+                _getRenderer: () => {
+                    const renderer = new AdeliomMapClusterRenderer(
+                        this.options[keys.map.clusterIconUrl],
+                        this.options[keys.map.clusterIconSize]
+                    );
+
+                    return renderer;
+                },
+                _handleClusterClick: (e, cluster, map) => {
+                    map.fitBounds(cluster.bounds);
+                },
+            },
             markers: {
                 /**
                  * Loop to init Google Maps markers
@@ -508,11 +532,21 @@ export default class AdeliomMapFunctions extends Emitter {
                 },
                 _initMapClusters: () => {
                     if (this.options && this.map && this.options[keys.map.useClusters]) {
-                        new MarkerClusterer({
+                        const clusterer = new MarkerClusterer({
                             markers: this.helpers.markers._getAllMarkerInstances(),
                             map: this.map,
+                            onClusterClick: this.helpers.google.clusters._handleClusterClick,
+                            renderer: this.helpers.google.clusters._getRenderer()
                         });
                     }
+                },
+                _getIconConfig: (url) => {
+                    const size = this.options[keys.map.markerIconSize];
+
+                    return {
+                        url: url,
+                        scaledSize: new this.google.maps.Size(size, size),
+                    };
                 },
                 /**
                  * Create a Google Map marker by passing marker raw data
@@ -534,10 +568,10 @@ export default class AdeliomMapFunctions extends Emitter {
                     };
 
                     if (markerRawData?.icon) {
-                        markerConfig.icon = markerRawData.icon;
+                        markerConfig.icon = this.helpers.google.markers._getIconConfig(markerRawData.icon);
                         markerData.icon = markerRawData.icon;
-                    } else if (this.options[keys.map.markerIcon]) {
-                        markerConfig.icon = this.options[keys.map.markerIcon];
+                    } else if (this.options[keys.map.markerIconUrl]) {
+                        markerConfig.icon = this.helpers.google.markers._getIconConfig(this.options[keys.map.markerIconUrl]);
                     }
 
                     if (markerRawData?.selectedIcon) {
