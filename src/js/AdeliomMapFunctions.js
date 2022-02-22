@@ -476,6 +476,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     this.mapContainer.innerHTML = '';
                     this.mapContainer.setAttribute(notConsentMapAttribute, '');
                     this.mapContainer.removeAttribute('style');
+                    this.markersData = [];
 
                     if (this.mapListContainer) {
                         this.mapListContainer.innerHTML = '';

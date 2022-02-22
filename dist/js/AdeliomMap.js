@@ -1883,6 +1883,8 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
             _this.mapContainer.removeAttribute('style');
 
+            _this.markersData = [];
+
             if (_this.mapListContainer) {
               _this.mapListContainer.innerHTML = '';
 
