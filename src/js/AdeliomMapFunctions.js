@@ -36,6 +36,12 @@ export default class AdeliomMapFunctions extends Emitter {
 
     helpers = {
         providers: {
+            /**
+             * Returns whether the provided provider is part of the available providers array
+             * @param provider
+             * @returns {boolean}
+             * @private
+             */
             _isProviderAvailable: (provider) => {
                 return availableProviders.findIndex(prov => prov === provider) !== -1;
             },
@@ -571,6 +577,12 @@ export default class AdeliomMapFunctions extends Emitter {
                 }
             },
             map: {
+                /**
+                 * Init the Google Map instance
+                 * @param container
+                 * @returns {Promise<void>}
+                 * @private
+                 */
                 _initMap: async (container) => {
                     if (!this.google) {
                         const loader = new Loader(this.options.apiKey);

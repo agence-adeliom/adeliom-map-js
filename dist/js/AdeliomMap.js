@@ -432,6 +432,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
     _defineProperty(_assertThisInitialized(_this), "helpers", {
       providers: {
+        /**
+         * Returns whether the provided provider is part of the available providers array
+         * @param provider
+         * @returns {boolean}
+         * @private
+         */
         _isProviderAvailable: function _isProviderAvailable(provider) {
           return availableProviders.findIndex(function (prov) {
             return prov === provider;
@@ -994,6 +1000,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           }
         },
         map: {
+          /**
+           * Init the Google Map instance
+           * @param container
+           * @returns {Promise<void>}
+           * @private
+           */
           _initMap: function () {
             var _initMap2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(container) {
               var loader;

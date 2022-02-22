@@ -2,7 +2,7 @@ import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
 import {env} from "../../env";
 
 const params = {
-    logAllEvents: false,
+    logAllEvents: true,
     logClickEvents: true,
 };
 
@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mapEnableTypeButtons: true, // Displays the buttons that allow the user to switch between map types
         mapDisplayScale: false, // Displays a scale at the bottom of the map
         mapAskForConsent: true,
+        mapConsentDefaultValue: true,
     });
 
     const disableMapButton = document.querySelector(`[js-disable-map]`);
