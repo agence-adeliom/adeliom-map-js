@@ -19,6 +19,7 @@ const notConsentListAttribute = `${listAttribute}-no-consent`;
 const availableProviders = ['google'];
 
 export default class AdeliomMapFunctions extends Emitter {
+    
     constructor() {
         super();
 
@@ -569,6 +570,10 @@ export default class AdeliomMapFunctions extends Emitter {
                     }
                 }
             },
+            /**
+             * Base init of the map
+             * @private
+             */
             _commonInit: () => {
                 if (this.mapContainer) {
                     this.mapContainer.setAttribute(mapAttribute, '');
@@ -656,6 +661,10 @@ export default class AdeliomMapFunctions extends Emitter {
 
                     this.helpers.google.markers._initMapClusters();
                 },
+                /**
+                 * Init the map clusters
+                 * @private
+                 */
                 _initMapClusters: () => {
                     if (this.options && this.map && this.options[keys.map.useClusters]) {
                         const clusterer = new MarkerClusterer({
@@ -666,6 +675,12 @@ export default class AdeliomMapFunctions extends Emitter {
                         });
                     }
                 },
+                /**
+                 * Returns the icon config object
+                 * @param url
+                 * @returns {{scaledSize: google.maps.Size, url}}
+                 * @private
+                 */
                 _getIconConfig: (url) => {
                     const size = this.options[keys.map.markerIconSize];
 
@@ -674,7 +689,11 @@ export default class AdeliomMapFunctions extends Emitter {
                         scaledSize: new this.google.maps.Size(size, size),
                     };
                 },
-                // Sets the idle icon to the provided marker
+                /**
+                 * Sets the idle icon to the provided marker
+                 * @param marker
+                 * @private
+                 */
                 _setIdleIcon: (marker) => {
                     const idleIcon = this.helpers.markers._getIdleIconForMarker(marker);
 
@@ -682,7 +701,11 @@ export default class AdeliomMapFunctions extends Emitter {
                         marker.setIcon(this.helpers.google.markers._getIconConfig(idleIcon));
                     }
                 },
-                // Sets the selected icon to the provided marker
+                /**
+                 * Sets the selected icon to the provided marker
+                 * @param marker
+                 * @private
+                 */
                 _setSelectedIcon: (marker) => {
                     const selectedIcon = this.helpers.markers._getSelectedIconForMarker(marker);
 
@@ -690,7 +713,11 @@ export default class AdeliomMapFunctions extends Emitter {
                         marker.setIcon(this.helpers.google.markers._getIconConfig(selectedIcon));
                     }
                 },
-                // Sets the hover icon to the provided marker
+                /**
+                 * Sets the hover icon to the provided marker
+                 * @param marker
+                 * @private
+                 */
                 _setHoveredIcon: (marker) => {
                     const hoveredIcon = this.helpers.markers._getHoveredIconForMarker(marker);
 
@@ -698,7 +725,11 @@ export default class AdeliomMapFunctions extends Emitter {
                         marker.setIcon(this.helpers.google.markers._getIconConfig(hoveredIcon));
                     }
                 },
-                // Adds basic Google Markers listeners (click, hover, ...)
+                /**
+                 * Adds basic Google Markers listeners (click, hover, ...)
+                 * @param markerInstance
+                 * @private
+                 */
                 _handleBasicMarkerListeners: (markerInstance) => {
                     // Listener to handle marker click
                     this.google.maps.event.addListener(markerInstance, 'click', () => {

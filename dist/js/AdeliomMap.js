@@ -2037,6 +2037,11 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             }
           }
         },
+
+        /**
+         * Base init of the map
+         * @private
+         */
         _commonInit: function _commonInit() {
           if (_this.mapContainer) {
             _this.mapContainer.setAttribute(mapAttribute, '');
@@ -2141,6 +2146,11 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
             return _initMapMarkers;
           }(),
+
+          /**
+           * Init the map clusters
+           * @private
+           */
           _initMapClusters: function _initMapClusters() {
             if (_this.options && _this.map && _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.useClusters]) {
               var clusterer = new _googlemaps_markerclusterer__WEBPACK_IMPORTED_MODULE_5__.MarkerClusterer({
@@ -2151,6 +2161,13 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               });
             }
           },
+
+          /**
+           * Returns the icon config object
+           * @param url
+           * @returns {{scaledSize: google.maps.Size, url}}
+           * @private
+           */
           _getIconConfig: function _getIconConfig(url) {
             var size = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconSize];
             return {
@@ -2158,7 +2175,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               scaledSize: new _this.google.maps.Size(size, size)
             };
           },
-          // Sets the idle icon to the provided marker
+
+          /**
+           * Sets the idle icon to the provided marker
+           * @param marker
+           * @private
+           */
           _setIdleIcon: function _setIdleIcon(marker) {
             var idleIcon = _this.helpers.markers._getIdleIconForMarker(marker);
 
@@ -2166,7 +2188,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               marker.setIcon(_this.helpers.google.markers._getIconConfig(idleIcon));
             }
           },
-          // Sets the selected icon to the provided marker
+
+          /**
+           * Sets the selected icon to the provided marker
+           * @param marker
+           * @private
+           */
           _setSelectedIcon: function _setSelectedIcon(marker) {
             var selectedIcon = _this.helpers.markers._getSelectedIconForMarker(marker);
 
@@ -2174,7 +2201,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               marker.setIcon(_this.helpers.google.markers._getIconConfig(selectedIcon));
             }
           },
-          // Sets the hover icon to the provided marker
+
+          /**
+           * Sets the hover icon to the provided marker
+           * @param marker
+           * @private
+           */
           _setHoveredIcon: function _setHoveredIcon(marker) {
             var hoveredIcon = _this.helpers.markers._getHoveredIconForMarker(marker);
 
@@ -2182,7 +2214,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               marker.setIcon(_this.helpers.google.markers._getIconConfig(hoveredIcon));
             }
           },
-          // Adds basic Google Markers listeners (click, hover, ...)
+
+          /**
+           * Adds basic Google Markers listeners (click, hover, ...)
+           * @param markerInstance
+           * @private
+           */
           _handleBasicMarkerListeners: function _handleBasicMarkerListeners(markerInstance) {
             // Listener to handle marker click
             _this.google.maps.event.addListener(markerInstance, 'click', function () {
