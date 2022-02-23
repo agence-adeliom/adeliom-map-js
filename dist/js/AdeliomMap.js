@@ -937,6 +937,9 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 var mapCustomClass = 'adeliom-map-js';
 var AdeliomMapEvents = {
+  map: {
+    hasAutoCentered: 'mapHasAutoCentered'
+  },
   markers: {
     created: 'markerCreated',
     dataCreated: 'markerDataCreated',
@@ -1608,13 +1611,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             case 'google':
             default:
               _this.helpers.google.markers._initMapMarkers(markers).then(function () {
-                if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.autoCenter]) {
-                  center = _this.helpers.markers._getMarkersCenterCoordinates(markers);
-
-                  if (center) {
-                    _this.map.setCenter(_this.helpers.google.coordinates._getLatLng(center));
-                  }
-                }
+                _this.helpers.map._autoCenter(markers);
               });
 
               break;
@@ -1902,6 +1899,11 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
         _getListNodeByMarker: function _getListNodeByMarker(marker) {
           return _this.helpers.markersData._returnDataByMarker('listElt', marker);
         },
+
+        /**
+         * Base init of the list
+         * @private
+         */
         _commonInit: function _commonInit() {
           if (_this.mapListContainer) {
             _this.mapListContainer.setAttribute(listAttribute, '');
@@ -1944,15 +1946,66 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           var googleMapCoordinates = _this.helpers.google.coordinates._getLatLng(coordinates);
 
           if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.animation] === _defaultOptions__WEBPACK_IMPORTED_MODULE_3__.mapAnims.smooth) {
-            _this.map.panTo(googleMapCoordinates);
+            _this.helpers.map._panTo(googleMapCoordinates);
           } else {
-            _this.map.setCenter(googleMapCoordinates);
+            _this.helpers.map._setCenter(googleMapCoordinates);
           }
 
           if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]) {
             // Only zoom if less zoomed than zoom value
             if (_this.map.getZoom() < _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]) {
               _this.map.setZoom(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]);
+            }
+          }
+        },
+
+        /**
+         * Sets the center of the map
+         * @param center
+         * @private
+         */
+        _setCenter: function _setCenter(center) {
+          switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
+            case 'google':
+            default:
+              _this.map.setCenter(center);
+
+              break;
+          }
+        },
+
+        /**
+         * Sets the center of the map (smoothly)
+         * @param center
+         * @private
+         */
+        _panTo: function _panTo(center) {
+          switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
+            case 'google':
+            default:
+              _this.map.panTo(center);
+
+              break;
+          }
+        },
+
+        /**
+         * Auto center the map on the markers
+         * @param markers
+         * @private
+         */
+        _autoCenter: function _autoCenter(markers) {
+          if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.autoCenter]) {
+            var center = _this.helpers.markers._getMarkersCenterCoordinates(markers);
+
+            if (center) {
+              switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
+                case 'google':
+                default:
+                  _this.helpers.map._setCenter(_this.helpers.google.coordinates._getLatLng(center));
+
+                  break;
+              }
             }
           }
         },

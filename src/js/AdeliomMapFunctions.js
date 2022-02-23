@@ -177,13 +177,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     case 'google':
                     default:
                         this.helpers.google.markers._initMapMarkers(markers).then(() => {
-                            if (this.options[keys.map.autoCenter]) {
-                                center = this.helpers.markers._getMarkersCenterCoordinates(markers);
-
-                                if (center) {
-                                    this.map.setCenter(this.helpers.google.coordinates._getLatLng(center));
-                                }
-                            }
+                            this.helpers.map._autoCenter(markers);
                         });
                         break;
                 }
@@ -450,6 +444,10 @@ export default class AdeliomMapFunctions extends Emitter {
             _getListNodeByMarker: (marker) => {
                 return this.helpers.markersData._returnDataByMarker('listElt', marker);
             },
+            /**
+             * Base init of the list
+             * @private
+             */
             _commonInit: () => {
                 if (this.mapListContainer) {
                     this.mapListContainer.setAttribute(listAttribute, '');
@@ -488,15 +486,60 @@ export default class AdeliomMapFunctions extends Emitter {
                 const googleMapCoordinates = this.helpers.google.coordinates._getLatLng(coordinates);
 
                 if (this.options[keys.map.animation] === mapAnims.smooth) {
-                    this.map.panTo(googleMapCoordinates);
+                    this.helpers.map._panTo(googleMapCoordinates);
                 } else {
-                    this.map.setCenter(googleMapCoordinates);
+                    this.helpers.map._setCenter(googleMapCoordinates);
                 }
 
                 if (this.options[keys.map.zoomMarkerOnClick]) {
                     // Only zoom if less zoomed than zoom value
                     if (this.map.getZoom() < this.options[keys.map.zoomMarkerOnClick]) {
                         this.map.setZoom(this.options[keys.map.zoomMarkerOnClick]);
+                    }
+                }
+            },
+            /**
+             * Sets the center of the map
+             * @param center
+             * @private
+             */
+            _setCenter: (center) => {
+                switch (this.options[keys.map.provider]) {
+                    case 'google':
+                    default:
+                        this.map.setCenter(center);
+                        break;
+                }
+            },
+            /**
+             * Sets the center of the map (smoothly)
+             * @param center
+             * @private
+             */
+            _panTo: (center) => {
+                switch (this.options[keys.map.provider]) {
+                    case 'google':
+                    default:
+                        this.map.panTo(center);
+                        break;
+                }
+            },
+            /**
+             * Auto center the map on the markers
+             * @param markers
+             * @private
+             */
+            _autoCenter: (markers) => {
+                if (this.options[keys.map.autoCenter]) {
+                    const center = this.helpers.markers._getMarkersCenterCoordinates(markers);
+
+                    if (center) {
+                        switch (this.options[keys.map.provider]) {
+                            case 'google':
+                            default:
+                                this.helpers.map._setCenter(this.helpers.google.coordinates._getLatLng(center));
+                                break;
+                        }
                     }
                 }
             },

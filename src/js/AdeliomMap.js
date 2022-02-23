@@ -5,6 +5,9 @@ import errors from "./errors";
 const mapCustomClass = 'adeliom-map-js';
 
 export const AdeliomMapEvents = {
+    map: {
+        hasAutoCentered: 'mapHasAutoCentered',
+    },
     markers: {
         created: 'markerCreated',
         dataCreated: 'markerDataCreated',
