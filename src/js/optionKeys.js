@@ -3,6 +3,7 @@ keys.apiKey = 'apiKey';
 keys.map = {};
 keys.map.selector = 'mapSelector';
 keys.map.defaultCenter = 'mapDefaultCenter';
+keys.map.autoCenter = 'mapAutoCenter';
 keys.map.defaultZoom = 'mapDefaultZoom';
 keys.map.provider = 'mapProvider';
 keys.map.checkSize = 'checkMapSize';

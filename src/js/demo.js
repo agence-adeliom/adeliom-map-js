@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mapInfoWindowReplaceWithMarkerData: true,
         mapListReplaceWithMarkerData: true,
         checkMapSize: false,
+        mapAutoCenter: true,
         mapDefaultCenter: {
             lat: 48.614782,
             lng: 7.714012
@@ -95,10 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ],
         mapDisplayMarkers: true,
         mapDisplayInfoWindows: true,
-        mapEnableZoomButtons: true, // Displays the + and - zoom buttons
-        mapEnableStreetView: true, // Displays the interactive StreetView button
-        mapEnableFullscreenButton: true, // Displays a button that allows the user to put the map in fullscreen
-        mapEnableTypeButtons: true, // Displays the buttons that allow the user to switch between map types
+        mapEnableZoomButtons: false, // Displays the + and - zoom buttons
+        mapEnableStreetView: false, // Displays the interactive StreetView button
+        mapEnableFullscreenButton: false, // Displays a button that allows the user to put the map in fullscreen
+        mapEnableTypeButtons: false, // Displays the buttons that allow the user to switch between map types
         mapDisplayScale: false, // Displays a scale at the bottom of the map
         mapAskForConsent: true,
         mapConsentDefaultValue: true,

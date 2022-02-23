@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 `mapListSelector (string)` : sélecteur CSS du container de la lise des points<br>
 `checkMapSize (bool)` : vérifie si la map a bien une hauteur/largeur<br>
 `mapDefaultCenter ({lat: x, lng: y})` : centre par défaut de la map<br>
+`mapAutoCenter (bool)` : indique si la map doit centrer automatiquement sur l'ensemble des coordonnées<br>
 `mapDefaultZoom (int)` : zoom par défaut de la map<br>
 `mapProvider (string)` : fournisseur de la map (seulement `google` pour le moment)<br>
 `mapShowPlaces (bool)` : afficher ou non les marqueurs de lieux _(peut être surchargé par mapCustomStyles)_<br>

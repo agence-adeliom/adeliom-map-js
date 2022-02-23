@@ -28,6 +28,7 @@ defaultOptions[keys.map.markerHoveredIconUrl] = null;
 defaultOptions[keys.map.markerSelectedIconUrl] = null;
 defaultOptions[keys.map.allowMultipleMarkersSelected] = true;
 defaultOptions[keys.map.defaultCenter] = {lat: 48.614782, lng: 7.714012};
+defaultOptions[keys.map.autoCenter] = false;
 defaultOptions[keys.map.defaultZoom] = 12;
 defaultOptions[keys.map.provider] = 'google';
 defaultOptions[keys.map.displayMarkers] = true;
