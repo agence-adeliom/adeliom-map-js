@@ -16,13 +16,12 @@
     "build:production": "mix --production"
   },
   "dependencies": {
-    "dauphine-js": "https://bitbucket.org/adeliomgit/dauphine-js.git"
+    "dauphine-js": "https://bitbucket.org/adeliomgit/dauphine-js.git",
+    "google-maps": "^4.3.3",
+    "@googlemaps/markerclusterer": "^1.0.24"
   },
   "devDependencies": {
-    "@googlemaps/markerclusterer": "^1.0.24",
     "cross-env": "^7.0.3",
-    "event-emitter": "^0.3.5",
-    "google-maps": "^4.3.3",
     "laravel-mix": "^6.0.41",
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.49.7",
