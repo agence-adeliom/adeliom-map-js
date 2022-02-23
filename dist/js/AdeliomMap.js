@@ -2036,6 +2036,8 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
                   break;
               }
             }
+
+            _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.map.hasAutoCentered);
           }
         },
 

@@ -542,6 +542,8 @@ export default class AdeliomMapFunctions extends Emitter {
                                 break;
                         }
                     }
+
+                    this.emit(AdeliomMapEvents.map.hasAutoCentered);
                 }
             },
             /**

@@ -347,4 +347,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         AdeliomMapInstance._setConsent(true);
     });
+
+    adeliomMap.on(AdeliomMapEvents.map.hasAutoCentered, () => {
+        if (params.logAllEvents) {
+            console.log('Map just auto-centered');
+        }
+    });
 });
