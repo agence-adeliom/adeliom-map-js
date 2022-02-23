@@ -46,12 +46,22 @@ document.addEventListener("DOMContentLoaded", () => {
         mapAnimation: 'smooth',
         mapShowPlaces: false,
         mapUseClusters: true,
-        mapClusterIconUrl: '/dist/img/cluster.png',
+        mapClusterParams: [
+            {
+                icon: '/dist/img/cluster.png',
+                size: 40,
+                from: 0,
+            },
+            {
+                size: 56,
+                from: 3,
+                defaultIconColor: '#E62A4D',
+            }
+        ],
         mapMarkerIconUrl: '/dist/img/marker.png',
         mapMarkerHoveredIconUrl: '/dist/img/marker-hovered.png',
         mapMarkerSelectedIconUrl: '/dist/img/marker-selected.png',
         mapMarkerIconSize: 40,
-        mapClusterIconSize: 40,
         mapMarkers: [
             {
                 title: 'Agence Adeliom',

@@ -48,8 +48,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 `mapUseClusters (bool)` : indique si la map doit générer des clusters lorsque les points sont suffisamment
 rapprochés<br>
-`mapClusterIconUrl (string)` : URL vers l'icône des clusters<br>
-`mapClusterIconSize (int)` : Taille des icônes des clusters<br>
+`mapClusterParams (object[])` : Tableau d'objets contenant des paramètres de clusters<br>
+
+```javascript
+mapClusterParams: [
+    {
+        icon: "/dist/img/cluser.png", // Icône du cluster (optionnel)
+        size: 40, // Taille de l'icône (optionnel)
+        from: 0, // Nombre de points regroupés à partir duquel ces paramètres sont utilisés
+        defaultIconColor: "#FF0000", // Couleur de l'icône par défaut du cluster (optionnel)
+    },
+    {
+        ...
+    }
+]
+```
 
 ### Infobulles
 

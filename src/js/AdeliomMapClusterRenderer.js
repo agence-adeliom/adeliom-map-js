@@ -1,11 +1,11 @@
 import {DefaultRenderer} from "@googlemaps/markerclusterer";
 
 export default class AdeliomMapClusterRenderer extends DefaultRenderer {
-    constructor(icon = null, size = 75) {
+    constructor(params = null) {
         super();
 
-        this.icon = icon;
-        this.size = size;
+        this.icon = null;
+        this.params = this.orderParamsByFromValue(params);
     }
 
     getSvg(color) {
@@ -17,30 +17,68 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
   </svg>`);
     }
 
+    /**
+     * Re-orders all params objects so that it's ordered by "from" value (ASC)
+     * @param params
+     * @returns {*}
+     */
+    orderParamsByFromValue(params) {
+        if (params) {
+            params.sort((a, b) => {
+                return a.from > b.from ? 1 : -1;
+            });
+        }
+
+        return params;
+    };
+
+    /**
+     * Returns the corresponding params object from a count value
+     * @param count
+     * @returns {null}
+     */
+    getParamsByCount(count) {
+        let currentParams = null;
+
+        for (let i in this.params) {
+            const paramArray = this.params[i];
+
+            if (paramArray?.from <= count) {
+                currentParams = paramArray;
+            } else {
+                break;
+            }
+        }
+
+        return currentParams;
+    };
+
     render({count, position}, stats) {
+        const params = this.getParamsByCount(count);
+
         const color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
-        const svg = this.getSvg(color);
+        const defaultIconColor = params?.defaultIconColor ?? color;
+
+        const svg = this.getSvg(defaultIconColor);
+
+        const fontColor = params?.fontColor ?? 'rgba(255,255,255,0.9)';
+        const iconSize = params?.size ?? 56;
+        const iconData = params?.icon ?? `data:image/svg+xml;base64,${svg}`;
+        const fontSize = params?.fontSize ?? '12px';
 
         const options = {
             position: position,
             label: {
                 text: String(count),
-                color: "rgba(255,255,255,0.9)",
-                fontSize: "12px",
+                color: fontColor,
+                fontSize: fontSize,
             },
             zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
         };
 
-        if (this.icon) {
-            options.icon = {
-                url: `${this.icon}`,
-                scaledSize: new google.maps.Size(this.size, this.size),
-            }
-        } else {
-            options.icon = {
-                url: `data:image/svg+xml;base64,${svg}`,
-                scaledSize: new google.maps.Size(this.size, this.size),
-            };
+        options.icon = {
+            url: iconData,
+            scaledSize: new google.maps.Size(iconSize, iconSize),
         }
 
         return new google.maps.Marker(options);

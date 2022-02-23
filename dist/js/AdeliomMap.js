@@ -1274,14 +1274,13 @@ var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
   function AdeliomMapClusterRenderer() {
     var _this;
 
-    var icon = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 75;
+    var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
     _classCallCheck(this, AdeliomMapClusterRenderer);
 
     _this = _super.call(this);
-    _this.icon = icon;
-    _this.size = size;
+    _this.icon = null;
+    _this.params = _this.orderParamsByFromValue(params);
     return _this;
   }
 
@@ -1290,35 +1289,74 @@ var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
     value: function getSvg(color) {
       return window.btoa("\n  <svg fill=\"".concat(color, "\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 240\">\n    <circle cx=\"120\" cy=\"120\" opacity=\".6\" r=\"70\" />\n    <circle cx=\"120\" cy=\"120\" opacity=\".3\" r=\"90\" />\n    <circle cx=\"120\" cy=\"120\" opacity=\".2\" r=\"110\" />\n  </svg>"));
     }
+    /**
+     * Re-orders all params objects so that it's ordered by "from" value (ASC)
+     * @param params
+     * @returns {*}
+     */
+
+  }, {
+    key: "orderParamsByFromValue",
+    value: function orderParamsByFromValue(params) {
+      if (params) {
+        params.sort(function (a, b) {
+          return a.from > b.from ? 1 : -1;
+        });
+      }
+
+      return params;
+    }
+  }, {
+    key: "getParamsByCount",
+    value:
+    /**
+     * Returns the corresponding params object from a count value
+     * @param count
+     * @returns {null}
+     */
+    function getParamsByCount(count) {
+      var currentParams = null;
+
+      for (var i in this.params) {
+        var paramArray = this.params[i];
+
+        if ((paramArray === null || paramArray === void 0 ? void 0 : paramArray.from) <= count) {
+          currentParams = paramArray;
+        } else {
+          break;
+        }
+      }
+
+      return currentParams;
+    }
   }, {
     key: "render",
     value: function render(_ref, stats) {
+      var _params$defaultIconCo, _params$fontColor, _params$size, _params$icon, _params$fontSize;
+
       var count = _ref.count,
           position = _ref.position;
+      var params = this.getParamsByCount(count);
       var color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
-      var svg = this.getSvg(color);
+      var defaultIconColor = (_params$defaultIconCo = params === null || params === void 0 ? void 0 : params.defaultIconColor) !== null && _params$defaultIconCo !== void 0 ? _params$defaultIconCo : color;
+      var svg = this.getSvg(defaultIconColor);
+      var fontColor = (_params$fontColor = params === null || params === void 0 ? void 0 : params.fontColor) !== null && _params$fontColor !== void 0 ? _params$fontColor : 'rgba(255,255,255,0.9)';
+      var iconSize = (_params$size = params === null || params === void 0 ? void 0 : params.size) !== null && _params$size !== void 0 ? _params$size : 56;
+      var iconData = (_params$icon = params === null || params === void 0 ? void 0 : params.icon) !== null && _params$icon !== void 0 ? _params$icon : "data:image/svg+xml;base64,".concat(svg);
+      var fontSize = (_params$fontSize = params === null || params === void 0 ? void 0 : params.fontSize) !== null && _params$fontSize !== void 0 ? _params$fontSize : '12px';
       var options = {
         position: position,
         label: {
           text: String(count),
-          color: "rgba(255,255,255,0.9)",
-          fontSize: "12px"
+          color: fontColor,
+          fontSize: fontSize
         },
         zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count
       };
-
-      if (this.icon) {
-        options.icon = {
-          url: "".concat(this.icon),
-          scaledSize: new google.maps.Size(this.size, this.size)
-        };
-      } else {
-        options.icon = {
-          url: "data:image/svg+xml;base64,".concat(svg),
-          scaledSize: new google.maps.Size(this.size, this.size)
-        };
-      }
-
+      options.icon = {
+        url: iconData,
+        scaledSize: new google.maps.Size(iconSize, iconSize)
+      };
       return new google.maps.Marker(options);
     }
   }]);
@@ -1932,7 +1970,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
       google: {
         clusters: {
           _getRenderer: function _getRenderer() {
-            var renderer = new _AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_6__["default"](_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.clusterIconUrl], _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.clusterIconSize]);
+            var renderer = new _AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_6__["default"](_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.clusterParams]);
             return renderer;
           },
           _handleClusterClick: function _handleClusterClick(e, cluster, map) {
@@ -2213,6 +2251,12 @@ defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.checkSize
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.useClusters] = false;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.clusterIconUrl] = null;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.clusterIconSize] = 56;
+defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.clusterParams] = [{
+  icon: null,
+  size: 56,
+  from: 0,
+  defaultIconColor: "#E62A4D"
+}];
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markers] = [];
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerIconSize] = 56;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerIconUrl] = null;
@@ -2296,6 +2340,7 @@ keys.map.checkSize = 'checkMapSize';
 keys.map.useClusters = 'mapUseClusters';
 keys.map.clusterIconUrl = 'mapClusterIconUrl';
 keys.map.clusterIconSize = 'mapClusterIconSize';
+keys.map.clusterParams = 'mapClusterParams';
 keys.map.markers = 'mapMarkers';
 keys.map.markerIconUrl = 'mapMarkerIconUrl';
 keys.map.markerHoveredIconUrl = 'mapMarkerHoveredIconUrl';

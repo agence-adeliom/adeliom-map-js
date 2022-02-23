@@ -13,6 +13,14 @@ defaultOptions[keys.map.checkSize] = false;
 defaultOptions[keys.map.useClusters] = false;
 defaultOptions[keys.map.clusterIconUrl] = null;
 defaultOptions[keys.map.clusterIconSize] = 56;
+defaultOptions[keys.map.clusterParams] = [
+    {
+        icon: null,
+        size: 56,
+        from: 0,
+        defaultIconColor: "#E62A4D"
+    }
+];
 defaultOptions[keys.map.markers] = [];
 defaultOptions[keys.map.markerIconSize] = 56;
 defaultOptions[keys.map.markerIconUrl] = null;

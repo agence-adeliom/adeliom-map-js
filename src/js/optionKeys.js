@@ -9,6 +9,7 @@ keys.map.checkSize = 'checkMapSize';
 keys.map.useClusters = 'mapUseClusters';
 keys.map.clusterIconUrl = 'mapClusterIconUrl';
 keys.map.clusterIconSize = 'mapClusterIconSize';
+keys.map.clusterParams = 'mapClusterParams';
 keys.map.markers = 'mapMarkers';
 keys.map.markerIconUrl = 'mapMarkerIconUrl';
 keys.map.markerHoveredIconUrl = 'mapMarkerHoveredIconUrl';

@@ -525,8 +525,7 @@ export default class AdeliomMapFunctions extends Emitter {
             clusters: {
                 _getRenderer: () => {
                     const renderer = new AdeliomMapClusterRenderer(
-                        this.options[keys.map.clusterIconUrl],
-                        this.options[keys.map.clusterIconSize]
+                        this.options[keys.map.clusterParams],
                     );
 
                     return renderer;
