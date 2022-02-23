@@ -53,17 +53,19 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
         return currentParams;
     };
 
+    getDefaultIconData(svg) {
+        return `data:image/svg+xml;base64,${svg}`
+    }
+
     render({count, position}, stats) {
         const params = this.getParamsByCount(count);
 
         const color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
         const defaultIconColor = params?.defaultIconColor ?? color;
 
-        const svg = this.getSvg(defaultIconColor);
-
         const fontColor = params?.fontColor ?? 'rgba(255,255,255,0.9)';
         const iconSize = params?.size ?? 56;
-        const iconData = params?.icon ?? `data:image/svg+xml;base64,${svg}`;
+        const iconData = params?.icon ?? this.getDefaultIconData(this.getSvg(defaultIconColor));
         const fontSize = params?.fontSize ?? '12px';
 
         const options = {
@@ -76,11 +78,30 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
             zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
         };
 
-        options.icon = {
-            url: iconData,
-            scaledSize: new google.maps.Size(iconSize, iconSize),
+        options.icon = this.getIconConfig(iconData, iconSize);
+
+        const clusterMarker = new google.maps.Marker(options);
+
+        if (params?.hoverIcon || params?.defaultIconHoverColor) {
+            clusterMarker.addListener('mouseover', () => {
+                if (params?.hoverIcon) {
+                    clusterMarker.setIcon(this.getIconConfig(params.hoverIcon, iconSize));
+                } else {
+                    clusterMarker.setIcon(this.getIconConfig(this.getDefaultIconData(this.getSvg(params.defaultIconHoverColor)), iconSize));
+                }
+            });
+            clusterMarker.addListener('mouseout', () => {
+                clusterMarker.setIcon(this.getIconConfig(iconData, iconSize));
+            });
         }
 
-        return new google.maps.Marker(options);
+        return clusterMarker;
+    }
+
+    getIconConfig(url, size) {
+        return {
+            url: url,
+            scaledSize: new google.maps.Size(size, size),
+        }
     }
 }

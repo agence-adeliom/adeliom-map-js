@@ -1333,19 +1333,28 @@ var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
       return currentParams;
     }
   }, {
+    key: "getDefaultIconData",
+    value: function getDefaultIconData(svg) {
+      return "data:image/svg+xml;base64,".concat(svg);
+    }
+  }, {
     key: "render",
     value: function render(_ref, stats) {
-      var _params$defaultIconCo, _params$fontColor, _params$size, _params$icon, _params$fontSize;
+      var _params$defaultIconCo,
+          _params$fontColor,
+          _params$size,
+          _params$icon,
+          _params$fontSize,
+          _this2 = this;
 
       var count = _ref.count,
           position = _ref.position;
       var params = this.getParamsByCount(count);
       var color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
       var defaultIconColor = (_params$defaultIconCo = params === null || params === void 0 ? void 0 : params.defaultIconColor) !== null && _params$defaultIconCo !== void 0 ? _params$defaultIconCo : color;
-      var svg = this.getSvg(defaultIconColor);
       var fontColor = (_params$fontColor = params === null || params === void 0 ? void 0 : params.fontColor) !== null && _params$fontColor !== void 0 ? _params$fontColor : 'rgba(255,255,255,0.9)';
       var iconSize = (_params$size = params === null || params === void 0 ? void 0 : params.size) !== null && _params$size !== void 0 ? _params$size : 56;
-      var iconData = (_params$icon = params === null || params === void 0 ? void 0 : params.icon) !== null && _params$icon !== void 0 ? _params$icon : "data:image/svg+xml;base64,".concat(svg);
+      var iconData = (_params$icon = params === null || params === void 0 ? void 0 : params.icon) !== null && _params$icon !== void 0 ? _params$icon : this.getDefaultIconData(this.getSvg(defaultIconColor));
       var fontSize = (_params$fontSize = params === null || params === void 0 ? void 0 : params.fontSize) !== null && _params$fontSize !== void 0 ? _params$fontSize : '12px';
       var options = {
         position: position,
@@ -1356,11 +1365,31 @@ var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
         },
         zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count
       };
-      options.icon = {
-        url: iconData,
-        scaledSize: new google.maps.Size(iconSize, iconSize)
+      options.icon = this.getIconConfig(iconData, iconSize);
+      var clusterMarker = new google.maps.Marker(options);
+
+      if (params !== null && params !== void 0 && params.hoverIcon || params !== null && params !== void 0 && params.defaultIconHoverColor) {
+        clusterMarker.addListener('mouseover', function () {
+          if (params !== null && params !== void 0 && params.hoverIcon) {
+            clusterMarker.setIcon(_this2.getIconConfig(params.hoverIcon, iconSize));
+          } else {
+            clusterMarker.setIcon(_this2.getIconConfig(_this2.getDefaultIconData(_this2.getSvg(params.defaultIconHoverColor)), iconSize));
+          }
+        });
+        clusterMarker.addListener('mouseout', function () {
+          clusterMarker.setIcon(_this2.getIconConfig(iconData, iconSize));
+        });
+      }
+
+      return clusterMarker;
+    }
+  }, {
+    key: "getIconConfig",
+    value: function getIconConfig(url, size) {
+      return {
+        url: url,
+        scaledSize: new google.maps.Size(size, size)
       };
-      return new google.maps.Marker(options);
     }
   }]);
 

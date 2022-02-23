@@ -54,14 +54,19 @@ rapprochés<br>
 
 ```javascript
 mapClusterParams: [
+    // Avec icône PNG
     {
-        icon: "/dist/img/cluser.png", // Icône du cluster (optionnel)
+        icon: "/dist/img/cluster.png", // Icône du cluster (optionnel)
+        hoverIcon: "/dist/img/cluster-hovered.png", // Icône du cluster au survol (optionnel)
         size: 40, // Taille de l'icône (optionnel)
         from: 0, // Nombre de points regroupés à partir duquel ces paramètres sont utilisés
-        defaultIconColor: "#FF0000", // Couleur de l'icône par défaut du cluster (optionnel)
     },
+    // Sans icône PNG
     {
-        ...
+        size: 56, // Taille de l'icône (optionnel)
+        from: 3, // Nombre de points regroupés à partir duquel ces paramètres sont utilisés
+        defaultIconColor: "#FF0000", // Couleur de l'icône par défaut du cluster (optionnel)
+        defaultIconHoverColor: "#FF00FF", // Couleur de l'icône par défaut du cluster au survol (optionnel)
     }
 ]
 ```

@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mapClusterParams: [
             {
                 icon: '/dist/img/cluster.png',
+                hoverIcon: '/dist/img/adeliom-logo.png',
                 size: 40,
                 from: 0,
             },
@@ -57,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 size: 56,
                 from: 3,
                 defaultIconColor: '#E62A4D',
+                defaultIconHoverColor: '#FF00FF',
             }
         ],
         mapMarkerIconUrl: '/dist/img/marker.png',
