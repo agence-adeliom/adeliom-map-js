@@ -128,14 +128,63 @@ export default class AdeliomMapFunctions extends Emitter {
         },
         markers: {
             /**
+             * Get the center of all provided markers
+             * @param markersRawData
+             * @returns {{lng: number, lat: number}|*}
+             * @private
+             */
+            _getMarkersCenterCoordinates: (markersRawData) => {
+                if (markersRawData.length === 1) {
+                    return markersRawData[0].coordinates;
+                }
+
+                let x = 0.0;
+                let y = 0.0;
+                let z = 0.0;
+
+                for (let markerRawData of markersRawData) {
+                    let latitude = markerRawData.coordinates.lat * Math.PI / 180;
+                    let longitude = markerRawData.coordinates.lng * Math.PI / 180;
+
+                    x += Math.cos(latitude) * Math.cos(longitude);
+                    y += Math.cos(latitude) * Math.sin(longitude);
+                    z += Math.sin(latitude);
+                }
+
+                let total = markersRawData.length;
+
+                x = x / total;
+                y = y / total;
+                z = z / total;
+
+                let centralLongitude = Math.atan2(y, x);
+                let centralSquareRoot = Math.sqrt(x * x + y * y);
+                let centralLatitude = Math.atan2(z, centralSquareRoot);
+
+                return {
+                    lat: centralLatitude * 180 / Math.PI,
+                    lng: centralLongitude * 180 / Math.PI
+                }
+            },
+            /**
              * Init markers by its map provider (google, ...)
              * @private
              */
             _initMarkers: (markers) => {
+                let center = null;
+
                 switch (this.options[keys.map.provider]) {
                     case 'google':
                     default:
-                        this.helpers.google.markers._initMapMarkers(markers);
+                        this.helpers.google.markers._initMapMarkers(markers).then(() => {
+                            if (this.options[keys.map.autoCenter]) {
+                                center = this.helpers.markers._getMarkersCenterCoordinates(markers);
+
+                                if (center) {
+                                    this.map.setCenter(this.helpers.google.coordinates._getLatLng(center));
+                                }
+                            }
+                        });
                         break;
                 }
             },
@@ -436,7 +485,7 @@ export default class AdeliomMapFunctions extends Emitter {
              */
             _centerMapOnMarker: (marker) => {
                 const coordinates = this.helpers.markers._getMarkerCoordinates(marker);
-                const googleMapCoordinates = new this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+                const googleMapCoordinates = this.helpers.google.coordinates._getLatLng(coordinates);
 
                 if (this.options[keys.map.animation] === mapAnims.smooth) {
                     this.map.panTo(googleMapCoordinates);
@@ -522,6 +571,23 @@ export default class AdeliomMapFunctions extends Emitter {
             }
         },
         google: {
+            coordinates: {
+                /**
+                 * Returns Google Map LatLng from coordinates {lat,lng}
+                 * @param coordinates
+                 * @returns {null|google.maps.LatLng}
+                 * @private
+                 */
+                _getLatLng: (coordinates) => {
+                    if (coordinates?.lat && coordinates?.lng) {
+                        return new this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+                    }
+
+                    console.error('No lat/lng object provided');
+
+                    return null;
+                },
+            },
             clusters: {
                 _getRenderer: () => {
                     const renderer = new AdeliomMapClusterRenderer(
@@ -539,7 +605,7 @@ export default class AdeliomMapFunctions extends Emitter {
                  * Loop to init Google Maps markers
                  * @private
                  */
-                _initMapMarkers: (markers) => {
+                _initMapMarkers: async (markers) => {
                     markers.forEach(marker => {
                         let markerData = this.helpers.google.markers._createMapMarker(marker);
                         this.emit(AdeliomMapEvents.markers.dataCreated, markerData);

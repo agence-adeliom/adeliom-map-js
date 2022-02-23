@@ -1397,6 +1397,12 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -1546,14 +1552,70 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
       },
       markers: {
         /**
+         * Get the center of all provided markers
+         * @param markersRawData
+         * @returns {{lng: number, lat: number}|*}
+         * @private
+         */
+        _getMarkersCenterCoordinates: function _getMarkersCenterCoordinates(markersRawData) {
+          if (markersRawData.length === 1) {
+            return markersRawData[0].coordinates;
+          }
+
+          var x = 0.0;
+          var y = 0.0;
+          var z = 0.0;
+
+          var _iterator = _createForOfIteratorHelper(markersRawData),
+              _step;
+
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var markerRawData = _step.value;
+              var latitude = markerRawData.coordinates.lat * Math.PI / 180;
+              var longitude = markerRawData.coordinates.lng * Math.PI / 180;
+              x += Math.cos(latitude) * Math.cos(longitude);
+              y += Math.cos(latitude) * Math.sin(longitude);
+              z += Math.sin(latitude);
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
+
+          var total = markersRawData.length;
+          x = x / total;
+          y = y / total;
+          z = z / total;
+          var centralLongitude = Math.atan2(y, x);
+          var centralSquareRoot = Math.sqrt(x * x + y * y);
+          var centralLatitude = Math.atan2(z, centralSquareRoot);
+          return {
+            lat: centralLatitude * 180 / Math.PI,
+            lng: centralLongitude * 180 / Math.PI
+          };
+        },
+
+        /**
          * Init markers by its map provider (google, ...)
          * @private
          */
         _initMarkers: function _initMarkers(markers) {
+          var center = null;
+
           switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
             case 'google':
             default:
-              _this.helpers.google.markers._initMapMarkers(markers);
+              _this.helpers.google.markers._initMapMarkers(markers).then(function () {
+                if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.autoCenter]) {
+                  center = _this.helpers.markers._getMarkersCenterCoordinates(markers);
+
+                  if (center) {
+                    _this.map.setCenter(_this.helpers.google.coordinates._getLatLng(center));
+                  }
+                }
+              });
 
               break;
           }
@@ -1879,7 +1941,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
         _centerMapOnMarker: function _centerMapOnMarker(marker) {
           var coordinates = _this.helpers.markers._getMarkerCoordinates(marker);
 
-          var googleMapCoordinates = new _this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+          var googleMapCoordinates = _this.helpers.google.coordinates._getLatLng(coordinates);
 
           if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.animation] === _defaultOptions__WEBPACK_IMPORTED_MODULE_3__.mapAnims.smooth) {
             _this.map.panTo(googleMapCoordinates);
@@ -1968,6 +2030,22 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
         }
       },
       google: {
+        coordinates: {
+          /**
+           * Returns Google Map LatLng from coordinates {lat,lng}
+           * @param coordinates
+           * @returns {null|google.maps.LatLng}
+           * @private
+           */
+          _getLatLng: function _getLatLng(coordinates) {
+            if (coordinates !== null && coordinates !== void 0 && coordinates.lat && coordinates !== null && coordinates !== void 0 && coordinates.lng) {
+              return new _this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+            }
+
+            console.error('No lat/lng object provided');
+            return null;
+          }
+        },
         clusters: {
           _getRenderer: function _getRenderer() {
             var renderer = new _AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_6__["default"](_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.clusterParams]);
@@ -1982,15 +2060,34 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * Loop to init Google Maps markers
            * @private
            */
-          _initMapMarkers: function _initMapMarkers(markers) {
-            markers.forEach(function (marker) {
-              var markerData = _this.helpers.google.markers._createMapMarker(marker);
+          _initMapMarkers: function () {
+            var _initMapMarkers2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(markers) {
+              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      markers.forEach(function (marker) {
+                        var markerData = _this.helpers.google.markers._createMapMarker(marker);
 
-              _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.markers.dataCreated, markerData);
-            });
+                        _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.markers.dataCreated, markerData);
+                      });
 
-            _this.helpers.google.markers._initMapClusters();
-          },
+                      _this.helpers.google.markers._initMapClusters();
+
+                    case 2:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, _callee);
+            }));
+
+            function _initMapMarkers(_x) {
+              return _initMapMarkers2.apply(this, arguments);
+            }
+
+            return _initMapMarkers;
+          }(),
           _initMapClusters: function _initMapClusters() {
             if (_this.options && _this.map && _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.useClusters]) {
               var clusterer = new _googlemaps_markerclusterer__WEBPACK_IMPORTED_MODULE_5__.MarkerClusterer({
@@ -2143,23 +2240,23 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * @private
            */
           _initMap: function () {
-            var _initMap2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(container) {
+            var _initMap2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(container) {
               var loader;
-              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
                 while (1) {
-                  switch (_context.prev = _context.next) {
+                  switch (_context2.prev = _context2.next) {
                     case 0:
                       if (_this.google) {
-                        _context.next = 5;
+                        _context2.next = 5;
                         break;
                       }
 
                       loader = new google_maps__WEBPACK_IMPORTED_MODULE_7__.Loader(_this.options.apiKey);
-                      _context.next = 4;
+                      _context2.next = 4;
                       return loader.load();
 
                     case 4:
-                      _this.google = _context.sent;
+                      _this.google = _context2.sent;
 
                     case 5:
                       _this.map = new _this.google.maps.Map(container, {
@@ -2176,13 +2273,13 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
                     case 6:
                     case "end":
-                      return _context.stop();
+                      return _context2.stop();
                   }
                 }
-              }, _callee);
+              }, _callee2);
             }));
 
-            function _initMap(_x) {
+            function _initMap(_x2) {
               return _initMap2.apply(this, arguments);
             }
 
@@ -2275,6 +2372,7 @@ defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.defaultCe
   lat: 48.614782,
   lng: 7.714012
 };
+defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.autoCenter] = false;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.defaultZoom] = 12;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.provider] = 'google';
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.displayMarkers] = true;
@@ -2343,6 +2441,7 @@ keys.apiKey = 'apiKey';
 keys.map = {};
 keys.map.selector = 'mapSelector';
 keys.map.defaultCenter = 'mapDefaultCenter';
+keys.map.autoCenter = 'mapAutoCenter';
 keys.map.defaultZoom = 'mapDefaultZoom';
 keys.map.provider = 'mapProvider';
 keys.map.checkSize = 'checkMapSize';
