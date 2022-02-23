@@ -8,5 +8,6 @@
     "/img/cluster.png": "/img/cluster.png",
     "/img/google-maps-api-icon-10.jpeg": "/img/google-maps-api-icon-10.jpeg",
     "/img/marker.png": "/img/marker.png",
-    "/img/marker-selected.png": "/img/marker-selected.png"
+    "/img/marker-selected.png": "/img/marker-selected.png",
+    "/img/marker-hovered.png": "/img/marker-hovered.png"
 }

@@ -40,8 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
 `mapAnimation (string)` : type d'animation de transition entre positions dans la map (smooth / default)<br>
 `mapAllowMultipleMarkersSelected (bool)` : si plusieurs marqueurs peuvent être sélectionnés en simultané<br>
 `mapMarkerIconUrl (string)` : URL vers l'icône du marker<br>
-`mapMarkerIconSize (int)` : Taille des icônes de marqueurs<br>
+`mapMarkerHoveredIconUrl (string)` : URL vers l'icône survolée du marker<br>
 `mapMarkerSelectedIconUrl (string)` : URL vers l'icône sélectionnée du marker<br>
+`mapMarkerIconSize (int)` : Taille des icônes de marqueurs<br>
 
 ### Clusters de markers
 

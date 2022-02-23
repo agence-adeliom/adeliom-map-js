@@ -16,6 +16,7 @@ defaultOptions[keys.map.clusterIconSize] = 56;
 defaultOptions[keys.map.markers] = [];
 defaultOptions[keys.map.markerIconSize] = 56;
 defaultOptions[keys.map.markerIconUrl] = null;
+defaultOptions[keys.map.markerHoveredIconUrl] = null;
 defaultOptions[keys.map.markerSelectedIconUrl] = null;
 defaultOptions[keys.map.allowMultipleMarkersSelected] = true;
 defaultOptions[keys.map.defaultCenter] = {lat: 48.614782, lng: 7.714012};

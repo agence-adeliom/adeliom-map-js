@@ -48,9 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
         mapUseClusters: true,
         mapClusterIconUrl: '/dist/img/cluster.png',
         mapMarkerIconUrl: '/dist/img/marker.png',
+        mapMarkerHoveredIconUrl: '/dist/img/marker-hovered.png',
+        mapMarkerSelectedIconUrl: '/dist/img/marker-selected.png',
         mapMarkerIconSize: 40,
         mapClusterIconSize: 40,
-        mapMarkerSelectedIconUrl: '/dist/img/marker-selected.png',
         mapMarkers: [
             {
                 title: 'Agence Adeliom',
@@ -61,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 icon: '/dist/img/adeliom-logo.png',
                 selectedIcon: '/dist/img/adeliom-logo-blue.png',
+                hoveredIcon: '/dist/img/marker-selected.png',
                 infoWindowTemplate: '<div class="map-infowindow-elt">Test template</div>',
                 listEltTemplate: 'Test de template personnalisé pour le marqueur',
             },

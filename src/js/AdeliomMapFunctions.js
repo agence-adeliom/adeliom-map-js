@@ -224,13 +224,13 @@ export default class AdeliomMapFunctions extends Emitter {
                     if (!isSelected) {
                         switch (this.options[keys.map.provider]) {
                             case 'google':
-                                marker.setIcon(this.helpers.google.markers._getIconConfig(this.helpers.markers._getIdleIconForMarker(marker)));
+                                this.helpers.google.markers._setIdleIcon(marker);
                                 break;
                         }
                     } else {
                         switch (this.options[keys.map.provider]) {
                             case 'google':
-                                marker.setIcon(this.helpers.google.markers._getIconConfig(this.helpers.markers._getSelectedIconForMarker(marker)));
+                                this.helpers.google.markers._setSelectedIcon(marker);
                                 break;
                         }
                     }
@@ -281,6 +281,23 @@ export default class AdeliomMapFunctions extends Emitter {
                     return data.icon;
                 } else if (this.options[keys.map.markerIconUrl]) {
                     return this.options[keys.map.markerIconUrl];
+                }
+
+                return null;
+            },
+            /**
+             * Returns the hovered icon for the provided marker
+             * @param marker
+             * @returns {null|*}
+             * @private
+             */
+            _getHoveredIconForMarker: (marker) => {
+                const data = this.helpers.markersData._getDataByProperty('marker', marker);
+
+                if (data?.hoveredIcon) {
+                    return data.hoveredIcon;
+                } else if (this.options[keys.map.markerHoveredIconUrl]) {
+                    return this.options[keys.map.markerHoveredIconUrl];
                 }
 
                 return null;
@@ -549,6 +566,47 @@ export default class AdeliomMapFunctions extends Emitter {
                         scaledSize: new this.google.maps.Size(size, size),
                     };
                 },
+                // Sets the idle icon to the provided marker
+                _setIdleIcon: (marker) => {
+                    const idleIcon = this.helpers.markers._getIdleIconForMarker(marker);
+
+                    if (!this.helpers.markers._isMarkerSelected(marker) && idleIcon) {
+                        marker.setIcon(this.helpers.google.markers._getIconConfig(idleIcon));
+                    }
+                },
+                // Sets the selected icon to the provided marker
+                _setSelectedIcon: (marker) => {
+                    const selectedIcon = this.helpers.markers._getSelectedIconForMarker(marker);
+
+                    if (selectedIcon) {
+                        marker.setIcon(this.helpers.google.markers._getIconConfig(selectedIcon));
+                    }
+                },
+                // Sets the hover icon to the provided marker
+                _setHoveredIcon: (marker) => {
+                    const hoveredIcon = this.helpers.markers._getHoveredIconForMarker(marker);
+
+                    if (!this.helpers.markers._isMarkerSelected(marker) && hoveredIcon) {
+                        marker.setIcon(this.helpers.google.markers._getIconConfig(hoveredIcon));
+                    }
+                },
+                // Adds basic Google Markers listeners (click, hover, ...)
+                _handleBasicMarkerListeners: (markerInstance) => {
+                    // Listener to handle marker click
+                    this.google.maps.event.addListener(markerInstance, 'click', () => {
+                        this._handleClickMarker(markerInstance)
+                    });
+
+                    // Listener to handle mouseover (change icon)
+                    this.google.maps.event.addListener(markerInstance, 'mouseover', () => {
+                        this.helpers.google.markers._setHoveredIcon(markerInstance);
+                    });
+
+                    // Listener to handle mouseout (change icon)
+                    this.google.maps.event.addListener(markerInstance, 'mouseout', () => {
+                        this.helpers.google.markers._setIdleIcon(markerInstance);
+                    });
+                },
                 /**
                  * Create a Google Map marker by passing marker raw data
                  * @param markerRawData
@@ -579,6 +637,10 @@ export default class AdeliomMapFunctions extends Emitter {
                         markerData.selectedIcon = markerRawData.selectedIcon;
                     }
 
+                    if (markerRawData?.hoveredIcon) {
+                        markerData.hoveredIcon = markerRawData.hoveredIcon;
+                    }
+
                     const markerInstance = new this.google.maps.Marker(markerConfig);
                     this.emit(AdeliomMapEvents.markers.created, markerInstance);
 
@@ -593,9 +655,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         markerData.listElt = listElt;
                     }
 
-                    this.google.maps.event.addListener(markerInstance, 'click', () => {
-                        this._handleClickMarker(markerInstance)
-                    });
+                    this.helpers.google.markers._handleBasicMarkerListeners(markerInstance);
 
                     this.markersData.push(markerData);
 

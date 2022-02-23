@@ -1613,13 +1613,15 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             if (!isSelected) {
               switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
                 case 'google':
-                  marker.setIcon(_this.helpers.google.markers._getIconConfig(_this.helpers.markers._getIdleIconForMarker(marker)));
+                  _this.helpers.google.markers._setIdleIcon(marker);
+
                   break;
               }
             } else {
               switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
                 case 'google':
-                  marker.setIcon(_this.helpers.google.markers._getIconConfig(_this.helpers.markers._getSelectedIconForMarker(marker)));
+                  _this.helpers.google.markers._setSelectedIcon(marker);
+
                   break;
               }
             }
@@ -1673,6 +1675,24 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             return data.icon;
           } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl]) {
             return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl];
+          }
+
+          return null;
+        },
+
+        /**
+         * Returns the hovered icon for the provided marker
+         * @param marker
+         * @returns {null|*}
+         * @private
+         */
+        _getHoveredIconForMarker: function _getHoveredIconForMarker(marker) {
+          var data = _this.helpers.markersData._getDataByProperty('marker', marker);
+
+          if (data !== null && data !== void 0 && data.hoveredIcon) {
+            return data.hoveredIcon;
+          } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerHoveredIconUrl]) {
+            return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerHoveredIconUrl];
           }
 
           return null;
@@ -1950,6 +1970,47 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               scaledSize: new _this.google.maps.Size(size, size)
             };
           },
+          // Sets the idle icon to the provided marker
+          _setIdleIcon: function _setIdleIcon(marker) {
+            var idleIcon = _this.helpers.markers._getIdleIconForMarker(marker);
+
+            if (!_this.helpers.markers._isMarkerSelected(marker) && idleIcon) {
+              marker.setIcon(_this.helpers.google.markers._getIconConfig(idleIcon));
+            }
+          },
+          // Sets the selected icon to the provided marker
+          _setSelectedIcon: function _setSelectedIcon(marker) {
+            var selectedIcon = _this.helpers.markers._getSelectedIconForMarker(marker);
+
+            if (selectedIcon) {
+              marker.setIcon(_this.helpers.google.markers._getIconConfig(selectedIcon));
+            }
+          },
+          // Sets the hover icon to the provided marker
+          _setHoveredIcon: function _setHoveredIcon(marker) {
+            var hoveredIcon = _this.helpers.markers._getHoveredIconForMarker(marker);
+
+            if (!_this.helpers.markers._isMarkerSelected(marker) && hoveredIcon) {
+              marker.setIcon(_this.helpers.google.markers._getIconConfig(hoveredIcon));
+            }
+          },
+          // Adds basic Google Markers listeners (click, hover, ...)
+          _handleBasicMarkerListeners: function _handleBasicMarkerListeners(markerInstance) {
+            // Listener to handle marker click
+            _this.google.maps.event.addListener(markerInstance, 'click', function () {
+              _this._handleClickMarker(markerInstance);
+            }); // Listener to handle mouseover (change icon)
+
+
+            _this.google.maps.event.addListener(markerInstance, 'mouseover', function () {
+              _this.helpers.google.markers._setHoveredIcon(markerInstance);
+            }); // Listener to handle mouseout (change icon)
+
+
+            _this.google.maps.event.addListener(markerInstance, 'mouseout', function () {
+              _this.helpers.google.markers._setIdleIcon(markerInstance);
+            });
+          },
 
           /**
            * Create a Google Map marker by passing marker raw data
@@ -1979,6 +2040,10 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               markerData.selectedIcon = markerRawData.selectedIcon;
             }
 
+            if (markerRawData !== null && markerRawData !== void 0 && markerRawData.hoveredIcon) {
+              markerData.hoveredIcon = markerRawData.hoveredIcon;
+            }
+
             var markerInstance = new _this.google.maps.Marker(markerConfig);
 
             _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.markers.created, markerInstance);
@@ -1992,9 +2057,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               markerData.listElt = listElt;
             }
 
-            _this.google.maps.event.addListener(markerInstance, 'click', function () {
-              _this._handleClickMarker(markerInstance);
-            });
+            _this.helpers.google.markers._handleBasicMarkerListeners(markerInstance);
 
             _this.markersData.push(markerData);
 
@@ -2153,6 +2216,7 @@ defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.clusterIc
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markers] = [];
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerIconSize] = 56;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerIconUrl] = null;
+defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerHoveredIconUrl] = null;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerSelectedIconUrl] = null;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.allowMultipleMarkersSelected] = true;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.defaultCenter] = {
@@ -2234,8 +2298,9 @@ keys.map.clusterIconUrl = 'mapClusterIconUrl';
 keys.map.clusterIconSize = 'mapClusterIconSize';
 keys.map.markers = 'mapMarkers';
 keys.map.markerIconUrl = 'mapMarkerIconUrl';
-keys.map.markerIconSize = 'mapMarkerIconSize';
+keys.map.markerHoveredIconUrl = 'mapMarkerHoveredIconUrl';
 keys.map.markerSelectedIconUrl = 'mapMarkerSelectedIconUrl';
+keys.map.markerIconSize = 'mapMarkerIconSize';
 keys.map.displayMarkers = 'mapDisplayMarkers';
 keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
 keys.map.allowMultipleMarkersSelected = 'mapAllowMultipleMarkersSelected';
