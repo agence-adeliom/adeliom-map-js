@@ -24,6 +24,7 @@ keys.map.zoomMarkerOnClick = 'mapZoomMarkerOnClick';
 keys.map.animation = 'mapAnimation';
 keys.map.showPlaces = 'mapShowPlaces';
 keys.map.replaceInfoWindowContentWithMarkerData = 'mapInfoWindowReplaceWithMarkerData';
+keys.map.customStyles = 'mapCustomStyles';
 keys.map.controls = {};
 keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
 keys.map.controls.streetViewButton = 'mapEnableStreetView';

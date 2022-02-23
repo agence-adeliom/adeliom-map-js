@@ -2195,12 +2195,20 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * @private
            */
           _getMapStyles: function _getMapStyles() {
+            var mapStyles = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.customStyles];
             var poiStyle = {
               featureType: 'poi',
               stylers: [{
                 visibility: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.showPlaces] ? 'on' : 'off'
               }]
             };
+
+            if (Object.prototype.toString.call(mapStyles) === '[object Array]') {
+              mapStyles.push(poiStyle);
+              return mapStyles;
+            }
+
+            console.error("".concat(_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.customStyles, " must be an array."));
             return [poiStyle];
           }
         }
@@ -2277,6 +2285,7 @@ defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.zoomMarke
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.animation] = mapAnims.smooth;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.showPlaces] = false;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.replaceInfoWindowContentWithMarkerData] = false;
+defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.customStyles] = [];
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.controls.zoomButtons] = false;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.controls.streetViewButton] = false;
 defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.controls.fullscreenButton] = false;
@@ -2355,6 +2364,7 @@ keys.map.zoomMarkerOnClick = 'mapZoomMarkerOnClick';
 keys.map.animation = 'mapAnimation';
 keys.map.showPlaces = 'mapShowPlaces';
 keys.map.replaceInfoWindowContentWithMarkerData = 'mapInfoWindowReplaceWithMarkerData';
+keys.map.customStyles = 'mapCustomStyles';
 keys.map.controls = {};
 keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
 keys.map.controls.streetViewButton = 'mapEnableStreetView';

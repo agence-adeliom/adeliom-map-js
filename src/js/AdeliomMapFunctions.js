@@ -728,6 +728,8 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @private
                  */
                 _getMapStyles: () => {
+                    const mapStyles = this.options[keys.map.customStyles];
+
                     const poiStyle = {
                         featureType: 'poi',
                         stylers: [
@@ -737,8 +739,16 @@ export default class AdeliomMapFunctions extends Emitter {
                         ]
                     };
 
+                    if (Object.prototype.toString.call(mapStyles) === '[object Array]') {
+                        mapStyles.push(poiStyle);
+
+                        return mapStyles;
+                    }
+
+                    console.error(`${keys.map.customStyles} must be an array.`);
+
                     return [
-                        poiStyle,
+                        poiStyle
                     ];
                 }
             }

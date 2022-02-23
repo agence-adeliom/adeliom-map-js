@@ -38,6 +38,7 @@ defaultOptions[keys.map.zoomMarkerOnClick] = 12;
 defaultOptions[keys.map.animation] = mapAnims.smooth;
 defaultOptions[keys.map.showPlaces] = false;
 defaultOptions[keys.map.replaceInfoWindowContentWithMarkerData] = false;
+defaultOptions[keys.map.customStyles] = [];
 defaultOptions[keys.map.controls.zoomButtons] = false;
 defaultOptions[keys.map.controls.streetViewButton] = false;
 defaultOptions[keys.map.controls.fullscreenButton] = false;
