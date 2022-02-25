@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 hoveredIcon: '/dist/img/marker-selected.png',
                 infoWindowTemplate: '<div class="map-infowindow-elt">Test template</div>',
                 listEltTemplate: 'Test de template personnalisé pour le marqueur',
+                listEltId: 1,
             },
             {
                 title: 'Cathédrale de Strasbourg',

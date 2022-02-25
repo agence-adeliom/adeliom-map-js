@@ -3,6 +3,7 @@
 Dépendance de gestion de Google Maps / Store Locator Adeliom
 
 ## Initialisation
+
 ```javascript
 import AdeliomMap from "./AdeliomMap"
 
@@ -11,6 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const adeliomMap = new AdeliomMap(paramsArray);
 });
 ```
+
+## Éléments de DOM
+
+`[js-map]` : container de la map<br>
+`[js-map-list]` : container de la liste d'éléments<br>
+`[js-map-list-id]` : élément de liste généré statiquement (fournir la propriété `listEltId` au marker associé)<br>
+
 ## Options disponibles
 
 ### Base

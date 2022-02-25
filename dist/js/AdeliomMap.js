@@ -1184,28 +1184,34 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
     function _createMapListInstance(markerRawData, mapMarkerInstance) {
       var _this2 = this;
 
-      var mapListInstance = document.createElement('div');
-      var selectorWithout = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector].replace('[', '').replace(']', '');
-      mapListInstance.setAttribute(selectorWithout + '-elt', '');
-      var listInstanceHtml; // If a list elt template is defined for this specific marker
+      var mapListInstance;
 
-      if (markerRawData !== null && markerRawData !== void 0 && markerRawData.listEltTemplate) {
-        listInstanceHtml = markerRawData.listEltTemplate;
+      if (markerRawData !== null && markerRawData !== void 0 && markerRawData.listEltId) {
+        mapListInstance = document.querySelector("[js-map-list-id='".concat(markerRawData.listEltId, "']"));
       } else {
-        listInstanceHtml = this.mapListEltTemplate;
+        mapListInstance = document.createElement('div');
+        var selectorWithout = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector].replace('[', '').replace(']', '');
+        mapListInstance.setAttribute(selectorWithout + '-elt', '');
+        var listInstanceHtml; // If a list elt template is defined for this specific marker
 
-        if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.replaceWithMarkerData]) {
-          listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
+        if (markerRawData !== null && markerRawData !== void 0 && markerRawData.listEltTemplate) {
+          listInstanceHtml = markerRawData.listEltTemplate;
+        } else {
+          listInstanceHtml = this.mapListEltTemplate;
+
+          if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.replaceWithMarkerData]) {
+            listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
+          }
         }
+
+        mapListInstance.innerHTML = listInstanceHtml;
+        this.mapListContainer.appendChild(mapListInstance);
       }
 
-      mapListInstance.innerHTML = listInstanceHtml;
-      mapListInstance.addEventListener('click', function () {
-        _this2._handleClickListElt(mapListInstance);
-      });
-      this.mapListContainer.appendChild(mapListInstance);
-
       if (mapListInstance) {
+        mapListInstance.addEventListener('click', function () {
+          _this2._handleClickListElt(mapListInstance);
+        });
         this.emit(AdeliomMapEvents.listElements.created, mapListInstance);
       }
 

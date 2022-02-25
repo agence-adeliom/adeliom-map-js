@@ -155,33 +155,40 @@ export default class AdeliomMap extends AdeliomMapFunctions {
      * @private
      */
     _createMapListInstance(markerRawData, mapMarkerInstance) {
-        const mapListInstance = document.createElement('div');
-        const selectorWithout = this.options[keys.list.selector].replace('[', '').replace(']', '');
+        let mapListInstance;
 
-        mapListInstance.setAttribute(selectorWithout + '-elt', '');
+        if (markerRawData?.listEltId) {
+            mapListInstance = document.querySelector(`[js-map-list-id='${markerRawData.listEltId}']`);
 
-        let listInstanceHtml;
-
-        // If a list elt template is defined for this specific marker
-        if (markerRawData?.listEltTemplate) {
-            listInstanceHtml = markerRawData.listEltTemplate;
         } else {
-            listInstanceHtml = this.mapListEltTemplate;
+            mapListInstance = document.createElement('div');
+            const selectorWithout = this.options[keys.list.selector].replace('[', '').replace(']', '');
 
-            if (this.options[keys.list.replaceWithMarkerData]) {
-                listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
+            mapListInstance.setAttribute(selectorWithout + '-elt', '');
+
+            let listInstanceHtml;
+
+            // If a list elt template is defined for this specific marker
+            if (markerRawData?.listEltTemplate) {
+                listInstanceHtml = markerRawData.listEltTemplate;
+            } else {
+                listInstanceHtml = this.mapListEltTemplate;
+
+                if (this.options[keys.list.replaceWithMarkerData]) {
+                    listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
+                }
             }
+
+            mapListInstance.innerHTML = listInstanceHtml;
+
+            this.mapListContainer.appendChild(mapListInstance);
         }
 
-        mapListInstance.innerHTML = listInstanceHtml;
-
-        mapListInstance.addEventListener('click', () => {
-            this._handleClickListElt(mapListInstance);
-        });
-
-        this.mapListContainer.appendChild(mapListInstance);
-
         if (mapListInstance) {
+            mapListInstance.addEventListener('click', () => {
+                this._handleClickListElt(mapListInstance);
+            });
+
             this.emit(AdeliomMapEvents.listElements.created, mapListInstance);
         }
 
