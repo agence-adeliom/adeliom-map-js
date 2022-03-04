@@ -887,9 +887,9 @@ class MarkerClusterer extends OverlayViewSafe {
 
 /***/ }),
 
-/***/ "./src/js/AdeliomMap.js":
+/***/ "./src/js/AdeliomMap.ts":
 /*!******************************!*\
-  !*** ./src/js/AdeliomMap.js ***!
+  !*** ./src/js/AdeliomMap.ts ***!
   \******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -899,18 +899,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "AdeliomMapEvents": () => (/* binding */ AdeliomMapEvents),
 /* harmony export */   "default": () => (/* binding */ AdeliomMap)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _AdeliomMapFunctions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AdeliomMapFunctions */ "./src/js/AdeliomMapFunctions.js");
-/* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.js");
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./errors */ "./src/js/errors.js");
+/* harmony import */ var _AdeliomMapFunctions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AdeliomMapFunctions */ "./src/js/AdeliomMapFunctions.ts");
+/* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.ts");
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./errors */ "./src/js/errors.ts");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
-
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -935,7 +927,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
-var mapCustomClass = 'adeliom-map-js';
 var AdeliomMapEvents = {
   map: {
     hasAutoCentered: 'mapHasAutoCentered'
@@ -963,176 +954,52 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
   var _super = _createSuper(AdeliomMap);
 
   function AdeliomMap(options) {
-    var _this$options$keys$ma, _this$options$keys$ma2;
-
     var _this;
 
     _classCallCheck(this, AdeliomMap);
 
+    var _a, _b;
+
     _this = _super.call(this);
     _this.options = Object.assign(_this.defaultOptions, options);
-    _this.hasConsent = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].rgpd.defaultConsentValue];
-    _this.mapContainer = document.querySelector(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.selector]);
+    _this.hasConsent = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].rgpd.defaultConsentValue];
+    _this.mapContainer = document.querySelector(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.selector]);
 
     _this.helpers.map._commonInit();
 
     _this.mapListEltTemplate = null;
 
-    if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector]) {
-      _this.mapListContainer = document.querySelector(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector]);
+    if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].list.selector]) {
+      _this.mapListContainer = document.querySelector(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].list.selector]);
 
       _this.helpers.listNodes._commonInit();
 
-      if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.eltTemplate]) {
-        _this.mapListEltTemplate = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.eltTemplate];
+      if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].list.eltTemplate]) {
+        _this.mapListEltTemplate = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].list.eltTemplate];
       }
     }
 
-    _this.markers = (_this$options$keys$ma = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markers]) !== null && _this$options$keys$ma !== void 0 ? _this$options$keys$ma : [];
-    _this.displayMarkers = (_this$options$keys$ma2 = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayMarkers]) !== null && _this$options$keys$ma2 !== void 0 ? _this$options$keys$ma2 : false;
+    _this.markers = (_a = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.markers]) !== null && _a !== void 0 ? _a : [];
+    _this.displayMarkers = (_b = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.displayMarkers]) !== null && _b !== void 0 ? _b : false;
 
-    if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].apiKey]) {
+    if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].apiKey]) {
       _this.helpers.map._setMap();
     } else {
-      console.error(_errors__WEBPACK_IMPORTED_MODULE_3__["default"].apiKey.notProvided);
+      console.error(_errors__WEBPACK_IMPORTED_MODULE_2__["default"].apiKey.notProvided);
     }
 
     return _this;
   }
 
   _createClass(AdeliomMap, [{
-    key: "_initMap",
-    value: function () {
-      var _initMap2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.selector]) {
-                  _context.next = 11;
-                  break;
-                }
-
-                if (!this.mapContainer) {
-                  _context.next = 8;
-                  break;
-                }
-
-                this.helpers.map._addClassesToMapContainer([mapCustomClass]);
-
-                _context.next = 5;
-                return this._handleConsent();
-
-              case 5:
-                return _context.abrupt("return", _context.sent);
-
-              case 8:
-                console.error(_errors__WEBPACK_IMPORTED_MODULE_3__["default"].selectors.map.notFound);
-
-              case 9:
-                _context.next = 12;
-                break;
-
-              case 11:
-                console.error(_errors__WEBPACK_IMPORTED_MODULE_3__["default"].selectors.map.notProvided);
-
-              case 12:
-                return _context.abrupt("return", false);
-
-              case 13:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function _initMap() {
-        return _initMap2.apply(this, arguments);
-      }
-
-      return _initMap;
-    }()
-  }, {
-    key: "_handleConsent",
-    value: function () {
-      var _handleConsent2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
-        var provider;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                if (!(this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].rgpd.askForConsent] && !this.hasConsent)) {
-                  _context2.next = 5;
-                  break;
-                }
-
-                this.helpers.consentScreen._setConsentScreen();
-
-                return _context2.abrupt("return", false);
-
-              case 5:
-                if (!(!this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.checkSize] || this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
-                  _context2.next = 21;
-                  break;
-                }
-
-                provider = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider];
-
-                if (!provider) {
-                  _context2.next = 18;
-                  break;
-                }
-
-                if (!this.helpers.providers._isProviderAvailable(provider)) {
-                  _context2.next = 17;
-                  break;
-                }
-
-                _context2.t0 = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider];
-                _context2.next = _context2.t0 === 'google' ? 12 : 12;
-                break;
-
-              case 12:
-                _context2.next = 14;
-                return this.helpers.google.map._initMap(this.mapContainer);
-
-              case 14:
-                return _context2.abrupt("return", true);
-
-              case 17:
-                console.error("The provider \"".concat(provider, "\" is not available."));
-
-              case 18:
-                return _context2.abrupt("return", false);
-
-              case 21:
-                console.error(_errors__WEBPACK_IMPORTED_MODULE_3__["default"].selectors.map.tooSmall);
-                return _context2.abrupt("return", false);
-
-              case 23:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function _handleConsent() {
-        return _handleConsent2.apply(this, arguments);
-      }
-
-      return _handleConsent;
-    }()
+    key: "_setConsent",
+    value:
     /**
      * Dynamically sets the consent value to display consent screen or map depending on passed value
      * @param consent
      * @public
      */
-
-  }, {
-    key: "_setConsent",
-    value: function _setConsent(consent) {
+    function _setConsent(consent) {
       this.hasConsent = consent;
 
       if (consent) {
@@ -1141,107 +1008,19 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
         this.helpers.consentScreen._setConsentScreen();
       }
     }
-  }, {
-    key: "_handleClickMarker",
-    value: function _handleClickMarker(marker) {
-      if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayInfoWindows]) {
-        if (this.helpers.markers._isMarkerSelected(marker)) {
-          this.helpers.markers._setMarkerState(marker, false);
-        } else {
-          this.helpers.markers._setMarkerState(marker, true);
-        }
-      }
-
-      var data = this.helpers.markersData._getDataByProperty('marker', marker);
-
-      this.emit(AdeliomMapEvents.markers.clicked, data);
-    }
-  }, {
-    key: "_handleClickListElt",
-    value: function _handleClickListElt(listElt) {
-      var mapMarkerInstance = this.helpers.markers._getMarkerByListEltNode(listElt);
-
-      if (mapMarkerInstance) {
-        if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayInfoWindows]) {
-          this.helpers.markers._setMarkerState(mapMarkerInstance, 'toggle');
-        }
-      }
-
-      var data = this.helpers.markersData._getDataByProperty('listElt', listElt);
-
-      this.emit(AdeliomMapEvents.listElements.clicked, data);
-    }
-  }, {
-    key: "_createMapListInstance",
-    value:
-    /**
-     * Creates a map list instance (store locator instance)
-     * @param markerRawData
-     * @param mapMarkerInstance
-     * @returns {HTMLDivElement}
-     * @private
-     */
-    function _createMapListInstance(markerRawData, mapMarkerInstance) {
-      var _this2 = this;
-
-      var mapListInstance;
-
-      if (markerRawData !== null && markerRawData !== void 0 && markerRawData.listEltId) {
-        mapListInstance = document.querySelector("[js-map-list-id='".concat(markerRawData.listEltId, "']"));
-      } else {
-        mapListInstance = document.createElement('div');
-        var selectorWithout = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector].replace('[', '').replace(']', '');
-        mapListInstance.setAttribute(selectorWithout + '-elt', '');
-        var listInstanceHtml; // If a list elt template is defined for this specific marker
-
-        if (markerRawData !== null && markerRawData !== void 0 && markerRawData.listEltTemplate) {
-          listInstanceHtml = markerRawData.listEltTemplate;
-        } else {
-          listInstanceHtml = this.mapListEltTemplate;
-
-          if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.replaceWithMarkerData]) {
-            listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
-          }
-        }
-
-        mapListInstance.innerHTML = listInstanceHtml;
-        this.mapListContainer.appendChild(mapListInstance);
-      }
-
-      if (mapListInstance) {
-        mapListInstance.addEventListener('click', function () {
-          _this2._handleClickListElt(mapListInstance);
-        });
-        this.emit(AdeliomMapEvents.listElements.created, mapListInstance);
-      }
-
-      return mapListInstance;
-    }
-  }, {
-    key: "_replaceMarkerDataInString",
-    value: function _replaceMarkerDataInString(markerData, string) {
-      if (string) {
-        Object.keys(markerData).forEach(function (key) {
-          var search = "{{ ".concat(key, " }}");
-          string = string.replaceAll(search, markerData[key]);
-        });
-      }
-
-      return string;
-    }
   }]);
 
   return AdeliomMap;
-}(_AdeliomMapFunctions__WEBPACK_IMPORTED_MODULE_1__["default"]);
+}(_AdeliomMapFunctions__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 
 ;
 
 /***/ }),
 
-/***/ "./src/js/AdeliomMapClusterRenderer.js":
+/***/ "./src/js/AdeliomMapClusterRenderer.ts":
 /*!*********************************************!*\
-  !*** ./src/js/AdeliomMapClusterRenderer.js ***!
+  !*** ./src/js/AdeliomMapClusterRenderer.ts ***!
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -1346,22 +1125,20 @@ var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
   }, {
     key: "render",
     value: function render(_ref, stats) {
-      var _params$defaultIconCo,
-          _params$fontColor,
-          _params$size,
-          _params$icon,
-          _params$fontSize,
-          _this2 = this;
+      var _this2 = this;
 
       var count = _ref.count,
           position = _ref.position;
+
+      var _a, _b, _c, _d, _e;
+
       var params = this.getParamsByCount(count);
       var color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
-      var defaultIconColor = (_params$defaultIconCo = params === null || params === void 0 ? void 0 : params.defaultIconColor) !== null && _params$defaultIconCo !== void 0 ? _params$defaultIconCo : color;
-      var fontColor = (_params$fontColor = params === null || params === void 0 ? void 0 : params.fontColor) !== null && _params$fontColor !== void 0 ? _params$fontColor : 'rgba(255,255,255,0.9)';
-      var iconSize = (_params$size = params === null || params === void 0 ? void 0 : params.size) !== null && _params$size !== void 0 ? _params$size : 56;
-      var iconData = (_params$icon = params === null || params === void 0 ? void 0 : params.icon) !== null && _params$icon !== void 0 ? _params$icon : this.getDefaultIconData(this.getSvg(defaultIconColor));
-      var fontSize = (_params$fontSize = params === null || params === void 0 ? void 0 : params.fontSize) !== null && _params$fontSize !== void 0 ? _params$fontSize : '12px';
+      var defaultIconColor = (_a = params === null || params === void 0 ? void 0 : params.defaultIconColor) !== null && _a !== void 0 ? _a : color;
+      var fontColor = (_b = params === null || params === void 0 ? void 0 : params.fontColor) !== null && _b !== void 0 ? _b : 'rgba(255,255,255,0.9)';
+      var iconSize = (_c = params === null || params === void 0 ? void 0 : params.size) !== null && _c !== void 0 ? _c : 56;
+      var iconData = (_d = params === null || params === void 0 ? void 0 : params.icon) !== null && _d !== void 0 ? _d : this.getDefaultIconData(this.getSvg(defaultIconColor));
+      var fontSize = (_e = params === null || params === void 0 ? void 0 : params.fontSize) !== null && _e !== void 0 ? _e : '12px';
       var options = {
         position: position,
         label: {
@@ -1369,14 +1146,16 @@ var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
           color: fontColor,
           fontSize: fontSize
         },
-        zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count
-      };
+        zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+        icon: undefined
+      }; // @ts-ignore
+
       options.icon = this.getIconConfig(iconData, iconSize);
       var clusterMarker = new google.maps.Marker(options);
 
-      if (params !== null && params !== void 0 && params.hoverIcon || params !== null && params !== void 0 && params.defaultIconHoverColor) {
+      if ((params === null || params === void 0 ? void 0 : params.hoverIcon) || (params === null || params === void 0 ? void 0 : params.defaultIconHoverColor)) {
         clusterMarker.addListener('mouseover', function () {
-          if (params !== null && params !== void 0 && params.hoverIcon) {
+          if (params === null || params === void 0 ? void 0 : params.hoverIcon) {
             clusterMarker.setIcon(_this2.getIconConfig(params.hoverIcon, iconSize));
           } else {
             clusterMarker.setIcon(_this2.getIconConfig(_this2.getDefaultIconData(_this2.getSvg(params.defaultIconHoverColor)), iconSize));
@@ -1406,9 +1185,9 @@ var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
 
 /***/ }),
 
-/***/ "./src/js/AdeliomMapFunctions.js":
+/***/ "./src/js/AdeliomMapFunctions.ts":
 /*!***************************************!*\
-  !*** ./src/js/AdeliomMapFunctions.js ***!
+  !*** ./src/js/AdeliomMapFunctions.ts ***!
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -1421,19 +1200,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dauphine-js/dist/emitter */ "./node_modules/dauphine-js/dist/emitter.js");
 /* harmony import */ var dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.js");
-/* harmony import */ var _defaultOptions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./defaultOptions */ "./src/js/defaultOptions.js");
-/* harmony import */ var _AdeliomMap__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./AdeliomMap */ "./src/js/AdeliomMap.js");
-/* harmony import */ var google_maps__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! google-maps */ "./node_modules/google-maps/lib/esm/loader.js");
+/* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.ts");
+/* harmony import */ var _defaultOptions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./defaultOptions */ "./src/js/defaultOptions.ts");
+/* harmony import */ var _AdeliomMap__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./AdeliomMap */ "./src/js/AdeliomMap.ts");
+/* harmony import */ var google_maps__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! google-maps */ "./node_modules/google-maps/lib/esm/loader.js");
 /* harmony import */ var _googlemaps_markerclusterer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @googlemaps/markerclusterer */ "./node_modules/@googlemaps/markerclusterer/dist/index.esm.js");
-/* harmony import */ var _AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./AdeliomMapClusterRenderer */ "./src/js/AdeliomMapClusterRenderer.js");
+/* harmony import */ var _AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./AdeliomMapClusterRenderer */ "./src/js/AdeliomMapClusterRenderer.ts");
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./errors */ "./src/js/errors.ts");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -1441,11 +1217,11 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -1461,7 +1237,39 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+var __awaiter = undefined && undefined.__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+}; // @ts-ignore
+
+
 
 
 
@@ -1490,8 +1298,11 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
     _classCallCheck(this, AdeliomMapFunctions);
 
     _this = _super.call(this);
-
-    _defineProperty(_assertThisInitialized(_this), "helpers", {
+    _this.google = null;
+    _this.options = _defaultOptions__WEBPACK_IMPORTED_MODULE_3__["default"];
+    _this.hasConsent = false;
+    _this.mapCustomClass = 'adeliom-map-js';
+    _this.helpers = {
       providers: {
         /**
          * Returns whether the provided provider is part of the available providers array
@@ -1524,6 +1335,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          * @private
          */
         _returnDataByInfoWindow: function _returnDataByInfoWindow(data, infoWindow) {
+          // @ts-ignore
           return _this.helpers.markersData._getDataByProperty('infoWindow', infoWindow)[data];
         },
 
@@ -1681,11 +1493,11 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          */
         _unselectAllMarkers: function _unselectAllMarkers() {
           _this.markersData.forEach(function (markerData) {
-            if (markerData !== null && markerData !== void 0 && markerData.marker && markerData !== null && markerData !== void 0 && markerData.selected) {
+            if ((markerData === null || markerData === void 0 ? void 0 : markerData.marker) && (markerData === null || markerData === void 0 ? void 0 : markerData.selected)) {
               _this.helpers.markers._setMarkerState(markerData.marker, false);
             }
 
-            if (markerData !== null && markerData !== void 0 && markerData.infoWindow) {
+            if (markerData === null || markerData === void 0 ? void 0 : markerData.infoWindow) {
               if (_this.helpers.infoWindows._isInfoWindowOpened(markerData.infoWindow)) {
                 markerData.infoWindow.close();
               }
@@ -1726,6 +1538,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
           if (isSelected == 'toggle') {
+            // @ts-ignore
             isSelected = !_this.helpers.markersData._getDataByProperty('marker', marker).selected;
           }
 
@@ -1803,7 +1616,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
         _getIdleIconForMarker: function _getIdleIconForMarker(marker) {
           var data = _this.helpers.markersData._getDataByProperty('marker', marker);
 
-          if (data !== null && data !== void 0 && data.icon) {
+          if (data === null || data === void 0 ? void 0 : data.icon) {
             return data.icon;
           } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl]) {
             return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl];
@@ -1821,7 +1634,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
         _getHoveredIconForMarker: function _getHoveredIconForMarker(marker) {
           var data = _this.helpers.markersData._getDataByProperty('marker', marker);
 
-          if (data !== null && data !== void 0 && data.hoveredIcon) {
+          if (data === null || data === void 0 ? void 0 : data.hoveredIcon) {
             return data.hoveredIcon;
           } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerHoveredIconUrl]) {
             return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerHoveredIconUrl];
@@ -1839,7 +1652,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
         _getSelectedIconForMarker: function _getSelectedIconForMarker(marker) {
           var data = _this.helpers.markersData._getDataByProperty('marker', marker);
 
-          if (data !== null && data !== void 0 && data.selectedIcon) {
+          if (data === null || data === void 0 ? void 0 : data.selectedIcon) {
             return data.selectedIcon;
           } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerSelectedIconUrl]) {
             return _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerSelectedIconUrl];
@@ -1855,7 +1668,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          */
         _getAllMarkerInstances: function _getAllMarkerInstances() {
           return _this.markersData.map(function (data) {
-            if (data !== null && data !== void 0 && data.marker) {
+            if (data === null || data === void 0 ? void 0 : data.marker) {
               return data.marker;
             }
           });
@@ -1873,6 +1686,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           var returnedData = null;
 
           for (var i = 0; i < Object.keys(_this.markersData).length; i++) {
+            // @ts-ignore
             var tempMarker = _this.markersData[Object.keys(_this.markersData)[i]];
 
             if (tempMarker[propertyName] === property) {
@@ -1894,7 +1708,9 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          */
         _setDataByProperty: function _setDataByProperty(propertyName, property, key, value) {
           for (var i = 0; i < Object.keys(_this.markersData).length; i++) {
+            // @ts-ignore
             if (_this.markersData[Object.keys(_this.markersData)[i]][propertyName] === property) {
+              // @ts-ignore
               _this.markersData[Object.keys(_this.markersData)[i]][key] = value;
             }
           }
@@ -1910,6 +1726,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          * @private
          */
         _returnDataByMarker: function _returnDataByMarker(data, marker) {
+          // @ts-ignore
           return _this.helpers.markersData._getDataByProperty('marker', marker)[data];
         }
       },
@@ -1922,6 +1739,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          * @private
          */
         _returnDataByListEltNode: function _returnDataByListEltNode(data, listEltNode) {
+          // @ts-ignore
           return _this.helpers.markersData._getDataByProperty('listElt', listEltNode)[data];
         },
 
@@ -1988,7 +1806,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
 
           if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]) {
             // Only zoom if less zoomed than zoom value
-            if (_this.map.getZoom() < _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]) {
+            if (_this.map && _this.map.getZoom() < _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]) {
               _this.map.setZoom(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.zoomMarkerOnClick]);
             }
           }
@@ -2003,7 +1821,9 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
             case 'google':
             default:
-              _this.map.setCenter(center);
+              if (_this.map) {
+                _this.map.setCenter(center);
+              }
 
               break;
           }
@@ -2018,7 +1838,9 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           switch (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider]) {
             case 'google':
             default:
-              _this.map.panTo(center);
+              if (_this.map) {
+                _this.map.panTo(center);
+              }
 
               break;
           }
@@ -2133,8 +1955,10 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * @private
            */
           _getLatLng: function _getLatLng(coordinates) {
-            if (coordinates !== null && coordinates !== void 0 && coordinates.lat && coordinates !== null && coordinates !== void 0 && coordinates.lng) {
-              return new _this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+            if ((coordinates === null || coordinates === void 0 ? void 0 : coordinates.lat) && (coordinates === null || coordinates === void 0 ? void 0 : coordinates.lng)) {
+              if (_this.google) {
+                return new _this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+              }
             }
 
             console.error('No lat/lng object provided');
@@ -2155,34 +1979,30 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * Loop to init Google Maps markers
            * @private
            */
-          _initMapMarkers: function () {
-            var _initMapMarkers2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(markers) {
+          _initMapMarkers: function _initMapMarkers(markers) {
+            return __awaiter(_assertThisInitialized(_this), void 0, void 0, /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+              var _this2 = this;
+
               return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
                 while (1) {
                   switch (_context.prev = _context.next) {
                     case 0:
                       markers.forEach(function (marker) {
-                        var markerData = _this.helpers.google.markers._createMapMarker(marker);
+                        var markerData = _this2.helpers.google.markers._createMapMarker(marker);
 
-                        _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.markers.dataCreated, markerData);
+                        _this2.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.markers.dataCreated, markerData);
                       });
 
-                      _this.helpers.google.markers._initMapClusters();
+                      this.helpers.google.markers._initMapClusters();
 
                     case 2:
                     case "end":
                       return _context.stop();
                   }
                 }
-              }, _callee);
+              }, _callee, this);
             }));
-
-            function _initMapMarkers(_x) {
-              return _initMapMarkers2.apply(this, arguments);
-            }
-
-            return _initMapMarkers;
-          }(),
+          },
 
           /**
            * Init the map clusters
@@ -2207,10 +2027,15 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            */
           _getIconConfig: function _getIconConfig(url) {
             var size = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconSize];
-            return {
-              url: url,
-              scaledSize: new _this.google.maps.Size(size, size)
-            };
+
+            if (_this.google) {
+              return {
+                url: url,
+                scaledSize: new _this.google.maps.Size(size, size)
+              };
+            }
+
+            return null;
           },
 
           /**
@@ -2258,20 +2083,22 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * @private
            */
           _handleBasicMarkerListeners: function _handleBasicMarkerListeners(markerInstance) {
-            // Listener to handle marker click
-            _this.google.maps.event.addListener(markerInstance, 'click', function () {
-              _this._handleClickMarker(markerInstance);
-            }); // Listener to handle mouseover (change icon)
+            if (_this.google) {
+              // Listener to handle marker click
+              _this.google.maps.event.addListener(markerInstance, 'click', function () {
+                _this._handleClickMarker(markerInstance);
+              }); // Listener to handle mouseover (change icon)
 
 
-            _this.google.maps.event.addListener(markerInstance, 'mouseover', function () {
-              _this.helpers.google.markers._setHoveredIcon(markerInstance);
-            }); // Listener to handle mouseout (change icon)
+              _this.google.maps.event.addListener(markerInstance, 'mouseover', function () {
+                _this.helpers.google.markers._setHoveredIcon(markerInstance);
+              }); // Listener to handle mouseout (change icon)
 
 
-            _this.google.maps.event.addListener(markerInstance, 'mouseout', function () {
-              _this.helpers.google.markers._setIdleIcon(markerInstance);
-            });
+              _this.google.maps.event.addListener(markerInstance, 'mouseout', function () {
+                _this.helpers.google.markers._setIdleIcon(markerInstance);
+              });
+            }
           },
 
           /**
@@ -2283,7 +2110,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           _createMapMarker: function _createMapMarker(markerRawData) {
             var markerData = {};
             markerData.selected = false;
-            var markerPosition = new _this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
+            var markerPosition = null;
+
+            if (_this.google) {
+              markerPosition = new _this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
+            }
+
             var markerTitle = markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.title;
             var markerConfig = {
               position: markerPosition,
@@ -2291,22 +2123,26 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               map: _this.map
             };
 
-            if (markerRawData !== null && markerRawData !== void 0 && markerRawData.icon) {
+            if (markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.icon) {
               markerConfig.icon = _this.helpers.google.markers._getIconConfig(markerRawData.icon);
               markerData.icon = markerRawData.icon;
             } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl]) {
               markerConfig.icon = _this.helpers.google.markers._getIconConfig(_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.markerIconUrl]);
             }
 
-            if (markerRawData !== null && markerRawData !== void 0 && markerRawData.selectedIcon) {
+            if (markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.selectedIcon) {
               markerData.selectedIcon = markerRawData.selectedIcon;
             }
 
-            if (markerRawData !== null && markerRawData !== void 0 && markerRawData.hoveredIcon) {
+            if (markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.hoveredIcon) {
               markerData.hoveredIcon = markerRawData.hoveredIcon;
             }
 
-            var markerInstance = new _this.google.maps.Marker(markerConfig);
+            var markerInstance = null;
+
+            if (_this.google) {
+              markerInstance = new _this.google.maps.Marker(markerConfig);
+            }
 
             _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.markers.created, markerInstance);
 
@@ -2337,7 +2173,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayInfoWindows]) {
               var content; // If an infoWindow template is defined for this specific marker
 
-              if (markerRawData !== null && markerRawData !== void 0 && markerRawData.infoWindowTemplate) {
+              if (markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.infoWindowTemplate) {
                 content = markerRawData.infoWindowTemplate;
               } else {
                 content = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.infoWindowTemplate];
@@ -2347,9 +2183,13 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
                 }
               }
 
-              var infoWindowInstance = new _this.google.maps.InfoWindow({
-                content: content
-              });
+              var infoWindowInstance = null;
+
+              if (_this.google) {
+                infoWindowInstance = new _this.google.maps.InfoWindow({
+                  content: content
+                });
+              }
 
               _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.infoWindows.created, infoWindowInstance);
 
@@ -2366,36 +2206,36 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * @returns {Promise<void>}
            * @private
            */
-          _initMap: function () {
-            var _initMap2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(container) {
+          _initMap: function _initMap(container) {
+            return __awaiter(_assertThisInitialized(_this), void 0, void 0, /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
               var loader;
               return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
                 while (1) {
                   switch (_context2.prev = _context2.next) {
                     case 0:
-                      if (_this.google) {
+                      if (this.google) {
                         _context2.next = 5;
                         break;
                       }
 
-                      loader = new google_maps__WEBPACK_IMPORTED_MODULE_7__.Loader(_this.options.apiKey);
+                      loader = new google_maps__WEBPACK_IMPORTED_MODULE_8__.Loader(this.options.apiKey);
                       _context2.next = 4;
                       return loader.load();
 
                     case 4:
-                      _this.google = _context2.sent;
+                      this.google = _context2.sent;
 
                     case 5:
-                      _this.map = new _this.google.maps.Map(container, {
-                        center: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.defaultCenter],
-                        zoom: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.defaultZoom],
-                        zoomControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.zoomButtons],
-                        streetViewControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.streetViewButton],
-                        fullscreenControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.fullscreenButton],
-                        mapTypeControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.mapTypeButtons],
-                        scaleControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.displayScale],
-                        rotateControl: _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.rotateControl],
-                        styles: _this.helpers.google.map._getMapStyles()
+                      this.map = new this.google.maps.Map(container, {
+                        center: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.defaultCenter],
+                        zoom: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.defaultZoom],
+                        zoomControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.zoomButtons],
+                        streetViewControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.streetViewButton],
+                        fullscreenControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.fullscreenButton],
+                        mapTypeControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.mapTypeButtons],
+                        scaleControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.displayScale],
+                        rotateControl: this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.controls.rotateControl],
+                        styles: this.helpers.google.map._getMapStyles()
                       });
 
                     case 6:
@@ -2403,15 +2243,9 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
                       return _context2.stop();
                   }
                 }
-              }, _callee2);
+              }, _callee2, this);
             }));
-
-            function _initMap(_x2) {
-              return _initMap2.apply(this, arguments);
-            }
-
-            return _initMap;
-          }(),
+          },
 
           /**
            * Returns the style array required to define Google Maps style
@@ -2428,7 +2262,10 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             };
 
             if (Object.prototype.toString.call(mapStyles) === '[object Array]') {
-              mapStyles.push(poiStyle);
+              if (mapStyles) {
+                mapStyles.push(poiStyle);
+              }
+
               return mapStyles;
             }
 
@@ -2437,8 +2274,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           }
         }
       }
-    });
-
+    };
     _this.defaultOptions = _defaultOptions__WEBPACK_IMPORTED_MODULE_3__["default"];
     _this.map = null;
     _this.mapContainer = null;
@@ -2446,20 +2282,224 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
     _this.markers = [];
     _this.markersData = [];
     _this.displayMarkers = false;
-    _this.google = null;
     return _this;
   }
 
-  return _createClass(AdeliomMapFunctions);
+  _createClass(AdeliomMapFunctions, [{
+    key: "_replaceMarkerDataInString",
+    value: function _replaceMarkerDataInString(markerData, string) {
+      if (string) {
+        Object.keys(markerData).forEach(function (key) {
+          var search = "{{ ".concat(key, " }}");
+          string = string.replaceAll(search, markerData[key]);
+        });
+      }
+
+      return string;
+    }
+    /**
+     * Creates a map list instance (store locator instance)
+     * @param markerRawData
+     * @param mapMarkerInstance
+     * @returns {HTMLDivElement}
+     * @private
+     */
+
+  }, {
+    key: "_createMapListInstance",
+    value: function _createMapListInstance(markerRawData, mapMarkerInstance) {
+      var _this3 = this;
+
+      var mapListInstance;
+
+      if (markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.listEltId) {
+        mapListInstance = document.querySelector("[js-map-list-id='".concat(markerRawData.listEltId, "']"));
+      } else {
+        mapListInstance = document.createElement('div');
+        var selectorWithout = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.selector].replace('[', '').replace(']', '');
+        mapListInstance.setAttribute(selectorWithout + '-elt', '');
+        var listInstanceHtml; // If a list elt template is defined for this specific marker
+
+        if (markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.listEltTemplate) {
+          listInstanceHtml = markerRawData.listEltTemplate;
+        } else {
+          listInstanceHtml = this.mapListEltTemplate;
+
+          if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].list.replaceWithMarkerData]) {
+            listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
+          }
+        }
+
+        mapListInstance.innerHTML = listInstanceHtml;
+
+        if (this.mapListContainer) {
+          this.mapListContainer.appendChild(mapListInstance);
+        }
+      }
+
+      if (mapListInstance) {
+        mapListInstance.addEventListener('click', function () {
+          _this3._handleClickListElt(mapListInstance);
+        });
+        this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.listElements.created, mapListInstance);
+      }
+
+      return mapListInstance;
+    }
+  }, {
+    key: "_handleClickListElt",
+    value: function _handleClickListElt(listElt) {
+      var mapMarkerInstance = this.helpers.markers._getMarkerByListEltNode(listElt);
+
+      if (mapMarkerInstance) {
+        if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayInfoWindows]) {
+          this.helpers.markers._setMarkerState(mapMarkerInstance, 'toggle');
+        }
+      }
+
+      var data = this.helpers.markersData._getDataByProperty('listElt', listElt);
+
+      this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.listElements.clicked, data);
+    }
+  }, {
+    key: "_handleClickMarker",
+    value: function _handleClickMarker(marker) {
+      if (this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.displayInfoWindows]) {
+        if (this.helpers.markers._isMarkerSelected(marker)) {
+          this.helpers.markers._setMarkerState(marker, false);
+        } else {
+          this.helpers.markers._setMarkerState(marker, true);
+        }
+      }
+
+      var data = this.helpers.markersData._getDataByProperty('marker', marker);
+
+      this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_4__.AdeliomMapEvents.markers.clicked, data);
+    }
+  }, {
+    key: "_initMap",
+    value: function _initMap() {
+      return __awaiter(this, void 0, void 0, /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (!this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.selector]) {
+                  _context3.next = 11;
+                  break;
+                }
+
+                if (!this.mapContainer) {
+                  _context3.next = 8;
+                  break;
+                }
+
+                this.helpers.map._addClassesToMapContainer([this.mapCustomClass]);
+
+                _context3.next = 5;
+                return this._handleConsent();
+
+              case 5:
+                return _context3.abrupt("return", _context3.sent);
+
+              case 8:
+                console.error(_errors__WEBPACK_IMPORTED_MODULE_7__["default"].selectors.map.notFound);
+
+              case 9:
+                _context3.next = 12;
+                break;
+
+              case 11:
+                console.error(_errors__WEBPACK_IMPORTED_MODULE_7__["default"].selectors.map.notProvided);
+
+              case 12:
+                return _context3.abrupt("return", false);
+
+              case 13:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+    }
+  }, {
+    key: "_handleConsent",
+    value: function _handleConsent() {
+      return __awaiter(this, void 0, void 0, /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+        var provider;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                if (!(this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].rgpd.askForConsent] && !this.hasConsent)) {
+                  _context4.next = 5;
+                  break;
+                }
+
+                this.helpers.consentScreen._setConsentScreen();
+
+                return _context4.abrupt("return", false);
+
+              case 5:
+                if (!(!this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.checkSize] || this.mapContainer && this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
+                  _context4.next = 21;
+                  break;
+                }
+
+                provider = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider];
+
+                if (!provider) {
+                  _context4.next = 18;
+                  break;
+                }
+
+                if (!this.helpers.providers._isProviderAvailable(provider)) {
+                  _context4.next = 17;
+                  break;
+                }
+
+                _context4.t0 = this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_2__["default"].map.provider];
+                _context4.next = _context4.t0 === 'google' ? 12 : 12;
+                break;
+
+              case 12:
+                _context4.next = 14;
+                return this.helpers.google.map._initMap(this.mapContainer);
+
+              case 14:
+                return _context4.abrupt("return", true);
+
+              case 17:
+                console.error("The provider \"".concat(provider, "\" is not available."));
+
+              case 18:
+                return _context4.abrupt("return", false);
+
+              case 21:
+                console.error(_errors__WEBPACK_IMPORTED_MODULE_7__["default"].selectors.map.tooSmall);
+                return _context4.abrupt("return", false);
+
+              case 23:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+    }
+  }]);
+
+  return AdeliomMapFunctions;
 }((dauphine_js_dist_emitter__WEBPACK_IMPORTED_MODULE_1___default()));
 
 
 
 /***/ }),
 
-/***/ "./src/js/defaultOptions.js":
+/***/ "./src/js/defaultOptions.ts":
 /*!**********************************!*\
-  !*** ./src/js/defaultOptions.js ***!
+  !*** ./src/js/defaultOptions.ts ***!
   \**********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2469,67 +2509,65 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "mapAnims": () => (/* binding */ mapAnims),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.js");
-
 var mapAnims = {
   smooth: 'smooth',
   "default": 'default'
 };
-var defaultOptions = {};
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.selector] = null;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].list.selector] = null;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].apiKey] = null;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.checkSize] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.useClusters] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.clusterIconUrl] = null;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.clusterIconSize] = 56;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.clusterParams] = [{
-  icon: null,
-  size: 56,
-  from: 0,
-  defaultIconColor: "#E62A4D"
-}];
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markers] = [];
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerIconSize] = 56;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerIconUrl] = null;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerHoveredIconUrl] = null;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.markerSelectedIconUrl] = null;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.allowMultipleMarkersSelected] = true;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.defaultCenter] = {
-  lat: 48.614782,
-  lng: 7.714012
+var defaultOptions = {
+  checkMapSize: false,
+  mapUseClusters: false,
+  mapClusterIconSize: 56,
+  mapClusterParams: [{
+    from: 2,
+    defaultIconColor: "#E62A4D",
+    size: 56
+  }],
+  mapMarkers: [{
+    title: 'Agence Adeliom',
+    description: 'Agence Digitale',
+    coordinates: {
+      lat: 48.614782,
+      lng: 7.714012
+    }
+  }],
+  mapMarkerIconSize: 56,
+  allowMultipleMarkersSelected: true,
+  mapDefaultCenter: {
+    lat: 48.614782,
+    lng: 7.714012
+  },
+  mapAutoCenter: false,
+  mapDefaultZoom: 12,
+  mapProvider: 'google',
+  mapDisplayMarkers: true,
+  mapDisplayInfoWindows: true,
+  mapInfoWindowTemplate: '',
+  mapCenterMarkerOnClick: true,
+  mapZoomMarkerOnClick: 12,
+  mapShowPlaces: false,
+  mapInfoWindowReplaceWithMarkerData: false,
+  mapCustomStyles: [],
+  mapEnableZoomButtons: false,
+  mapEnableStreetView: false,
+  mapEnableFullscreenButton: false,
+  mapEnableTypeButtons: false,
+  mapDisplayScale: false,
+  mapRotate: false,
+  mapAskForConsent: false,
+  mapConsentDefaultValue: false,
+  mapConsentButtonMessage: 'Activer la carte',
+  mapListReplaceWithMarkerData: false,
+  mapListCenterMarkerOnClick: true,
+  mapListEltTemplate: '',
+  mapAnimation: mapAnims.smooth
 };
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.autoCenter] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.defaultZoom] = 12;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.provider] = 'google';
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.displayMarkers] = true;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.displayInfoWindows] = true;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.infoWindowTemplate] = '';
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.centerMarkerOnClick] = true;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.zoomMarkerOnClick] = 12;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.animation] = mapAnims.smooth;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.showPlaces] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.replaceInfoWindowContentWithMarkerData] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.customStyles] = [];
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.controls.zoomButtons] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.controls.streetViewButton] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.controls.fullscreenButton] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.controls.mapTypeButtons] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.controls.displayScale] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.controls.rotateControl] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].list.eltTemplate] = '';
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].list.centerMarkerOnClick] = true;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].list.replaceWithMarkerData] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].rgpd.askForConsent] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].rgpd.defaultConsentValue] = false;
-defaultOptions[_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].rgpd.buttonMessage] = 'Activer la carte';
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (defaultOptions);
 
 /***/ }),
 
-/***/ "./src/js/errors.js":
+/***/ "./src/js/errors.ts":
 /*!**************************!*\
-  !*** ./src/js/errors.js ***!
+  !*** ./src/js/errors.ts ***!
   \**************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2538,23 +2576,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.js");
+/* harmony import */ var _optionKeys__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./optionKeys */ "./src/js/optionKeys.ts");
 
-var errors = {};
-errors.apiKey = {};
-errors.apiKey.notProvided = "".concat(_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].apiKey, " not provided");
-errors.selectors = {};
-errors.selectors.map = {};
-errors.selectors.map.notProvided = "Need to provide ".concat(_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.selector, " option");
-errors.selectors.map.notFound = "No element found with matching selector provided in ".concat(_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.selector);
-errors.selectors.map.tooSmall = "The map container is too small";
+var errors = {
+  apiKey: {
+    notProvided: "".concat(_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].apiKey, " not provided")
+  },
+  selectors: {
+    map: {
+      notProvided: "Need to provide ".concat(_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.selector, " option"),
+      notFound: "No element found with matching selector provided in ".concat(_optionKeys__WEBPACK_IMPORTED_MODULE_0__["default"].map.selector),
+      tooSmall: "The map container is too small"
+    }
+  }
+};
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (errors);
 
 /***/ }),
 
-/***/ "./src/js/optionKeys.js":
+/***/ "./src/js/optionKeys.ts":
 /*!******************************!*\
-  !*** ./src/js/optionKeys.js ***!
+  !*** ./src/js/optionKeys.ts ***!
   \******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2563,50 +2605,55 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-var keys = {};
-keys.apiKey = 'apiKey';
-keys.map = {};
-keys.map.selector = 'mapSelector';
-keys.map.defaultCenter = 'mapDefaultCenter';
-keys.map.autoCenter = 'mapAutoCenter';
-keys.map.defaultZoom = 'mapDefaultZoom';
-keys.map.provider = 'mapProvider';
-keys.map.checkSize = 'checkMapSize';
-keys.map.useClusters = 'mapUseClusters';
-keys.map.clusterIconUrl = 'mapClusterIconUrl';
-keys.map.clusterIconSize = 'mapClusterIconSize';
-keys.map.clusterParams = 'mapClusterParams';
-keys.map.markers = 'mapMarkers';
-keys.map.markerIconUrl = 'mapMarkerIconUrl';
-keys.map.markerHoveredIconUrl = 'mapMarkerHoveredIconUrl';
-keys.map.markerSelectedIconUrl = 'mapMarkerSelectedIconUrl';
-keys.map.markerIconSize = 'mapMarkerIconSize';
-keys.map.displayMarkers = 'mapDisplayMarkers';
-keys.map.displayInfoWindows = 'mapDisplayInfoWindows';
-keys.map.allowMultipleMarkersSelected = 'mapAllowMultipleMarkersSelected';
-keys.map.infoWindowTemplate = 'mapInfoWindowTemplate';
-keys.map.centerMarkerOnClick = 'mapCenterMarkerOnClick';
-keys.map.zoomMarkerOnClick = 'mapZoomMarkerOnClick';
-keys.map.animation = 'mapAnimation';
-keys.map.showPlaces = 'mapShowPlaces';
-keys.map.replaceInfoWindowContentWithMarkerData = 'mapInfoWindowReplaceWithMarkerData';
-keys.map.customStyles = 'mapCustomStyles';
-keys.map.controls = {};
-keys.map.controls.zoomButtons = 'mapEnableZoomButtons';
-keys.map.controls.streetViewButton = 'mapEnableStreetView';
-keys.map.controls.fullscreenButton = 'mapEnableFullscreenButton';
-keys.map.controls.mapTypeButtons = 'mapEnableTypeButtons';
-keys.map.controls.displayScale = 'mapDisplayScale';
-keys.map.controls.rotateControl = 'mapRotate';
-keys.list = {};
-keys.list.selector = 'mapListSelector';
-keys.list.eltTemplate = 'mapListEltTemplate';
-keys.list.centerMarkerOnClick = 'mapListCenterMarkerOnClick';
-keys.list.replaceWithMarkerData = 'mapListReplaceWithMarkerData';
-keys.rgpd = {};
-keys.rgpd.askForConsent = 'mapAskForConsent';
-keys.rgpd.defaultConsentValue = 'mapConsentDefaultValue';
-keys.rgpd.buttonMessage = 'mapConsentButtonMessage';
+var keys = {
+  apiKey: 'apiKey',
+  map: {
+    selector: 'mapSelector',
+    defaultCenter: 'mapDefaultCenter',
+    autoCenter: 'mapAutoCenter',
+    defaultZoom: 'mapDefaultZoom',
+    provider: 'mapProvider',
+    checkSize: 'checkMapSize',
+    useClusters: 'mapUseClusters',
+    clusterIconUrl: 'mapClusterIconUrl',
+    clusterIconSize: 'mapClusterIconSize',
+    clusterParams: 'mapClusterParams',
+    markers: 'mapMarkers',
+    markerIconUrl: 'mapMarkerIconUrl',
+    markerHoveredIconUrl: 'mapMarkerHoveredIconUrl',
+    markerSelectedIconUrl: 'mapMarkerSelectedIconUrl',
+    markerIconSize: 'mapMarkerIconSize',
+    displayMarkers: 'mapDisplayMarkers',
+    displayInfoWindows: 'mapDisplayInfoWindows',
+    allowMultipleMarkersSelected: 'mapAllowMultipleMarkersSelected',
+    infoWindowTemplate: 'mapInfoWindowTemplate',
+    centerMarkerOnClick: 'mapCenterMarkerOnClick',
+    zoomMarkerOnClick: 'mapZoomMarkerOnClick',
+    animation: 'mapAnimation',
+    showPlaces: 'mapShowPlaces',
+    replaceInfoWindowContentWithMarkerData: 'mapInfoWindowReplaceWithMarkerData',
+    customStyles: 'mapCustomStyles',
+    controls: {
+      zoomButtons: 'mapEnableZoomButtons',
+      streetViewButton: 'mapEnableStreetView',
+      fullscreenButton: 'mapEnableFullscreenButton',
+      mapTypeButtons: 'mapEnableTypeButtons',
+      displayScale: 'mapDisplayScale',
+      rotateControl: 'mapRotate'
+    }
+  },
+  list: {
+    selector: 'mapListSelector',
+    eltTemplate: 'mapListEltTemplate',
+    centerMarkerOnClick: 'mapListCenterMarkerOnClick',
+    replaceWithMarkerData: 'mapListReplaceWithMarkerData'
+  },
+  rgpd: {
+    askForConsent: 'mapAskForConsent',
+    defaultConsentValue: 'mapConsentDefaultValue',
+    buttonMessage: 'mapConsentButtonMessage'
+  }
+};
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (keys);
 
 /***/ }),
@@ -8671,7 +8718,7 @@ function findPoint(geojson, options) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/demo","css/AdeliomMap"], () => (__webpack_require__("./src/js/AdeliomMap.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/demo","css/AdeliomMap"], () => (__webpack_require__("./src/js/AdeliomMap.ts")))
 /******/ 	__webpack_require__.O(undefined, ["css/demo","css/AdeliomMap"], () => (__webpack_require__("./src/scss/AdeliomMap.scss")))
 /******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/demo","css/AdeliomMap"], () => (__webpack_require__("./src/scss/demo.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);

@@ -1,3 +1,4 @@
+// @ts-ignore
 import Emitter from "dauphine-js/dist/emitter";
 import keys from "./optionKeys";
 import defaultOptions, {mapAnims} from "./defaultOptions";
@@ -5,6 +6,13 @@ import {AdeliomMapEvents} from "./AdeliomMap";
 import {Loader} from "google-maps";
 import {MarkerClusterer} from "@googlemaps/markerclusterer";
 import AdeliomMapClusterRenderer from "./AdeliomMapClusterRenderer";
+import {
+    AdeliomMapCoordinatesType, AdeliomMapGoogleType,
+    AdeliomMapMarkerConfigType,
+    AdeliomMapMarkerDataType, AdeliomMapMarkerParamsType,
+    AdeliomMapOptionsType
+} from "./AdeliomMapTypes";
+import errors from "./errors";
 
 const mapAttribute = 'adeliom-map';
 const listAttribute = `${mapAttribute}-list`;
@@ -19,7 +27,21 @@ const notConsentListAttribute = `${listAttribute}-no-consent`;
 const availableProviders = ['google'];
 
 export default class AdeliomMapFunctions extends Emitter {
-    
+    public defaultOptions: AdeliomMapOptionsType;
+    private map: google.maps.Map | null;
+    public mapContainer: HTMLElement | null;
+    public mapListContainer: HTMLElement | null;
+    public markers: AdeliomMapMarkerParamsType[];
+    private markersData: AdeliomMapMarkerDataType[];
+    public displayMarkers: boolean;
+    private google: AdeliomMapGoogleType | null = null;
+    public options: AdeliomMapOptionsType = defaultOptions;
+    public emit: any;
+    public mapListEltTemplate: any;
+    public hasConsent: boolean = false;
+    public mapCustomClass: string = 'adeliom-map-js';
+
+
     constructor() {
         super();
 
@@ -33,8 +55,6 @@ export default class AdeliomMapFunctions extends Emitter {
         this.markersData = [];
 
         this.displayMarkers = false;
-
-        this.google = null;
     }
 
     helpers = {
@@ -45,7 +65,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {boolean}
              * @private
              */
-            _isProviderAvailable: (provider) => {
+            _isProviderAvailable: (provider: string) => {
                 return availableProviders.findIndex(prov => prov === provider) !== -1;
             },
         },
@@ -56,7 +76,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {boolean}
              * @private
              */
-            _isInfoWindowOpened: (infoWindow) => {
+            _isInfoWindowOpened: (infoWindow: any) => {
                 return infoWindow.getMap() ? true : false;
             },
             /**
@@ -66,7 +86,8 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {*}
              * @private
              */
-            _returnDataByInfoWindow: (data, infoWindow) => {
+            _returnDataByInfoWindow: (data: any, infoWindow: any) => {
+                // @ts-ignore
                 return this.helpers.markersData._getDataByProperty('infoWindow', infoWindow)[data];
             },
             /**
@@ -75,7 +96,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {null}
              * @private
              */
-            _getInfoWindowByMarker: (marker) => {
+            _getInfoWindowByMarker: (marker: any) => {
                 return this.helpers.markersData._returnDataByMarker('infoWindow', marker);
             },
             /**
@@ -83,11 +104,11 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param infoWindow
              * @private
              */
-            _openInfoWindow: (infoWindow) => {
+            _openInfoWindow: (infoWindow: any) => {
                 if (this.helpers.infoWindows._isInfoWindowOpened(infoWindow)) {
                     infoWindow.close();
                 } else {
-                    if (!this.options[keys.map.allowMultipleMarkersSelected]) {
+                    if (!this.options[keys.map.allowMultipleMarkersSelected as keyof AdeliomMapOptionsType]) {
                         this.helpers.markers._unselectAllMarkers();
                     }
 
@@ -96,7 +117,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     if (marker) {
                         infoWindow.open(this.map, marker);
 
-                        if (this.options[keys.map.centerMarkerOnClick]) {
+                        if (this.options[keys.map.centerMarkerOnClick as keyof AdeliomMapOptionsType]) {
                             this.helpers.map._centerMapOnMarker(marker);
                         }
                     }
@@ -107,7 +128,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param marker
              * @private
              */
-            _openInfoWindowByMarker: (marker) => {
+            _openInfoWindowByMarker: (marker: any) => {
                 const infoWindow = this.helpers.infoWindows._getInfoWindowByMarker(marker);
 
                 if (infoWindow) {
@@ -119,7 +140,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param marker
              * @private
              */
-            _closeInfoWindowByMarker: (marker) => {
+            _closeInfoWindowByMarker: (marker: any) => {
                 const infoWindow = this.helpers.infoWindows._getInfoWindowByMarker(marker);
 
                 if (infoWindow) {
@@ -134,7 +155,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {{lng: number, lat: number}|*}
              * @private
              */
-            _getMarkersCenterCoordinates: (markersRawData) => {
+            _getMarkersCenterCoordinates: (markersRawData: any) => {
                 if (markersRawData.length === 1) {
                     return markersRawData[0].coordinates;
                 }
@@ -171,10 +192,10 @@ export default class AdeliomMapFunctions extends Emitter {
              * Init markers by its map provider (google, ...)
              * @private
              */
-            _initMarkers: (markers) => {
+            _initMarkers: (markers: any) => {
                 let center = null;
 
-                switch (this.options[keys.map.provider]) {
+                switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                     case 'google':
                     default:
                         this.helpers.google.markers._initMapMarkers(markers).then(() => {
@@ -189,8 +210,8 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {bool}
              * @private
              */
-            _isMarkerSelected: (marker) => {
-                const data = this.helpers.markersData._getDataByProperty('marker', marker);
+            _isMarkerSelected: (marker: any) => {
+                const data: any = this.helpers.markersData._getDataByProperty('marker', marker);
 
                 return data?.selected;
             },
@@ -200,7 +221,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {null}
              * @private
              */
-            _getMarkerByListEltNode: (listEltNode) => {
+            _getMarkerByListEltNode: (listEltNode: any) => {
                 return this.helpers.listNodes._returnDataByListEltNode('marker', listEltNode);
             },
             /**
@@ -226,7 +247,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {{lng: *, lat: *}}
              * @private
              */
-            _getMarkerCoordinates: (marker) => {
+            _getMarkerCoordinates: (marker: any) => {
                 return {
                     lat: marker.getPosition().lat(),
                     lng: marker.getPosition().lng(),
@@ -238,7 +259,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {null}
              * @private
              */
-            _getMarkerByInfoWindow: (infoWindow) => {
+            _getMarkerByInfoWindow: (infoWindow: any) => {
                 return this.helpers.infoWindows._returnDataByInfoWindow('marker', infoWindow);
             },
             /**
@@ -247,8 +268,9 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param isSelected
              * @private
              */
-            _setMarkerState: (marker, isSelected = null) => {
+            _setMarkerState: (marker: any, isSelected: null | boolean | string = null) => {
                 if (isSelected == 'toggle') {
+                    // @ts-ignore
                     isSelected = !this.helpers.markersData._getDataByProperty('marker', marker).selected;
                 }
 
@@ -264,15 +286,15 @@ export default class AdeliomMapFunctions extends Emitter {
 
                 this.helpers.markersData._setDataByProperty('marker', marker, 'selected', isSelected);
 
-                if (this.options[keys.map.provider]) {
+                if (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                     if (!isSelected) {
-                        switch (this.options[keys.map.provider]) {
+                        switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                             case 'google':
                                 this.helpers.google.markers._setIdleIcon(marker);
                                 break;
                         }
                     } else {
-                        switch (this.options[keys.map.provider]) {
+                        switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                             case 'google':
                                 this.helpers.google.markers._setSelectedIcon(marker);
                                 break;
@@ -285,8 +307,8 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param marker
              * @private
              */
-            _openMarker: (marker) => {
-                if (!this.options[keys.map.allowMultipleMarkersSelected]) {
+            _openMarker: (marker: any) => {
+                if (!this.options[keys.map.allowMultipleMarkersSelected as keyof AdeliomMapOptionsType]) {
                     this.helpers.markers._unselectAllMarkers();
                 }
 
@@ -303,7 +325,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param marker
              * @private
              */
-            _closeMarker: (marker) => {
+            _closeMarker: (marker: any) => {
                 this.helpers.infoWindows._closeInfoWindowByMarker(marker);
 
                 const listNode = this.helpers.listNodes._getListNodeByMarker(marker);
@@ -318,13 +340,13 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {null|*}
              * @private
              */
-            _getIdleIconForMarker: (marker) => {
-                const data = this.helpers.markersData._getDataByProperty('marker', marker);
+            _getIdleIconForMarker: (marker: any) => {
+                const data: any = this.helpers.markersData._getDataByProperty('marker', marker);
 
                 if (data?.icon) {
                     return data.icon;
-                } else if (this.options[keys.map.markerIconUrl]) {
-                    return this.options[keys.map.markerIconUrl];
+                } else if (this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType]) {
+                    return this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType];
                 }
 
                 return null;
@@ -335,13 +357,13 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {null|*}
              * @private
              */
-            _getHoveredIconForMarker: (marker) => {
-                const data = this.helpers.markersData._getDataByProperty('marker', marker);
+            _getHoveredIconForMarker: (marker: any) => {
+                const data: any = this.helpers.markersData._getDataByProperty('marker', marker);
 
                 if (data?.hoveredIcon) {
                     return data.hoveredIcon;
-                } else if (this.options[keys.map.markerHoveredIconUrl]) {
-                    return this.options[keys.map.markerHoveredIconUrl];
+                } else if (this.options[keys.map.markerHoveredIconUrl as keyof AdeliomMapOptionsType]) {
+                    return this.options[keys.map.markerHoveredIconUrl as keyof AdeliomMapOptionsType];
                 }
 
                 return null;
@@ -352,13 +374,13 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {null|string|*}
              * @private
              */
-            _getSelectedIconForMarker: (marker) => {
-                const data = this.helpers.markersData._getDataByProperty('marker', marker);
+            _getSelectedIconForMarker: (marker: any) => {
+                const data: any = this.helpers.markersData._getDataByProperty('marker', marker);
 
                 if (data?.selectedIcon) {
                     return data.selectedIcon;
-                } else if (this.options[keys.map.markerSelectedIconUrl]) {
-                    return this.options[keys.map.markerSelectedIconUrl];
+                } else if (this.options[keys.map.markerSelectedIconUrl as keyof AdeliomMapOptionsType]) {
+                    return this.options[keys.map.markerSelectedIconUrl as keyof AdeliomMapOptionsType];
                 }
 
                 return null;
@@ -384,10 +406,11 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {null}
              * @private
              */
-            _getDataByProperty: (propertyName, property) => {
+            _getDataByProperty: (propertyName: any, property: any) => {
                 let returnedData = null;
 
                 for (let i = 0; i < Object.keys(this.markersData).length; i++) {
+                    // @ts-ignore
                     const tempMarker = this.markersData[Object.keys(this.markersData)[i]];
                     if (tempMarker[propertyName] === property) {
                         returnedData = tempMarker;
@@ -405,9 +428,11 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param value
              * @private
              */
-            _setDataByProperty: (propertyName, property, key, value) => {
+            _setDataByProperty: (propertyName: any, property: any, key: any, value: any) => {
                 for (let i = 0; i < Object.keys(this.markersData).length; i++) {
+                    // @ts-ignore
                     if (this.markersData[Object.keys(this.markersData)[i]][propertyName] === property) {
+                        // @ts-ignore
                         this.markersData[Object.keys(this.markersData)[i]][key] = value;
                     }
                 }
@@ -421,7 +446,8 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {null}
              * @private
              */
-            _returnDataByMarker: (data, marker) => {
+            _returnDataByMarker: (data: any, marker: any) => {
+                // @ts-ignore
                 return this.helpers.markersData._getDataByProperty('marker', marker)[data];
             }
         },
@@ -433,7 +459,8 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {null}
              * @private
              */
-            _returnDataByListEltNode: (data, listEltNode) => {
+            _returnDataByListEltNode: (data: any, listEltNode: any) => {
+                // @ts-ignore
                 return this.helpers.markersData._getDataByProperty('listElt', listEltNode)[data];
             },
             /**
@@ -442,7 +469,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {*}
              * @private
              */
-            _getListNodeByMarker: (marker) => {
+            _getListNodeByMarker: (marker: any) => {
                 return this.helpers.markersData._returnDataByMarker('listElt', marker);
             },
             /**
@@ -470,7 +497,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         this.mapListContainer.removeAttribute(notConsentListAttribute);
                     }
 
-                    this._initMap().then((isInit) => {
+                    this._initMap().then((isInit: any) => {
                         if (isInit && this.displayMarkers) {
                             this.helpers.markers._initMarkers(this.markers);
                         }
@@ -482,20 +509,20 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param marker
              * @private
              */
-            _centerMapOnMarker: (marker) => {
-                const coordinates = this.helpers.markers._getMarkerCoordinates(marker);
+            _centerMapOnMarker: (marker: any) => {
+                const coordinates: AdeliomMapCoordinatesType = this.helpers.markers._getMarkerCoordinates(marker);
                 const googleMapCoordinates = this.helpers.google.coordinates._getLatLng(coordinates);
 
-                if (this.options[keys.map.animation] === mapAnims.smooth) {
+                if (this.options[keys.map.animation as keyof AdeliomMapOptionsType] === mapAnims.smooth) {
                     this.helpers.map._panTo(googleMapCoordinates);
                 } else {
                     this.helpers.map._setCenter(googleMapCoordinates);
                 }
 
-                if (this.options[keys.map.zoomMarkerOnClick]) {
+                if (this.options[keys.map.zoomMarkerOnClick as keyof AdeliomMapOptionsType]) {
                     // Only zoom if less zoomed than zoom value
-                    if (this.map.getZoom() < this.options[keys.map.zoomMarkerOnClick]) {
-                        this.map.setZoom(this.options[keys.map.zoomMarkerOnClick]);
+                    if (this.map && this.map.getZoom() < this.options[keys.map.zoomMarkerOnClick as keyof AdeliomMapOptionsType]) {
+                        this.map.setZoom(this.options[keys.map.zoomMarkerOnClick as keyof AdeliomMapOptionsType]);
                     }
                 }
             },
@@ -504,11 +531,13 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param center
              * @private
              */
-            _setCenter: (center) => {
-                switch (this.options[keys.map.provider]) {
+            _setCenter: (center: any) => {
+                switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                     case 'google':
                     default:
-                        this.map.setCenter(center);
+                        if (this.map) {
+                            this.map.setCenter(center);
+                        }
                         break;
                 }
             },
@@ -517,11 +546,13 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param center
              * @private
              */
-            _panTo: (center) => {
-                switch (this.options[keys.map.provider]) {
+            _panTo: (center: any) => {
+                switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                     case 'google':
                     default:
-                        this.map.panTo(center);
+                        if (this.map) {
+                            this.map.panTo(center);
+                        }
                         break;
                 }
             },
@@ -530,12 +561,12 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param markers
              * @private
              */
-            _autoCenter: (markers) => {
-                if (this.options[keys.map.autoCenter]) {
-                    const center = this.helpers.markers._getMarkersCenterCoordinates(markers);
+            _autoCenter: (markers: any) => {
+                if (this.options[keys.map.autoCenter as keyof AdeliomMapOptionsType]) {
+                    const center: AdeliomMapCoordinatesType = this.helpers.markers._getMarkersCenterCoordinates(markers);
 
                     if (center) {
-                        switch (this.options[keys.map.provider]) {
+                        switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                             case 'google':
                             default:
                                 this.helpers.map._setCenter(this.helpers.google.coordinates._getLatLng(center));
@@ -551,7 +582,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param array classes
              * @private
              */
-            _addClassesToMapContainer: (classes) => {
+            _addClassesToMapContainer: (classes: any) => {
                 if (this.mapContainer) {
                     for (let singleClass in classes) {
                         this.mapContainer.classList.add(classes[singleClass]);
@@ -563,7 +594,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param array classes
              * @private
              */
-            _removeClassesToMapContainer: (classes) => {
+            _removeClassesToMapContainer: (classes: any) => {
                 if (this.mapContainer) {
                     for (let singleClass in classes) {
                         if (this.mapContainer.classList.contains(classes[singleClass])) {
@@ -607,7 +638,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     consentScreen.setAttribute(consentScreenContainerAttribute, '');
 
                     const consentButton = document.createElement('button');
-                    consentButton.innerText = this.options[keys.rgpd.buttonMessage];
+                    consentButton.innerText = this.options[keys.rgpd.buttonMessage as keyof AdeliomMapOptionsType];
                     consentButton.setAttribute(consentButtonAttribute, '');
 
                     consentButton.addEventListener('click', () => {
@@ -628,9 +659,11 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @returns {null|google.maps.LatLng}
                  * @private
                  */
-                _getLatLng: (coordinates) => {
+                _getLatLng: (coordinates: AdeliomMapCoordinatesType) => {
                     if (coordinates?.lat && coordinates?.lng) {
-                        return new this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+                        if (this.google) {
+                            return new this.google.maps.LatLng(coordinates.lat, coordinates.lng);
+                        }
                     }
 
                     console.error('No lat/lng object provided');
@@ -641,12 +674,12 @@ export default class AdeliomMapFunctions extends Emitter {
             clusters: {
                 _getRenderer: () => {
                     const renderer = new AdeliomMapClusterRenderer(
-                        this.options[keys.map.clusterParams],
+                        this.options[keys.map.clusterParams as keyof AdeliomMapOptionsType],
                     );
 
                     return renderer;
                 },
-                _handleClusterClick: (e, cluster, map) => {
+                _handleClusterClick: (e: any, cluster: any, map: any) => {
                     map.fitBounds(cluster.bounds);
                 },
             },
@@ -655,8 +688,8 @@ export default class AdeliomMapFunctions extends Emitter {
                  * Loop to init Google Maps markers
                  * @private
                  */
-                _initMapMarkers: async (markers) => {
-                    markers.forEach(marker => {
+                _initMapMarkers: async (markers: any) => {
+                    markers.forEach((marker: any) => {
                         let markerData = this.helpers.google.markers._createMapMarker(marker);
                         this.emit(AdeliomMapEvents.markers.dataCreated, markerData);
                     });
@@ -668,7 +701,7 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @private
                  */
                 _initMapClusters: () => {
-                    if (this.options && this.map && this.options[keys.map.useClusters]) {
+                    if (this.options && this.map && this.options[keys.map.useClusters as keyof AdeliomMapOptionsType]) {
                         const clusterer = new MarkerClusterer({
                             markers: this.helpers.markers._getAllMarkerInstances(),
                             map: this.map,
@@ -683,20 +716,24 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @returns {{scaledSize: google.maps.Size, url}}
                  * @private
                  */
-                _getIconConfig: (url) => {
-                    const size = this.options[keys.map.markerIconSize];
+                _getIconConfig: (url: any) => {
+                    const size = this.options[keys.map.markerIconSize as keyof AdeliomMapOptionsType];
 
-                    return {
-                        url: url,
-                        scaledSize: new this.google.maps.Size(size, size),
-                    };
+                    if (this.google) {
+                        return {
+                            url: url,
+                            scaledSize: new this.google.maps.Size(size, size),
+                        };
+                    }
+
+                    return null;
                 },
                 /**
                  * Sets the idle icon to the provided marker
                  * @param marker
                  * @private
                  */
-                _setIdleIcon: (marker) => {
+                _setIdleIcon: (marker: any) => {
                     const idleIcon = this.helpers.markers._getIdleIconForMarker(marker);
 
                     if (!this.helpers.markers._isMarkerSelected(marker) && idleIcon) {
@@ -708,7 +745,7 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @param marker
                  * @private
                  */
-                _setSelectedIcon: (marker) => {
+                _setSelectedIcon: (marker: any) => {
                     const selectedIcon = this.helpers.markers._getSelectedIconForMarker(marker);
 
                     if (selectedIcon) {
@@ -720,8 +757,8 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @param marker
                  * @private
                  */
-                _setHoveredIcon: (marker) => {
-                    const hoveredIcon = this.helpers.markers._getHoveredIconForMarker(marker);
+                _setHoveredIcon: (marker: any) => {
+                    const hoveredIcon: any = this.helpers.markers._getHoveredIconForMarker(marker);
 
                     if (!this.helpers.markers._isMarkerSelected(marker) && hoveredIcon) {
                         marker.setIcon(this.helpers.google.markers._getIconConfig(hoveredIcon));
@@ -732,21 +769,23 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @param markerInstance
                  * @private
                  */
-                _handleBasicMarkerListeners: (markerInstance) => {
-                    // Listener to handle marker click
-                    this.google.maps.event.addListener(markerInstance, 'click', () => {
-                        this._handleClickMarker(markerInstance)
-                    });
+                _handleBasicMarkerListeners: (markerInstance: any) => {
+                    if (this.google) {
+                        // Listener to handle marker click
+                        this.google.maps.event.addListener(markerInstance, 'click', () => {
+                            this._handleClickMarker(markerInstance)
+                        });
 
-                    // Listener to handle mouseover (change icon)
-                    this.google.maps.event.addListener(markerInstance, 'mouseover', () => {
-                        this.helpers.google.markers._setHoveredIcon(markerInstance);
-                    });
+                        // Listener to handle mouseover (change icon)
+                        this.google.maps.event.addListener(markerInstance, 'mouseover', () => {
+                            this.helpers.google.markers._setHoveredIcon(markerInstance);
+                        });
 
-                    // Listener to handle mouseout (change icon)
-                    this.google.maps.event.addListener(markerInstance, 'mouseout', () => {
-                        this.helpers.google.markers._setIdleIcon(markerInstance);
-                    });
+                        // Listener to handle mouseout (change icon)
+                        this.google.maps.event.addListener(markerInstance, 'mouseout', () => {
+                            this.helpers.google.markers._setIdleIcon(markerInstance);
+                        });
+                    }
                 },
                 /**
                  * Create a Google Map marker by passing marker raw data
@@ -754,14 +793,19 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @returns {{}}
                  * @private
                  */
-                _createMapMarker: (markerRawData) => {
-                    const markerData = {};
+                _createMapMarker: (markerRawData: any) => {
+                    const markerData: AdeliomMapMarkerDataType = {};
                     markerData.selected = false;
 
-                    const markerPosition = new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
+                    let markerPosition = null;
+
+                    if (this.google) {
+                        markerPosition = new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng);
+                    }
+
                     const markerTitle = markerRawData?.title;
 
-                    const markerConfig = {
+                    const markerConfig: AdeliomMapMarkerConfigType = {
                         position: markerPosition,
                         title: markerTitle,
                         map: this.map,
@@ -770,8 +814,8 @@ export default class AdeliomMapFunctions extends Emitter {
                     if (markerRawData?.icon) {
                         markerConfig.icon = this.helpers.google.markers._getIconConfig(markerRawData.icon);
                         markerData.icon = markerRawData.icon;
-                    } else if (this.options[keys.map.markerIconUrl]) {
-                        markerConfig.icon = this.helpers.google.markers._getIconConfig(this.options[keys.map.markerIconUrl]);
+                    } else if (this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType]) {
+                        markerConfig.icon = this.helpers.google.markers._getIconConfig(this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType]);
                     }
 
                     if (markerRawData?.selectedIcon) {
@@ -782,14 +826,19 @@ export default class AdeliomMapFunctions extends Emitter {
                         markerData.hoveredIcon = markerRawData.hoveredIcon;
                     }
 
-                    const markerInstance = new this.google.maps.Marker(markerConfig);
+                    let markerInstance = null;
+
+                    if (this.google) {
+                        markerInstance = new this.google.maps.Marker(markerConfig);
+                    }
+
                     this.emit(AdeliomMapEvents.markers.created, markerInstance);
 
                     markerData.marker = markerInstance;
 
                     markerData.infoWindow = this.helpers.google.infoWindows._createMapInfoWindow(markerRawData);
 
-                    let listElt = null;
+                    let listElt: any = null;
 
                     if (this.mapListContainer) {
                         listElt = this._createMapListInstance(markerRawData, markerInstance);
@@ -810,8 +859,8 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @returns {null|*}
                  * @private
                  */
-                _createMapInfoWindow: (markerRawData) => {
-                    if (this.options[keys.map.displayInfoWindows]) {
+                _createMapInfoWindow: (markerRawData: any) => {
+                    if (this.options[keys.map.displayInfoWindows as keyof AdeliomMapOptionsType]) {
 
                         let content;
 
@@ -819,16 +868,20 @@ export default class AdeliomMapFunctions extends Emitter {
                         if (markerRawData?.infoWindowTemplate) {
                             content = markerRawData.infoWindowTemplate;
                         } else {
-                            content = this.options[keys.map.infoWindowTemplate];
+                            content = this.options[keys.map.infoWindowTemplate as keyof AdeliomMapOptionsType];
 
-                            if (this.options[keys.map.replaceInfoWindowContentWithMarkerData]) {
+                            if (this.options[keys.map.replaceInfoWindowContentWithMarkerData as keyof AdeliomMapOptionsType]) {
                                 content = this._replaceMarkerDataInString(markerRawData, content)
                             }
                         }
 
-                        const infoWindowInstance = new this.google.maps.InfoWindow({
-                            content: content,
-                        });
+                        let infoWindowInstance = null;
+
+                        if (this.google) {
+                            infoWindowInstance = new this.google.maps.InfoWindow({
+                                content: content,
+                            });
+                        }
 
                         this.emit(AdeliomMapEvents.infoWindows.created, infoWindowInstance);
 
@@ -845,7 +898,7 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @returns {Promise<void>}
                  * @private
                  */
-                _initMap: async (container) => {
+                _initMap: async (container: any) => {
                     if (!this.google) {
                         const loader = new Loader(this.options.apiKey);
 
@@ -853,14 +906,14 @@ export default class AdeliomMapFunctions extends Emitter {
                     }
 
                     this.map = new this.google.maps.Map(container, {
-                        center: this.options[keys.map.defaultCenter],
-                        zoom: this.options[keys.map.defaultZoom],
-                        zoomControl: this.options[keys.map.controls.zoomButtons],
-                        streetViewControl: this.options[keys.map.controls.streetViewButton],
-                        fullscreenControl: this.options[keys.map.controls.fullscreenButton],
-                        mapTypeControl: this.options[keys.map.controls.mapTypeButtons],
-                        scaleControl: this.options[keys.map.controls.displayScale],
-                        rotateControl: this.options[keys.map.controls.rotateControl],
+                        center: this.options[keys.map.defaultCenter as keyof AdeliomMapOptionsType],
+                        zoom: this.options[keys.map.defaultZoom as keyof AdeliomMapOptionsType],
+                        zoomControl: this.options[keys.map.controls.zoomButtons as keyof AdeliomMapOptionsType],
+                        streetViewControl: this.options[keys.map.controls.streetViewButton as keyof AdeliomMapOptionsType],
+                        fullscreenControl: this.options[keys.map.controls.fullscreenButton as keyof AdeliomMapOptionsType],
+                        mapTypeControl: this.options[keys.map.controls.mapTypeButtons as keyof AdeliomMapOptionsType],
+                        scaleControl: this.options[keys.map.controls.displayScale as keyof AdeliomMapOptionsType],
+                        rotateControl: this.options[keys.map.controls.rotateControl as keyof AdeliomMapOptionsType],
                         styles: this.helpers.google.map._getMapStyles(),
                     });
                 },
@@ -870,19 +923,21 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @private
                  */
                 _getMapStyles: () => {
-                    const mapStyles = this.options[keys.map.customStyles];
+                    const mapStyles = this.options[keys.map.customStyles as keyof AdeliomMapOptionsType];
 
                     const poiStyle = {
                         featureType: 'poi',
                         stylers: [
                             {
-                                visibility: this.options[keys.map.showPlaces] ? 'on' : 'off',
+                                visibility: this.options[keys.map.showPlaces as keyof AdeliomMapOptionsType] ? 'on' : 'off',
                             }
                         ]
                     };
 
                     if (Object.prototype.toString.call(mapStyles) === '[object Array]') {
-                        mapStyles.push(poiStyle);
+                        if (mapStyles) {
+                            mapStyles.push(poiStyle);
+                        }
 
                         return mapStyles;
                     }
@@ -896,4 +951,139 @@ export default class AdeliomMapFunctions extends Emitter {
             }
         }
     };
+
+    _replaceMarkerDataInString(markerData: any, string: any) {
+        if (string) {
+            Object.keys(markerData).forEach(key => {
+                const search = `{{ ${key} }}`;
+                string = string.replaceAll(search, markerData[key]);
+            });
+        }
+
+        return string;
+    }
+
+    /**
+     * Creates a map list instance (store locator instance)
+     * @param markerRawData
+     * @param mapMarkerInstance
+     * @returns {HTMLDivElement}
+     * @private
+     */
+    _createMapListInstance(markerRawData: any, mapMarkerInstance: any) {
+        let mapListInstance: any;
+
+        if (markerRawData?.listEltId) {
+            mapListInstance = document.querySelector(`[js-map-list-id='${markerRawData.listEltId}']`);
+
+        } else {
+            mapListInstance = document.createElement('div');
+            const selectorWithout = this.options[keys.list.selector as keyof AdeliomMapOptionsType].replace('[', '').replace(']', '');
+
+            mapListInstance.setAttribute(selectorWithout + '-elt', '');
+
+            let listInstanceHtml;
+
+            // If a list elt template is defined for this specific marker
+            if (markerRawData?.listEltTemplate) {
+                listInstanceHtml = markerRawData.listEltTemplate;
+            } else {
+                listInstanceHtml = this.mapListEltTemplate;
+
+                if (this.options[keys.list.replaceWithMarkerData as keyof AdeliomMapOptionsType]) {
+                    listInstanceHtml = this._replaceMarkerDataInString(markerRawData, listInstanceHtml);
+                }
+            }
+
+            mapListInstance.innerHTML = listInstanceHtml;
+
+            if (this.mapListContainer) {
+                this.mapListContainer.appendChild(mapListInstance);
+            }
+        }
+
+        if (mapListInstance) {
+            mapListInstance.addEventListener('click', () => {
+                this._handleClickListElt(mapListInstance);
+            });
+
+            this.emit(AdeliomMapEvents.listElements.created, mapListInstance);
+        }
+
+        return mapListInstance;
+    };
+
+    _handleClickListElt(listElt: any) {
+        const mapMarkerInstance = this.helpers.markers._getMarkerByListEltNode(listElt);
+
+        if (mapMarkerInstance) {
+            if (this.options[keys.map.displayInfoWindows as keyof AdeliomMapOptionsType]) {
+                this.helpers.markers._setMarkerState(mapMarkerInstance, 'toggle');
+            }
+        }
+
+        const data = this.helpers.markersData._getDataByProperty('listElt', listElt);
+
+        this.emit(AdeliomMapEvents.listElements.clicked, data);
+    };
+
+    _handleClickMarker(marker: any) {
+        if (this.options[keys.map.displayInfoWindows as keyof AdeliomMapOptionsType]) {
+            if (this.helpers.markers._isMarkerSelected(marker)) {
+                this.helpers.markers._setMarkerState(marker, false);
+            } else {
+                this.helpers.markers._setMarkerState(marker, true);
+            }
+        }
+
+        const data = this.helpers.markersData._getDataByProperty('marker', marker);
+
+        this.emit(AdeliomMapEvents.markers.clicked, data);
+    };
+
+    async _initMap() {
+        if (this.options[keys.map.selector as keyof AdeliomMapOptionsType]) {
+            if (this.mapContainer) {
+                this.helpers.map._addClassesToMapContainer([this.mapCustomClass]);
+
+                return await this._handleConsent();
+            } else {
+                console.error(errors.selectors.map.notFound);
+            }
+        } else {
+            console.error(errors.selectors.map.notProvided);
+        }
+
+        return false;
+    };
+
+    async _handleConsent() {
+        if ((this.options[keys.rgpd.askForConsent as keyof AdeliomMapOptionsType] && !this.hasConsent)) {
+            this.helpers.consentScreen._setConsentScreen();
+            return false;
+        } else {
+            if (!this.options[keys.map.checkSize as keyof AdeliomMapOptionsType] || (this.mapContainer && this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
+                const provider = this.options[keys.map.provider as keyof AdeliomMapOptionsType];
+                if (provider) {
+                    if (this.helpers.providers._isProviderAvailable(provider)) {
+                        switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
+                            case 'google':
+                            default:
+                                await this.helpers.google.map._initMap(this.mapContainer);
+                        }
+
+                        return true;
+                    } else {
+                        console.error(`The provider "${provider}" is not available.`);
+                    }
+                }
+
+                return false;
+            } else {
+                console.error(errors.selectors.map.tooSmall);
+
+                return false;
+            }
+        }
+    }
 }

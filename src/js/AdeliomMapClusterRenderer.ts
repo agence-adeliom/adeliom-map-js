@@ -1,6 +1,14 @@
 import {DefaultRenderer} from "@googlemaps/markerclusterer";
 
+type renderParams = {
+    count: number,
+    position: any,
+}
+
 export default class AdeliomMapClusterRenderer extends DefaultRenderer {
+    private icon: any;
+    private params: any;
+
     constructor(params = null) {
         super();
 
@@ -8,7 +16,7 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
         this.params = this.orderParamsByFromValue(params);
     }
 
-    getSvg(color) {
+    getSvg(color: string) {
         return window.btoa(`
   <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
     <circle cx="120" cy="120" opacity=".6" r="70" />
@@ -22,9 +30,9 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
      * @param params
      * @returns {*}
      */
-    orderParamsByFromValue(params) {
+    orderParamsByFromValue(params: any) {
         if (params) {
-            params.sort((a, b) => {
+            params.sort((a: any, b: any) => {
                 return a.from > b.from ? 1 : -1;
             });
         }
@@ -37,7 +45,7 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
      * @param count
      * @returns {null}
      */
-    getParamsByCount(count) {
+    getParamsByCount(count: any) {
         let currentParams = null;
 
         for (let i in this.params) {
@@ -53,12 +61,12 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
         return currentParams;
     };
 
-    getDefaultIconData(svg) {
+    getDefaultIconData(svg: string) {
         return `data:image/svg+xml;base64,${svg}`
     }
 
-    render({count, position}, stats) {
-        const params = this.getParamsByCount(count);
+    render({count, position}: renderParams, stats: any) {
+        const params: any = this.getParamsByCount(count);
 
         const color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
         const defaultIconColor = params?.defaultIconColor ?? color;
@@ -75,9 +83,11 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
                 color: fontColor,
                 fontSize: fontSize,
             },
-            zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+            zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count, icon: undefined
+
         };
 
+        // @ts-ignore
         options.icon = this.getIconConfig(iconData, iconSize);
 
         const clusterMarker = new google.maps.Marker(options);
@@ -98,7 +108,7 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
         return clusterMarker;
     }
 
-    getIconConfig(url, size) {
+    getIconConfig(url: string, size: number) {
         return {
             url: url,
             scaledSize: new google.maps.Size(size, size),

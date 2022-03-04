@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 icon: '/dist/img/cluster.png',
                 hoverIcon: '/dist/img/adeliom-logo.png',
                 size: 40,
-                from: 0,
+                from: 0
             },
             {
                 size: 56,
