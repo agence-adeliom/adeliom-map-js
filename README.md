@@ -2,10 +2,16 @@
 
 Dépendance de gestion de Google Maps / Store Locator Adeliom
 
+## Installation
+
+```shell
+$ yarn add agence-adeliom/adeliom-map-js
+```
+
 ## Initialisation
 
 ```javascript
-import AdeliomMap from "./AdeliomMap"
+import AdeliomMap from "adeliom-map-js/src/js/AdeliomMap";
 
 document.addEventListener('DOMContentLoaded', () => {
     const paramsArray = {...};
@@ -53,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
 `mapMarkerHoveredIconUrl (string)` : URL vers l'icône survolée du marker<br>
 `mapMarkerSelectedIconUrl (string)` : URL vers l'icône sélectionnée du marker<br>
 `mapMarkerIconSize (int)` : Taille des icônes de marqueurs<br>
+`mapHideMarkerOnClickOutside (bool)` : Indique si les marqueurs doivent se fermer au click sur la carte (en dehors du
+marqueur)<br>
 
 ### Clusters de markers
 
