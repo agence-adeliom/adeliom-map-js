@@ -37,6 +37,7 @@ const defaultOptions: AdeliomMapOptionsType = {
     mapInfoWindowTemplate: '',
     mapCenterMarkerOnClick: true,
     mapZoomMarkerOnClick: 12,
+    mapHideMarkerOnClickOutside: false,
     mapShowPlaces: false,
     mapInfoWindowReplaceWithMarkerData: false,
     mapCustomStyles: [],

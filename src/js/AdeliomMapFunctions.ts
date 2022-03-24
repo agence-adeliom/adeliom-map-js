@@ -916,6 +916,19 @@ export default class AdeliomMapFunctions extends Emitter {
                         rotateControl: this.options[keys.map.controls.rotateControl as keyof AdeliomMapOptionsType],
                         styles: this.helpers.google.map._getMapStyles(),
                     });
+
+                    this.helpers.google.map._handleClickOnMap();
+                },
+                _handleClickOnMap: () => {
+                    if (this.map) {
+                        if (this.options.mapHideMarkerOnClickOutside) {
+                            this.map.addListener('click', () => {
+                                this.markersData.forEach(markerData => {
+                                    this.helpers.markers._setMarkerState(markerData.marker, false);
+                                });
+                            });
+                        }
+                    }
                 },
                 /**
                  * Returns the style array required to define Google Maps style

@@ -109,6 +109,7 @@ export type AdeliomMapOptionsType = {
     mapInfoWindowTemplate?: string,
     mapCenterMarkerOnClick?: boolean,
     mapZoomMarkerOnClick?: number,
+    mapHideMarkerOnClickOutside?: boolean,
     mapShowPlaces?: boolean,
     mapInfoWindowReplaceWithMarkerData?: boolean,
     mapCustomStyles?: any,

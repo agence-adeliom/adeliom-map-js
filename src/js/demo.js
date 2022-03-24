@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
             lng: 7.714012
         },
         mapCenterMarkerOnClick: true,
+        mapHideMarkerOnClickOutside: true,
         mapZoomMarkerOnClick: 12,
         mapDefaultZoom: 6,
         mapProvider: 'google',
