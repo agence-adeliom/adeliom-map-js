@@ -500,6 +500,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     this._initMap().then((isInit: any) => {
                         if (isInit && this.displayMarkers) {
                             this.helpers.markers._initMarkers(this.markers);
+                            this.emit(AdeliomMapEvents.map.mapLoaded);
                         }
                     });
                 }
@@ -695,6 +696,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     });
 
                     this.helpers.google.markers._initMapClusters();
+                    this.emit(AdeliomMapEvents.markers.allCreated);
                 },
                 /**
                  * Init the map clusters

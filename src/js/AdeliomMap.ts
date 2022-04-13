@@ -6,8 +6,10 @@ import {AdeliomMapOptionsType} from "./AdeliomMapTypes";
 export const AdeliomMapEvents = {
     map: {
         hasAutoCentered: 'mapHasAutoCentered',
+        mapLoaded: 'mapLoaded',
     },
     markers: {
+        allCreated: 'allMarkerCreated',
         created: 'markerCreated',
         dataCreated: 'markerDataCreated',
         clicked: 'markerClicked',
