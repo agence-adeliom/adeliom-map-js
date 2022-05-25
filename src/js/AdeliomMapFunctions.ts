@@ -33,6 +33,7 @@ export default class AdeliomMapFunctions extends Emitter {
     public mapListContainer: HTMLElement | null;
     public markers: AdeliomMapMarkerParamsType[];
     private markersData: AdeliomMapMarkerDataType[];
+    public clusterer: MarkerClusterer | null;
     public displayMarkers: boolean;
     private google: AdeliomMapGoogleType | null = null;
     public options: AdeliomMapOptionsType = defaultOptions;
@@ -53,6 +54,7 @@ export default class AdeliomMapFunctions extends Emitter {
 
         this.markers = [];
         this.markersData = [];
+        this.clusterer = null;
 
         this.displayMarkers = false;
     }
@@ -704,7 +706,7 @@ export default class AdeliomMapFunctions extends Emitter {
                  */
                 _initMapClusters: () => {
                     if (this.options && this.map && this.options[keys.map.useClusters as keyof AdeliomMapOptionsType]) {
-                        const clusterer = new MarkerClusterer({
+                        this.clusterer = new MarkerClusterer({
                             markers: this.helpers.markers._getAllMarkerInstances(),
                             map: this.map,
                             onClusterClick: this.helpers.google.clusters._handleClusterClick,
