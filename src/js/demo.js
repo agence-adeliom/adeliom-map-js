@@ -1,5 +1,6 @@
 import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
-import {env} from "../../env";
+
+const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
     logAllEvents: false,
@@ -25,8 +26,8 @@ const mapInfoWindowTemplate = '<div class="map-infowindow-elt">' +
     '</div>';
 
 document.addEventListener("DOMContentLoaded", () => {
-    const adeliomMap = new AdeliomMap({
-        apiKey: env.apiKey,
+    window.adeliomMap = new AdeliomMap({
+        apiKey: API_KEY,
         mapSelector: '[js-map]',
         mapListSelector: '[js-map-list]',
         mapAllowMultipleMarkersSelected: false,
