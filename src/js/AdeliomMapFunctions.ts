@@ -683,6 +683,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     return renderer;
                 },
                 _handleClusterClick: (e: any, cluster: any, map: any) => {
+                    this.helpers.markers._unselectAllMarkers();
                     map.fitBounds(cluster.bounds);
                 },
             },
