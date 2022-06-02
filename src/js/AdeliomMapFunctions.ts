@@ -851,6 +851,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     }
 
                     this.helpers.google.markers._handleBasicMarkerListeners(markerInstance);
+                    this.helpers.google.infoWindows._handleInfoWindowListeners(markerData.infoWindow, markerInstance);
 
                     this.markersData.push(markerData);
 
@@ -887,14 +888,21 @@ export default class AdeliomMapFunctions extends Emitter {
                                 content: content,
                             });
                         }
-
+                        
                         this.emit(AdeliomMapEvents.infoWindows.created, infoWindowInstance);
 
                         return infoWindowInstance;
                     }
 
                     return null;
-                }
+                },
+                _handleInfoWindowListeners: (infoWindow: any, markerInstance: any) => {
+                    if (this.google) {
+                        infoWindow.addListener('closeclick', () => {
+                            this._handleClickMarker(markerInstance);
+                        });
+                    }
+                },
             },
             map: {
                 /**
