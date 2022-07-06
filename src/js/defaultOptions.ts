@@ -54,6 +54,8 @@ const defaultOptions: AdeliomMapOptionsType = {
     mapListCenterMarkerOnClick: true,
     mapListEltTemplate: '',
     mapAnimation: mapAnims.smooth,
+    markerIconCentered: false,
+    clusterIconCentered: false,
 };
 
 export default defaultOptions;

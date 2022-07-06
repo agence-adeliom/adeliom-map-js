@@ -126,6 +126,8 @@ export type AdeliomMapOptionsType = {
     mapListCenterMarkerOnClick?: boolean,
     mapListEltTemplate?: string,
     mapAnimation?: string,
+    markerIconCentered?: boolean,
+    clusterIconCentered?: boolean,
 }
 
 export type AdeliomMapMarkerDataType = {

@@ -108,6 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
         mapDisplayScale: false, // Displays a scale at the bottom of the map
         mapAskForConsent: true,
         mapConsentDefaultValue: true,
+        markerIconCentered: true,
+        clusterIconCentered: true,
         mapCustomStyles: [
             {
                 "featureType": "water",

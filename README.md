@@ -39,6 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
 `mapProvider (string)` : fournisseur de la map (seulement `google` pour le moment)<br>
 `mapShowPlaces (bool)` : afficher ou non les marqueurs de lieux _(peut être surchargé par mapCustomStyles)_<br>
 `mapCustomStyles (array)` : tableau de styles personnalisés à appliquer à la map<br>
+`markerIconCentered (bool)` : indique si l'icône du marqueur doit être centrée _(utile si ronde)_<br>
+`clusterIconCentered (bool)` : indique si l'icône du cluster doit être centrée _(utile si ronde)_<br>
 
 ### Contrôles
 `mapEnableZoomButtons (bool)` : afficher ou non les boutons de zoom<br>

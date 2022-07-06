@@ -1,4 +1,5 @@
 import {DefaultRenderer} from "@googlemaps/markerclusterer";
+import {AdeliomMapOptionsType} from "./AdeliomMapTypes";
 
 type renderParams = {
     count: number,
@@ -8,12 +9,14 @@ type renderParams = {
 export default class AdeliomMapClusterRenderer extends DefaultRenderer {
     private icon: any;
     private params: any;
+    private options: AdeliomMapOptionsType;
 
-    constructor(params = null) {
+    constructor(params = null, options: AdeliomMapOptionsType) {
         super();
 
         this.icon = null;
         this.params = this.orderParamsByFromValue(params);
+        this.options = options;
     }
 
     getSvg(color: string) {
@@ -109,9 +112,21 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
     }
 
     getIconConfig(url: string, size: number) {
-        return {
-            url: url,
-            scaledSize: new google.maps.Size(size, size),
+        if (this.options.clusterIconCentered) {
+            const config = {
+                url: url,
+                scaledSize: new google.maps.Size(size, size),
+                anchor: new google.maps.Point(size / 2, size / 2),
+            }
+
+            return config;
+        } else {
+            const config = {
+                url: url,
+                scaledSize: new google.maps.Size(size, size),
+            }
+
+            return config;
         }
     }
 }

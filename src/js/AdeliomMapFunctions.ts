@@ -40,6 +40,8 @@ export default class AdeliomMapFunctions extends Emitter {
     public emit: any;
     public mapListEltTemplate: any;
     public hasConsent: boolean = false;
+    public markerIconCentered: boolean = false;
+    public clusterIconCentered: boolean = false;
     public mapCustomClass: string = 'adeliom-map-js';
 
 
@@ -678,6 +680,7 @@ export default class AdeliomMapFunctions extends Emitter {
                 _getRenderer: () => {
                     const renderer = new AdeliomMapClusterRenderer(
                         this.options[keys.map.clusterParams as keyof AdeliomMapOptionsType],
+                        this.options
                     );
 
                     return renderer;
@@ -725,10 +728,17 @@ export default class AdeliomMapFunctions extends Emitter {
                     const size = this.options[keys.map.markerIconSize as keyof AdeliomMapOptionsType];
 
                     if (this.google) {
-                        return {
+                        const config = {
                             url: url,
                             scaledSize: new this.google.maps.Size(size, size),
+                            anchor: null,
                         };
+
+                        if (this.options.markerIconCentered) {
+                            config.anchor = new this.google.maps.Point(size / 2, size / 2);
+                        }
+
+                        return config;
                     }
 
                     return null;
