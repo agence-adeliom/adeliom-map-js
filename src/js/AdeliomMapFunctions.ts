@@ -1,5 +1,5 @@
 // @ts-ignore
-import Emitter from "dauphine-js/dist/emitter";
+import Emitter from "./Emitter";
 import keys from "./optionKeys";
 import defaultOptions, {mapAnims} from "./defaultOptions";
 import {AdeliomMapEvents} from "./AdeliomMap";
@@ -38,6 +38,7 @@ export default class AdeliomMapFunctions extends Emitter {
     private google: AdeliomMapGoogleType | null = null;
     public options: AdeliomMapOptionsType = defaultOptions;
     public emit: any;
+    public on: any;
     public mapListEltTemplate: any;
     public hasConsent: boolean = false;
     public markerIconCentered: boolean = false;
@@ -47,6 +48,9 @@ export default class AdeliomMapFunctions extends Emitter {
 
     constructor() {
         super();
+
+        this.emit = super.emit;
+        this.on = super.on;
 
         this.defaultOptions = defaultOptions;
 
