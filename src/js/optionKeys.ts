@@ -2,6 +2,7 @@ import {AdeliomMapKeys} from "./AdeliomMapTypes";
 
 const keys: AdeliomMapKeys = {
     apiKey: 'apiKey',
+    apiOptions: 'apiOptions',
     map: {
         selector: 'mapSelector',
         defaultCenter: 'mapDefaultCenter',

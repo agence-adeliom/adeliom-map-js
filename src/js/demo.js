@@ -28,6 +28,9 @@ const mapInfoWindowTemplate = '<div class="map-infowindow-elt">' +
 document.addEventListener("DOMContentLoaded", () => {
     window.adeliomMap = new AdeliomMap({
         apiKey: API_KEY,
+        apiOptions: {
+            libraries: ['places'],
+        },
         mapSelector: '[js-map]',
         mapListSelector: '[js-map-list]',
         mapAllowMultipleMarkersSelected: false,

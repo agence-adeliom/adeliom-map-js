@@ -3,7 +3,7 @@ import Emitter from "./Emitter";
 import keys from "./optionKeys";
 import defaultOptions, {mapAnims} from "./defaultOptions";
 import {AdeliomMapEvents} from "./AdeliomMap";
-import {Loader} from "google-maps";
+import {Loader, LoaderOptions} from "google-maps";
 import {MarkerClusterer} from "@googlemaps/markerclusterer";
 import AdeliomMapClusterRenderer from "./AdeliomMapClusterRenderer";
 import {
@@ -927,7 +927,14 @@ export default class AdeliomMapFunctions extends Emitter {
                  */
                 _initMap: async (container: any) => {
                     if (!this.google) {
-                        const loader = new Loader(this.options.apiKey);
+                        let loader;
+
+                        if (this.options[keys.apiOptions as keyof AdeliomMapOptionsType]) {
+                            const options: LoaderOptions = this.options[keys.apiOptions as keyof AdeliomMapOptionsType];
+                            loader = new Loader(this.options.apiKey, options);
+                        } else {
+                            loader = new Loader(this.options.apiKey);
+                        }
 
                         this.google = await loader.load();
                     }

@@ -1,5 +1,6 @@
 export type AdeliomMapKeys = {
     apiKey: string,
+    apiOptions: string,
     map: AdeliomMapKeys_Map,
     list: AdeliomMapKeys_List,
     rgpd: AdeliomMapKeys_Rgpd,
@@ -85,8 +86,17 @@ export type AdeliomMapCoordinatesType = {
     lng: number,
 }
 
+export type AdeliomMapApiOptionsType = {
+    version?: string,
+    client?: string,
+    language?: string,
+    region?: string,
+    libraries?: object,
+}
+
 export type AdeliomMapOptionsType = {
     apiKey?: string
+    apiOptions?: AdeliomMapApiOptionsType,
     mapSelector?: string,
     mapListSelector?: string,
     checkMapSize: boolean,
