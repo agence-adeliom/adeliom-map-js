@@ -35,7 +35,7 @@ export default class AdeliomMapFunctions extends Emitter {
     private markersData: AdeliomMapMarkerDataType[];
     public clusterer: MarkerClusterer | null;
     public displayMarkers: boolean;
-    private google: AdeliomMapGoogleType | null = null;
+    public google: AdeliomMapGoogleType | null = null;
     public options: AdeliomMapOptionsType = defaultOptions;
     public emit: any;
     public on: any;
