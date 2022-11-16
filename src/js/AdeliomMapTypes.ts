@@ -74,6 +74,7 @@ export type AdeliomMapMarkerParamsType = {
     description?: string,
     coordinates: AdeliomMapCoordinatesType,
     icon?: string,
+    iconSize?: number,
     selectedIcon?: string,
     hoveredIcon?: string,
     infoWindowTemplate?: string,
@@ -143,6 +144,7 @@ export type AdeliomMapOptionsType = {
 export type AdeliomMapMarkerDataType = {
     selected?: boolean,
     icon?: string,
+    iconSize?: number,
     hoveredIcon?: string,
     selectedIcon?: string,
     marker?: any,

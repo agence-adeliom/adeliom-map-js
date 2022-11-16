@@ -393,6 +393,11 @@ export default class AdeliomMapFunctions extends Emitter {
 
                 return null;
             },
+            _getIconSizeForMarker: (marker: any) => {
+                const data: any = this.helpers.markersData._getDataByProperty('marker', marker);
+
+                return data?.iconSize ?? this.options[keys.map.markerIconSize as keyof AdeliomMapOptionsType];
+            },
             /**
              * Returns all map marker instances already created
              * @returns {marker[]}
@@ -728,8 +733,14 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @returns {{scaledSize: google.maps.Size, url}}
                  * @private
                  */
-                _getIconConfig: (url: any) => {
-                    const size = this.options[keys.map.markerIconSize as keyof AdeliomMapOptionsType];
+                _getIconConfig: (url: any, iconSize?: any) => {
+                    let size;
+
+                    if (iconSize) {
+                        size = iconSize;
+                    } else {
+                        size = this.options[keys.map.markerIconSize as keyof AdeliomMapOptionsType];
+                    }
 
                     if (this.google) {
                         const config = {
@@ -756,7 +767,8 @@ export default class AdeliomMapFunctions extends Emitter {
                     const idleIcon = this.helpers.markers._getIdleIconForMarker(marker);
 
                     if (!this.helpers.markers._isMarkerSelected(marker) && idleIcon) {
-                        marker.setIcon(this.helpers.google.markers._getIconConfig(idleIcon));
+                        const iconSize = this.helpers.markers._getIconSizeForMarker(marker);
+                        marker.setIcon(this.helpers.google.markers._getIconConfig(idleIcon, iconSize));
                     }
                 },
                 /**
@@ -768,7 +780,8 @@ export default class AdeliomMapFunctions extends Emitter {
                     const selectedIcon = this.helpers.markers._getSelectedIconForMarker(marker);
 
                     if (selectedIcon) {
-                        marker.setIcon(this.helpers.google.markers._getIconConfig(selectedIcon));
+                        const iconSize = this.helpers.markers._getIconSizeForMarker(marker);
+                        marker.setIcon(this.helpers.google.markers._getIconConfig(selectedIcon, iconSize));
                     }
                 },
                 /**
@@ -780,7 +793,8 @@ export default class AdeliomMapFunctions extends Emitter {
                     const hoveredIcon: any = this.helpers.markers._getHoveredIconForMarker(marker);
 
                     if (!this.helpers.markers._isMarkerSelected(marker) && hoveredIcon) {
-                        marker.setIcon(this.helpers.google.markers._getIconConfig(hoveredIcon));
+                        const iconSize = this.helpers.markers._getIconSizeForMarker(marker);
+                        marker.setIcon(this.helpers.google.markers._getIconConfig(hoveredIcon, iconSize));
                     }
                 },
                 /**
@@ -831,10 +845,10 @@ export default class AdeliomMapFunctions extends Emitter {
                     };
 
                     if (markerRawData?.icon) {
-                        markerConfig.icon = this.helpers.google.markers._getIconConfig(markerRawData.icon);
+                        markerConfig.icon = this.helpers.google.markers._getIconConfig(markerRawData.icon, markerRawData?.iconSize);
                         markerData.icon = markerRawData.icon;
                     } else if (this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType]) {
-                        markerConfig.icon = this.helpers.google.markers._getIconConfig(this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType]);
+                        markerConfig.icon = this.helpers.google.markers._getIconConfig(this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType], markerRawData?.iconSize);
                     }
 
                     if (markerRawData?.selectedIcon) {
@@ -856,6 +870,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     markerData.marker = markerInstance;
 
                     markerData.infoWindow = this.helpers.google.infoWindows._createMapInfoWindow(markerRawData);
+                    markerData.iconSize = markerRawData?.iconSize ? markerRawData.iconSize : this.options[keys.map.markerIconSize as keyof AdeliomMapOptionsType];
 
                     let listElt: any = null;
 

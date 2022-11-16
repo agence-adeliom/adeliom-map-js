@@ -79,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     lng: 7.714012,
                 },
                 icon: '/dist/img/adeliom-logo.png',
+                iconSize: 32,
                 selectedIcon: '/dist/img/adeliom-logo-blue.png',
                 hoveredIcon: '/dist/img/marker-selected.png',
                 infoWindowTemplate: '<div class="map-infowindow-elt">Test template</div>',
