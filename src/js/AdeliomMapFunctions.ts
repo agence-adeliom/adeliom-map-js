@@ -232,6 +232,9 @@ export default class AdeliomMapFunctions extends Emitter {
             _getMarkerByListEltNode: (listEltNode: any) => {
                 return this.helpers.listNodes._returnDataByListEltNode('marker', listEltNode);
             },
+            _getMarkersData: () => {
+                return this.markersData;
+            },
             /**
              * Un-select all markers and close all infoWindows
              * @private
@@ -719,6 +722,9 @@ export default class AdeliomMapFunctions extends Emitter {
                  */
                 _initMapClusters: () => {
                     if (this.options && this.map && this.options[keys.map.useClusters as keyof AdeliomMapOptionsType]) {
+                        if (this.clusterer) {
+                            this.clusterer?.clearMarkers();
+                        }
                         this.clusterer = new MarkerClusterer({
                             markers: this.helpers.markers._getAllMarkerInstances(),
                             map: this.map,
@@ -819,6 +825,13 @@ export default class AdeliomMapFunctions extends Emitter {
                             this.helpers.google.markers._setIdleIcon(markerInstance);
                         });
                     }
+                },
+                _addMapMarkers: (markersRawData: any) => {
+                    if (!Array.isArray(markersRawData)) {
+                        markersRawData = [markersRawData];
+                    }
+
+                    this.helpers.google.markers._initMapMarkers(markersRawData);
                 },
                 /**
                  * Create a Google Map marker by passing marker raw data

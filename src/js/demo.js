@@ -303,6 +303,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const disableMapButton = document.querySelector(`[js-disable-map]`);
 
+    setTimeout(() => {
+        const newMarkers = [
+            {
+                title: 'Chamonix',
+                description: 'Lieu touristique',
+                iconSize: 10,
+                coordinates: {
+                    lat: 45.923697,
+                    lng: 6.869433,
+                }
+            },
+            {
+                title: 'Sommet du Mont-Blanc',
+                description: 'Lieu touristique',
+                iconSize: 20,
+                coordinates: {
+                    lat: 45.8325,
+                    lng: 6.865,
+                }
+            }
+        ];
+
+        adeliomMap.helpers.google.markers._addMapMarkers(newMarkers);
+    }, 3000);
+
     if (disableMapButton) {
         if (adeliomMap.options['mapAskForConsent']) {
             disableMapButton.addEventListener('click', () => {
