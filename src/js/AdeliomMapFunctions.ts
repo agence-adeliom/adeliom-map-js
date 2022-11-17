@@ -835,6 +835,10 @@ export default class AdeliomMapFunctions extends Emitter {
                         markersRawData = [markersRawData];
                     }
 
+                    markersRawData.forEach((markerRawData: AdeliomMapMarkerParamsType) => {
+                        this.markers.push(markerRawData);
+                    });
+
                     this.helpers.google.markers._initMapMarkers(markersRawData);
                 },
                 /**
