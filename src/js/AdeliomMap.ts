@@ -73,5 +73,14 @@ export default class AdeliomMap extends AdeliomMapFunctions {
         } else {
             this.helpers.consentScreen._setConsentScreen();
         }
-    }
+    };
+
+    _addMarkers(markersRawData: any) {
+        switch (this.options.mapProvider) {
+            case 'google':
+            default:
+                this.helpers.google.markers._addMapMarkers(markersRawData);
+                break;
+        }
+    };
 };

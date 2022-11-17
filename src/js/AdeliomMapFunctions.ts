@@ -826,6 +826,10 @@ export default class AdeliomMapFunctions extends Emitter {
                         });
                     }
                 },
+                /**
+                 * Allows to dynamically add markers to the Google Map
+                 * @param markersRawData
+                 */
                 _addMapMarkers: (markersRawData: any) => {
                     if (!Array.isArray(markersRawData)) {
                         markersRawData = [markersRawData];

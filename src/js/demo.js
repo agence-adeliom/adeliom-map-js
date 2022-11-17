@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         ];
 
-        adeliomMap.helpers.google.markers._addMapMarkers(newMarkers);
+        adeliomMap._addMarkers(newMarkers);
     }, 3000);
 
     if (disableMapButton) {

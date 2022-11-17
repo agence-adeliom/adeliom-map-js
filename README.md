@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 `clusterIconCentered (bool)` : indique si l'icône du cluster doit être centrée _(utile si ronde)_<br>
 
 ### Contrôles
+
 `mapEnableZoomButtons (bool)` : afficher ou non les boutons de zoom<br>
 `mapEnableStreetView (bool)` : afficher ou non le bouton StreetView<br>
 `mapEnableFullscreenButton (bool)` : afficher ou non le bouton plein écran<br>
@@ -141,7 +142,9 @@ mapMarkers: [
 ```
 
 ## Événements
+
 Il est possible d'utiliser l'objet `AdeliomMapEvents` afin de récupérer les différents événements disponibles.
+
 ```javascript
 // Instanciation de l'AdeliomMap
 const adeliomMap = new AdeliomMap({});
@@ -175,3 +178,4 @@ et élément de liste).<br>
 ## Fonctions
 
 `_setConsent (bool)` : Permet d'indiquer dynamiquement l'état de consentement de l'utilisateur<br>
+`_addMarkers (array|object)` : Permet d'ajouter dynamiquement des marqueurs à la map<br>
