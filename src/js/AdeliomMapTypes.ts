@@ -149,7 +149,8 @@ export type AdeliomMapMarkerDataType = {
     selectedIcon?: string,
     marker?: any,
     infoWindow?: any,
-    listElt?: any
+    listElt?: any,
+    rawData?: AdeliomMapMarkerParamsType,
 }
 
 export type AdeliomMapMarkerConfigType = {

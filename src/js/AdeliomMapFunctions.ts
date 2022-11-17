@@ -734,6 +734,25 @@ export default class AdeliomMapFunctions extends Emitter {
                     }
                 },
                 /**
+                 * Removes everything from the map and the list
+                 */
+                _clearMap: () => {
+                    if (this.clusterer) {
+                        this.clusterer?.clearMarkers();
+                    }
+
+                    this.markersData.forEach((markerData: AdeliomMapMarkerDataType) => {
+                        markerData.marker?.setMap(null);
+                    });
+
+                    this.markersData = [];
+                    this.markers = [];
+
+                    if (this.mapListContainer) {
+                        this.mapListContainer.innerHTML = '';
+                    }
+                },
+                /**
                  * Returns the icon config object
                  * @param url
                  * @returns {{scaledSize: google.maps.Size, url}}
@@ -841,15 +860,37 @@ export default class AdeliomMapFunctions extends Emitter {
 
                     this.helpers.google.markers._initMapMarkers(markersRawData);
                 },
+                _removeMapMarkers: (markers: any) => {
+                    if (!Array.isArray(markers)) {
+                        markers = [markers];
+                    }
+
+                    const alreadyExistingMarkers = this.markers;
+
+                    markers.forEach((marker: any) => {
+                        const rawData = this.helpers.markersData._getDataByProperty('marker', marker).rawData;
+
+                        // Remove rawData from alreadyExistingMarkers
+                        const index = alreadyExistingMarkers.indexOf(rawData);
+
+                        if (index > -1) {
+                            alreadyExistingMarkers.splice(index, 1);
+                        }
+                    });
+
+                    this.helpers.google.markers._clearMap();
+                    this.helpers.google.markers._addMapMarkers(alreadyExistingMarkers);
+                },
                 /**
                  * Create a Google Map marker by passing marker raw data
                  * @param markerRawData
                  * @returns {{}}
                  * @private
                  */
-                _createMapMarker: (markerRawData: any) => {
+                _createMapMarker: (markerRawData: AdeliomMapMarkerParamsType) => {
                     const markerData: AdeliomMapMarkerDataType = {};
                     markerData.selected = false;
+                    markerData.rawData = markerRawData;
 
                     let markerPosition = null;
 

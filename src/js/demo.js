@@ -326,6 +326,12 @@ document.addEventListener("DOMContentLoaded", () => {
         ];
 
         adeliomMap._addMarkers(newMarkers);
+
+        const markersToRemove = [
+            adeliomMap._getMarkersData()[1]?.marker,
+        ];
+
+        adeliomMap._removeMarkers(markersToRemove);
     }, 3000);
 
     if (disableMapButton) {

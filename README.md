@@ -179,3 +179,4 @@ et élément de liste).<br>
 
 `_setConsent (bool)` : Permet d'indiquer dynamiquement l'état de consentement de l'utilisateur<br>
 `_addMarkers (array|object)` : Permet d'ajouter dynamiquement des marqueurs à la map<br>
+`_removeMarkers (array|object)` : Permet de supprimer dynamiquement des marqueurs à la map<br>
