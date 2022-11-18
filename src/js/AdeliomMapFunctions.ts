@@ -1365,6 +1365,8 @@ export default class AdeliomMapFunctions extends Emitter {
                 return this.options[keys.geolocation.options as keyof AdeliomMapOptionsType]?.iconSize;
             },
             _handleGeolocationRequest: (forceMarker: boolean = false) => {
+                this.helpers.geolocation._removeGeolocationMarker();
+
                 this.helpers.geolocation._getCoordinates((data: GeolocationPosition) => {
                     if (data?.coords?.latitude && data?.coords?.longitude) {
                         let showMarker: boolean;
