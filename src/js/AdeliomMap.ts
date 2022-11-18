@@ -101,4 +101,16 @@ export default class AdeliomMap extends AdeliomMapFunctions {
                 break;
         }
     }
+
+    _getAllCurrentMarkersRawData() {
+        return this.helpers.markersData._getAllMarkersRawData();
+    }
+
+    _disableClusters() {
+        return this.helpers.markers._disableClusters();
+    }
+
+    _enableClusters() {
+        return this.helpers.markers._enableClusters();
+    }
 };

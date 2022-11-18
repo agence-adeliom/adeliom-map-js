@@ -232,6 +232,9 @@ export default class AdeliomMapFunctions extends Emitter {
             _getMarkerByListEltNode: (listEltNode: any) => {
                 return this.helpers.listNodes._returnDataByListEltNode('marker', listEltNode);
             },
+            /**
+             * Returns all the markers data
+             */
             _getMarkersData: () => {
                 return this.markersData;
             },
@@ -396,6 +399,11 @@ export default class AdeliomMapFunctions extends Emitter {
 
                 return null;
             },
+            /**
+             * Returns the icon size for the provided marker
+             * @param marker
+             * @private
+             */
             _getIconSizeForMarker: (marker: any) => {
                 const data: any = this.helpers.markersData._getDataByProperty('marker', marker);
 
@@ -412,6 +420,60 @@ export default class AdeliomMapFunctions extends Emitter {
                         return data.marker;
                     }
                 });
+            },
+            _getClustersStatus: () => {
+                return this.options[keys.map.useClusters as keyof AdeliomMapOptionsType];
+            },
+            _setClustersStatus: (status: boolean) => {
+                // @ts-ignore
+                if (this.helpers.markers._getClustersStatus() === status) return false;
+
+                // @ts-ignore
+                this.options[keys.map.useClusters as keyof AdeliomMapOptionsType] = status;
+
+                return true;
+            },
+            _disableClusters: () => {
+                if (this.helpers.markers._getClustersStatus() && this.map) {
+                    if (this.clusterer) {
+                        this.clusterer?.clearMarkers();
+                        this.clusterer = null;
+
+                        this.helpers.markers._setClustersStatus(false);
+
+                        const currentMarkersData = this.helpers.markersData._getAllMarkersRawData();
+
+                        this.helpers.google.markers._clearMap();
+                        this.helpers.google.markers._addMapMarkers(currentMarkersData);
+                    }
+                }
+            },
+            _enableClusters: (firstInit: boolean = false) => {
+                if (this.map) {
+
+                    if (!firstInit) {
+                        if (this.helpers.markers._getClustersStatus()) {
+                            this.helpers.markers._disableClusters();
+                        } else {
+                            this.helpers.markers._setClustersStatus(true);
+                        }
+                    }
+
+                    if (this.helpers.markers._getClustersStatus()) {
+                        switch (this.options.mapProvider) {
+                            case 'google':
+                                this.clusterer = new MarkerClusterer({
+                                    markers: this.helpers.markers._getAllMarkerInstances(),
+                                    map: this.map,
+                                    onClusterClick: this.helpers.google.clusters._handleClusterClick,
+                                    renderer: this.helpers.google.clusters._getRenderer()
+                                });
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
             },
         },
         markersData: {
@@ -465,7 +527,19 @@ export default class AdeliomMapFunctions extends Emitter {
             _returnDataByMarker: (data: any, marker: any) => {
                 // @ts-ignore
                 return this.helpers.markersData._getDataByProperty('marker', marker)[data];
-            }
+            },
+            /**
+             * Method that allows to retrieve all existing markers rawData
+             */
+            _getAllMarkersRawData: () => {
+                const markersRawData: (AdeliomMapMarkerParamsType | undefined)[] = [];
+
+                this.helpers.markers._getMarkersData().forEach((markerData: AdeliomMapMarkerDataType) => {
+                    markersRawData.push(markerData.rawData);
+                });
+
+                return markersRawData;
+            },
         },
         listNodes: {
             /**
@@ -713,33 +787,14 @@ export default class AdeliomMapFunctions extends Emitter {
                         this.emit(AdeliomMapEvents.markers.dataCreated, markerData);
                     });
 
-                    this.helpers.google.markers._initMapClusters();
+                    this.helpers.markers._enableClusters(true);
                     this.emit(AdeliomMapEvents.markers.allCreated);
-                },
-                /**
-                 * Init the map clusters
-                 * @private
-                 */
-                _initMapClusters: () => {
-                    if (this.options && this.map && this.options[keys.map.useClusters as keyof AdeliomMapOptionsType]) {
-                        if (this.clusterer) {
-                            this.clusterer?.clearMarkers();
-                        }
-                        this.clusterer = new MarkerClusterer({
-                            markers: this.helpers.markers._getAllMarkerInstances(),
-                            map: this.map,
-                            onClusterClick: this.helpers.google.clusters._handleClusterClick,
-                            renderer: this.helpers.google.clusters._getRenderer()
-                        });
-                    }
                 },
                 /**
                  * Removes everything from the map and the list
                  */
                 _clearMap: () => {
-                    if (this.clusterer) {
-                        this.clusterer?.clearMarkers();
-                    }
+                    this.helpers.markers._disableClusters();
 
                     this.markersData.forEach((markerData: AdeliomMapMarkerDataType) => {
                         markerData.marker?.setMap(null);

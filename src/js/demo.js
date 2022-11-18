@@ -5,6 +5,10 @@ const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 const params = {
     logAllEvents: false,
     logClickEvents: false,
+    testAddMarkers: false,
+    testRemoveMarkers: false,
+    testDisableClusters: false,
+    testReEnableClusters: false,
 };
 
 const mapListEltTemplate = '<div class="map-list-elt">' +
@@ -303,36 +307,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const disableMapButton = document.querySelector(`[js-disable-map]`);
 
-    setTimeout(() => {
-        const newMarkers = [
-            {
-                title: 'Chamonix',
-                description: 'Lieu touristique',
-                iconSize: 10,
-                coordinates: {
-                    lat: 45.923697,
-                    lng: 6.869433,
+    if (params.testAddMarkers) {
+        setTimeout(() => {
+            const newMarkers = [
+                {
+                    title: 'Chamonix',
+                    description: 'Lieu touristique',
+                    iconSize: 10,
+                    coordinates: {
+                        lat: 45.923697,
+                        lng: 6.869433,
+                    }
+                },
+                {
+                    title: 'Sommet du Mont-Blanc',
+                    description: 'Lieu touristique',
+                    iconSize: 20,
+                    coordinates: {
+                        lat: 45.8325,
+                        lng: 6.865,
+                    }
                 }
-            },
-            {
-                title: 'Sommet du Mont-Blanc',
-                description: 'Lieu touristique',
-                iconSize: 20,
-                coordinates: {
-                    lat: 45.8325,
-                    lng: 6.865,
-                }
+            ];
+
+            adeliomMap._addMarkers(newMarkers);
+        }, 2000);
+    }
+
+    if (params.testRemoveMarkers) {
+        setTimeout(() => {
+            const markersToRemove = [
+                adeliomMap._getMarkersData()[1]?.marker,
+            ];
+
+            adeliomMap._removeMarkers(markersToRemove);
+        }, 3000);
+    }
+
+    if (params.testDisableClusters) {
+        setTimeout(() => {
+            adeliomMap._disableClusters();
+
+            if (params.testReEnableClusters) {
+                setTimeout(() => {
+                    adeliomMap._enableClusters();
+                }, 3000);
             }
-        ];
-
-        adeliomMap._addMarkers(newMarkers);
-
-        const markersToRemove = [
-            adeliomMap._getMarkersData()[1]?.marker,
-        ];
-
-        adeliomMap._removeMarkers(markersToRemove);
-    }, 3000);
+        }, 1000);
+    }
 
     if (disableMapButton) {
         if (adeliomMap.options['mapAskForConsent']) {
