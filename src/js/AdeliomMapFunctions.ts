@@ -10,7 +10,7 @@ import {
     AdeliomMapCoordinatesType, AdeliomMapGoogleType,
     AdeliomMapMarkerConfigType,
     AdeliomMapMarkerDataType, AdeliomMapMarkerParamsType,
-    AdeliomMapOptionsType
+    AdeliomMapOptionsType, AdeliomMapPlacesMapOptionsType, AdeliomMapPlacesOptionsType
 } from "./AdeliomMapTypes";
 import errors from "./errors";
 
@@ -31,6 +31,8 @@ export default class AdeliomMapFunctions extends Emitter {
     private map: google.maps.Map | null;
     public mapContainer: HTMLElement | null;
     public mapListContainer: HTMLElement | null;
+    public placesInput: HTMLInputElement | null;
+    public autocomplete: any;
     public markers: AdeliomMapMarkerParamsType[];
     private markersData: AdeliomMapMarkerDataType[];
     public clusterer: MarkerClusterer | null;
@@ -57,6 +59,7 @@ export default class AdeliomMapFunctions extends Emitter {
         this.map = null;
         this.mapContainer = null;
         this.mapListContainer = null;
+        this.placesInput = null;
 
         this.markers = [];
         this.markersData = [];
@@ -75,6 +78,12 @@ export default class AdeliomMapFunctions extends Emitter {
              */
             _isProviderAvailable: (provider: string) => {
                 return availableProviders.findIndex(prov => prov === provider) !== -1;
+            },
+            /**
+             * Returns the currently used provider
+             */
+            _getProvider: () => {
+                return this.options[keys.map.provider as keyof AdeliomMapOptionsType];
             },
         },
         infoWindows: {
@@ -467,7 +476,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     }
 
                     if (this.helpers.markers._getClustersStatus()) {
-                        switch (this.options.mapProvider) {
+                        switch (this.helpers.providers._getProvider()) {
                             case 'google':
                                 this.clusterer = new MarkerClusterer({
                                     markers: this.helpers.markers._getAllMarkerInstances(),
@@ -622,8 +631,17 @@ export default class AdeliomMapFunctions extends Emitter {
                 if (this.options[keys.map.zoomMarkerOnClick as keyof AdeliomMapOptionsType]) {
                     // Only zoom if less zoomed than zoom value
                     if (this.map && this.map.getZoom() < this.options[keys.map.zoomMarkerOnClick as keyof AdeliomMapOptionsType]) {
-                        this.map.setZoom(this.options[keys.map.zoomMarkerOnClick as keyof AdeliomMapOptionsType]);
+                        this.helpers.map._setZoom(this.options[keys.map.zoomMarkerOnClick as keyof AdeliomMapOptionsType]);
                     }
+                }
+            },
+            /**
+             * Sets the level of zoom on the map
+             * @param zoom
+             */
+            _setZoom: (zoom: number) => {
+                if (this.map) {
+                    this.map.setZoom(zoom);
                 }
             },
             /**
@@ -1153,7 +1171,50 @@ export default class AdeliomMapFunctions extends Emitter {
                         poiStyle
                     ];
                 }
+            },
+            places: {
+                _initPlacesField: () => {
+                    if (this.placesInput) {
+                        const placesField: HTMLInputElement = this.placesInput;
+                        const placesOptions: AdeliomMapPlacesOptionsType = this.options[keys.places.options as keyof AdeliomMapOptionsType] ?? {};
+                        const placesMapOptions: AdeliomMapPlacesMapOptionsType = this.options[keys.places.mapOptions as keyof AdeliomMapOptionsType] ?? {};
+
+                        this.on(AdeliomMapEvents.map.mapLoaded, () => {
+                            if (this.google?.maps?.places) {
+                                this.autocomplete = new this.google.maps.places.Autocomplete(placesField, placesOptions);
+                                this.google.maps.event.addListener(this.autocomplete, 'place_changed', () => {
+                                    const clickedPlace = this.autocomplete.getPlace();
+
+                                    if (clickedPlace?.geometry?.location) {
+                                        const coordinates: AdeliomMapCoordinatesType = {
+                                            lat: clickedPlace.geometry.location.lat(),
+                                            lng: clickedPlace.geometry.location.lng(),
+                                        };
+
+                                        const latLngCoordinates = this.helpers.google.coordinates._getLatLng(coordinates);
+
+                                        if (latLngCoordinates?.lat() && latLngCoordinates?.lng()) {
+                                            this.helpers.map._setCenter(latLngCoordinates);
+                                            this.helpers.map._setZoom(placesMapOptions.zoomOnPlace);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                },
             }
+        },
+        places: {
+            _commonInit: () => {
+                switch (this.helpers.providers._getProvider()) {
+                    case 'google':
+                        this.helpers.google.places._initPlacesField();
+                        break;
+                    default:
+                        break;
+                }
+            },
         }
     };
 

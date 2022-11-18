@@ -32,6 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
 `apiKey (string)` : clé API de la map<br>
 `mapSelector (string)` : sélecteur CSS du container de la map<br>
 `mapListSelector (string)` : sélecteur CSS du container de la lise des points<br>
+`placesSelector (string)` : sélecteur CSS de l'input utilisé pour l'autocomplete<br>
+`placesOptions (object)` : objet d'options pour l'autocomplete<br>
+`placesMapOptions (object)` : objet d'options pour l'association champ autocomplete / map<br>
 `checkMapSize (bool)` : vérifie si la map a bien une hauteur/largeur<br>
 `mapDefaultCenter ({lat: x, lng: y})` : centre par défaut de la map<br>
 `mapAutoCenter (bool)` : indique si la map doit centrer automatiquement sur l'ensemble des coordonnées<br>

@@ -39,19 +39,30 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
         this.hasConsent = this.options[keys.rgpd.defaultConsentValue as keyof AdeliomMapOptionsType];
 
-        this.mapContainer = document.querySelector(this.options[keys.map.selector as keyof AdeliomMapOptionsType]);
+        const mapSelector = this.options[keys.map.selector as keyof AdeliomMapOptionsType];
+        const mapListSelector = this.options[keys.list.selector as keyof AdeliomMapOptionsType];
+        const placesSelector = this.options[keys.places.selector as keyof AdeliomMapOptionsType];
+
+        this.mapContainer = document.querySelector(mapSelector);
         this.helpers.map._commonInit();
         this.mapListEltTemplate = null;
 
-        if (this.options[keys.list.selector as keyof AdeliomMapOptionsType]) {
-            this.mapListContainer = document.querySelector(this.options[keys.list.selector as keyof AdeliomMapOptionsType]);
+        if (mapListSelector) {
+            this.mapListContainer = document.querySelector(mapListSelector);
             this.helpers.listNodes._commonInit();
 
-            if (this.options[keys.list.eltTemplate as keyof AdeliomMapOptionsType]) {
-                this.mapListEltTemplate = this.options[keys.list.eltTemplate as keyof AdeliomMapOptionsType];
+            const eltTemplate = this.options[keys.list.eltTemplate as keyof AdeliomMapOptionsType];
+
+            if (eltTemplate) {
+                this.mapListEltTemplate = eltTemplate;
             }
         }
 
+        if (placesSelector) {
+            this.placesInput = document.querySelector(placesSelector);
+
+            this.helpers.places._commonInit();
+        }
 
         this.markers = this.options[keys.map.markers as keyof AdeliomMapOptionsType] ?? [];
         this.displayMarkers = this.options[keys.map.displayMarkers as keyof AdeliomMapOptionsType] ?? false;
@@ -80,7 +91,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
     };
 
     _addMarkers(markersRawData: any) {
-        switch (this.options.mapProvider) {
+        switch (this.helpers.providers._getProvider()) {
             case 'google':
             default:
                 this.helpers.google.markers._addMapMarkers(markersRawData);
@@ -89,7 +100,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
     };
 
     _removeMarkers(markers: any) {
-        switch (this.options.mapProvider) {
+        switch (this.helpers.providers._getProvider()) {
             case 'google':
             default:
                 this.helpers.google.markers._removeMapMarkers(markers);
@@ -98,7 +109,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
     }
 
     _getMarkersData() {
-        switch (this.options.mapProvider) {
+        switch (this.helpers.providers._getProvider()) {
             case 'google':
             default:
                 return this.helpers.markers._getMarkersData();

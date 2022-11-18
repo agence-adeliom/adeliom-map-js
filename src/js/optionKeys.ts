@@ -45,6 +45,11 @@ const keys: AdeliomMapKeys = {
         centerMarkerOnClick: 'mapListCenterMarkerOnClick',
         replaceWithMarkerData: 'mapListReplaceWithMarkerData',
     },
+    places: {
+        selector: 'placesSelector',
+        options: 'placesOptions',
+        mapOptions: 'placesMapOptions',
+    },
     rgpd: {
         askForConsent: 'mapAskForConsent',
         defaultConsentValue: 'mapConsentDefaultValue',

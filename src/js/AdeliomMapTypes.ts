@@ -4,6 +4,7 @@ export type AdeliomMapKeys = {
     map: AdeliomMapKeys_Map,
     list: AdeliomMapKeys_List,
     rgpd: AdeliomMapKeys_Rgpd,
+    places: AdeliomMapKeys_Places,
 }
 
 export type AdeliomMapKeys_Map = {
@@ -52,6 +53,12 @@ export type AdeliomMapKeys_List = {
     replaceWithMarkerData: string,
 }
 
+export type AdeliomMapKeys_Places = {
+    selector: string,
+    options: string,
+    mapOptions: string,
+}
+
 export type AdeliomMapKeys_Rgpd = {
     askForConsent: string,
     defaultConsentValue: string,
@@ -87,7 +94,7 @@ export type AdeliomMapMarkerParamsType = {
 export type AdeliomMapCoordinatesType = {
     lat: number,
     lng: number,
-}
+};
 
 export type AdeliomMapApiOptionsType = {
     version?: string,
@@ -95,13 +102,29 @@ export type AdeliomMapApiOptionsType = {
     language?: string,
     region?: string,
     libraries?: object,
-}
+};
+
+export type AdeliomMapPlacesOptionsType = {
+    types?: string[],
+    componentRestrictions?: {
+        country: string | string[],
+    },
+    fields?: string[],
+};
+
+export type AdeliomMapPlacesMapOptionsType = {
+    autoCenterOnPlace?: boolean,
+    zoomOnPlace: number,
+};
 
 export type AdeliomMapOptionsType = {
     apiKey?: string
     apiOptions?: AdeliomMapApiOptionsType,
     mapSelector?: string,
     mapListSelector?: string,
+    placesSelector?: string,
+    placesOptions?: AdeliomMapPlacesOptionsType,
+    placesMapOptions?: AdeliomMapPlacesMapOptionsType,
     checkMapSize: boolean,
     mapUseClusters: boolean,
     mapClusterIconUrl?: string,

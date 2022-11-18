@@ -9,6 +9,17 @@ const defaultOptions: AdeliomMapOptionsType = {
     checkMapSize: false,
     mapUseClusters: false,
     mapClusterIconSize: 56,
+    placesSelector: undefined,
+    placesOptions: {
+        componentRestrictions: {
+            country: 'fr',
+        },
+        fields: ['geometry.location', 'formatted_address'],
+    },
+    placesMapOptions: {
+        autoCenterOnPlace: true,
+        zoomOnPlace: 15,
+    },
     mapClusterParams: [
         {
             from: 2,

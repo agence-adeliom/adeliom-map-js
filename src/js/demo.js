@@ -37,6 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         mapSelector: '[js-map]',
         mapListSelector: '[js-map-list]',
+        placesSelector: '[js-places]',
+        placesOptions: {
+            componentRestrictions: {
+                country: ['fr']
+            },
+            fields: ['geometry.location', 'formatted_address'],
+        },
+        placesMapOptions: {
+            autoCenterOnPlace: true,
+            zoomOnPlace: 12,
+        },
         mapAllowMultipleMarkersSelected: false,
         mapInfoWindowTemplate: mapInfoWindowTemplate,
         mapListEltTemplate: mapListEltTemplate,
