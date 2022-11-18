@@ -19,6 +19,7 @@ const keys: AdeliomMapKeys = {
         markerHoveredIconUrl: 'mapMarkerHoveredIconUrl',
         markerSelectedIconUrl: 'mapMarkerSelectedIconUrl',
         markerIconSize: 'mapMarkerIconSize',
+        markerIconCentered: 'markerIconCentered',
         displayMarkers: 'mapDisplayMarkers',
         displayInfoWindows: 'mapDisplayInfoWindows',
         allowMultipleMarkersSelected: 'mapAllowMultipleMarkersSelected',

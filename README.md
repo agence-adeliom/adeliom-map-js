@@ -126,6 +126,8 @@ mapMarkers: [
             lng: 7.714012,
         },
         icon: 'https://...', // override l'icon par défaut
+        iconSize: 32,
+        iconCentered: false,
         selectedIcon: 'https://...', // override l'icon selected par défaut
         infoWindowTemplate: '<div class="map-infowindow-elt">Test template</div>',
         listEltTemplate: 'Test 2',

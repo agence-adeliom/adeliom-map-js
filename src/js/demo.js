@@ -7,8 +7,8 @@ const params = {
     logClickEvents: false,
     testAddMarkers: false,
     testRemoveMarkers: false,
-    testDisableClusters: true,
-    testReEnableClusters: true,
+    testDisableClusters: false,
+    testReEnableClusters: false,
 };
 
 const mapListEltTemplate = '<div class="map-list-elt">' +
@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
             {
                 title: 'Tour Eiffel',
                 description: 'Monument',
+                iconCentered: false,
                 coordinates: {
                     lat: 48.858370,
                     lng: 2.294481
