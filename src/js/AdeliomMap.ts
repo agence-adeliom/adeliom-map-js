@@ -8,6 +8,12 @@ export const AdeliomMapEvents = {
         hasAutoCentered: 'mapHasAutoCentered',
         mapLoaded: 'mapLoaded',
     },
+    places: {
+        selectedPlaceHasBeenCentered: 'selectedPlaceHasBeenCentered',
+        selectedPlaceHasBeenFound: 'selectedPlaceHasBeenFound',
+        fieldHasBeenFocused: 'fieldHasBeenFocused',
+        fieldHasBeenBlurred: 'fieldHasBeenBlurred',
+    },
     clusters: {
         enabled: 'clustersEnabled',
         disabled: 'clustersDisabled',

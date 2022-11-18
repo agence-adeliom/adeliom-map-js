@@ -3,7 +3,7 @@ import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
-    logAllEvents: false,
+    logAllEvents: true,
     logClickEvents: false,
     testAddMarkers: false,
     testRemoveMarkers: false,
@@ -318,6 +318,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const disableMapButton = document.querySelector(`[js-disable-map]`);
+    const disableClustersButton = document.querySelector(`[js-disable-clusters]`);
+    const enableClustersButton = document.querySelector(`[js-enable-clusters]`);
+
+    disableClustersButton.addEventListener('click', () => {
+        adeliomMap._disableClusters();
+    });
+
+    enableClustersButton.addEventListener('click', () => {
+        adeliomMap._enableClusters();
+    });
 
     if (params.testAddMarkers) {
         setTimeout(() => {
@@ -437,6 +447,30 @@ document.addEventListener("DOMContentLoaded", () => {
     adeliomMap.on(AdeliomMapEvents.clusters.enabled, () => {
         if (params.logAllEvents) {
             console.log('Clusters enabled');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.places.selectedPlaceHasBeenFound, () => {
+        if (params.logAllEvents) {
+            console.log('Selected place has been found');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.places.selectedPlaceHasBeenCentered, () => {
+        if (params.logAllEvents) {
+            console.log('Selected place has been centered');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.places.fieldHasBeenFocused, () => {
+        if (params.logAllEvents) {
+            console.log('Places field has been focused');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.places.fieldHasBeenBlurred, () => {
+        if (params.logAllEvents) {
+            console.log('Places field has been blurred');
         }
     });
 });

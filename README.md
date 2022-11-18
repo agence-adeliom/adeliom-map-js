@@ -180,6 +180,18 @@ et élément de liste).<br>
 
 `consentButtonClicked` : Est émit lorsque le bouton de consentement de la map est cliqué.<br>
 
+### Clusters
+
+`clustersEnabled` : Est émit lorsque les clusters ont été activés (à l'init et à l'activation manuelle)<br>
+`clustersDisabled` : Est émit lorsque les clusters ont été désactivés
+
+### Places
+
+`selectedPlaceHasBeenCentered` : Est émit lorsque le lieu choisit via le champ autocomplete est centré sur la map<br>
+`selectedPlaceHasBeenFound` : Est émit lorsque les données du lieu choisit via le champ autocomplete sont récupérées<br>
+`fieldHasBeenFocused` : Est émit lorsque le champ autocomplete est focus<br>
+`fieldHasBeenBlurred` : Est émit lorsque le champ autocomplete n'est plus focus
+
 ## Fonctions
 
 `_setConsent (bool)` : Permet d'indiquer dynamiquement l'état de consentement de l'utilisateur<br>

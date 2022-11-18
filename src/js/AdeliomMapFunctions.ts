@@ -1179,6 +1179,14 @@ export default class AdeliomMapFunctions extends Emitter {
                         const placesOptions: AdeliomMapPlacesOptionsType = this.options[keys.places.options as keyof AdeliomMapOptionsType] ?? {};
                         const placesMapOptions: AdeliomMapPlacesMapOptionsType = this.options[keys.places.mapOptions as keyof AdeliomMapOptionsType] ?? {};
 
+                        placesField.addEventListener('focus', () => {
+                            this.emit(AdeliomMapEvents.places.fieldHasBeenFocused);
+                        });
+
+                        placesField.addEventListener('blur', () => {
+                            this.emit(AdeliomMapEvents.places.fieldHasBeenBlurred);
+                        });
+
                         this.on(AdeliomMapEvents.map.mapLoaded, () => {
                             if (this.google?.maps?.places) {
                                 this.autocomplete = new this.google.maps.places.Autocomplete(placesField, placesOptions);
@@ -1186,6 +1194,8 @@ export default class AdeliomMapFunctions extends Emitter {
                                     const clickedPlace = this.autocomplete.getPlace();
 
                                     if (clickedPlace?.geometry?.location) {
+                                        this.emit(AdeliomMapEvents.places.selectedPlaceHasBeenFound, clickedPlace);
+
                                         const coordinates: AdeliomMapCoordinatesType = {
                                             lat: clickedPlace.geometry.location.lat(),
                                             lng: clickedPlace.geometry.location.lng(),
@@ -1196,6 +1206,8 @@ export default class AdeliomMapFunctions extends Emitter {
                                         if (latLngCoordinates?.lat() && latLngCoordinates?.lng()) {
                                             this.helpers.map._setCenter(latLngCoordinates);
                                             this.helpers.map._setZoom(placesMapOptions.zoomOnPlace);
+
+                                            this.emit(AdeliomMapEvents.places.selectedPlaceHasBeenCentered, clickedPlace);
                                         }
                                     }
                                 });
