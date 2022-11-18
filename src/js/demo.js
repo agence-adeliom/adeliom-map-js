@@ -7,8 +7,8 @@ const params = {
     logClickEvents: false,
     testAddMarkers: false,
     testRemoveMarkers: false,
-    testDisableClusters: false,
-    testReEnableClusters: false,
+    testDisableClusters: true,
+    testReEnableClusters: true,
 };
 
 const mapListEltTemplate = '<div class="map-list-elt">' +
@@ -413,6 +413,18 @@ document.addEventListener("DOMContentLoaded", () => {
     adeliomMap.on(AdeliomMapEvents.map.hasAutoCentered, () => {
         if (params.logAllEvents) {
             console.log('Map just auto-centered');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.clusters.disabled, () => {
+        if (params.logAllEvents) {
+            console.log('Clusters disabled');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.clusters.enabled, () => {
+        if (params.logAllEvents) {
+            console.log('Clusters enabled');
         }
     });
 });

@@ -445,6 +445,8 @@ export default class AdeliomMapFunctions extends Emitter {
 
                         this.helpers.google.markers._clearMap();
                         this.helpers.google.markers._addMapMarkers(currentMarkersData);
+
+                        this.emit(AdeliomMapEvents.clusters.disabled);
                     }
                 }
             },
@@ -472,6 +474,8 @@ export default class AdeliomMapFunctions extends Emitter {
                             default:
                                 break;
                         }
+
+                        this.emit(AdeliomMapEvents.clusters.enabled);
                     }
                 }
             },

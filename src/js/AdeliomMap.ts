@@ -8,6 +8,10 @@ export const AdeliomMapEvents = {
         hasAutoCentered: 'mapHasAutoCentered',
         mapLoaded: 'mapLoaded',
     },
+    clusters: {
+        enabled: 'clustersEnabled',
+        disabled: 'clustersDisabled',
+    },
     markers: {
         allCreated: 'allMarkerCreated',
         created: 'markerCreated',
