@@ -95,6 +95,8 @@ export type AdeliomMapMarkerParamsType = {
     infoWindowTemplate?: string,
     listEltTemplate?: string,
     listEltId?: any,
+    hasInteractions?: boolean,
+    isGeolocation?: boolean,
 }
 
 export type AdeliomMapCoordinatesType = {
@@ -125,6 +127,7 @@ export type AdeliomMapPlacesMapOptionsType = {
 
 export type AdeliomMapGeolocationOptionsType = {
     zoomOnGeolocation: number,
+    addMarkerToMap?: boolean,
 };
 
 export type AdeliomMapOptionsType = {
@@ -188,7 +191,9 @@ export type AdeliomMapMarkerDataType = {
     marker?: any,
     infoWindow?: any,
     listElt?: any,
-    rawData?: AdeliomMapMarkerParamsType,
+    rawData: AdeliomMapMarkerParamsType,
+    hasInteraction?: boolean,
+    isGeolocation?: boolean,
 }
 
 export type AdeliomMapMarkerConfigType = {
@@ -196,6 +201,7 @@ export type AdeliomMapMarkerConfigType = {
     title?: any,
     map?: any,
     icon?: any
+    zIndex?: number,
 }
 
 export type AdeliomMapErrorsType = {

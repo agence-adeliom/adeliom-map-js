@@ -12,6 +12,7 @@ const defaultOptions: AdeliomMapOptionsType = {
     geolocationSelector: undefined,
     geolocationOptions: {
         zoomOnGeolocation: 15,
+        addMarkerToMap: false,
     },
     placesSelector: undefined,
     placesOptions: {

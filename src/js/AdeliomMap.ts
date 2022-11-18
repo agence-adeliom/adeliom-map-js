@@ -1,12 +1,14 @@
 import AdeliomMapFunctions from "./AdeliomMapFunctions";
 import keys from "./optionKeys";
 import errors from "./errors";
-import {AdeliomMapOptionsType} from "./AdeliomMapTypes";
+import {AdeliomMapMarkerDataType, AdeliomMapMarkerParamsType, AdeliomMapOptionsType} from "./AdeliomMapTypes";
 
 export const AdeliomMapEvents = {
     map: {
         hasAutoCentered: 'mapHasAutoCentered',
         mapLoaded: 'mapLoaded',
+        reset: 'mapReset',
+        clear: 'mapCleared',
     },
     places: {
         selectedPlaceHasBeenCentered: 'selectedPlaceHasBeenCentered',
@@ -28,6 +30,7 @@ export const AdeliomMapEvents = {
         created: 'markerCreated',
         dataCreated: 'markerDataCreated',
         clicked: 'markerClicked',
+        geolocationClicked: 'markerGeolocationClicked',
     },
     infoWindows: {
         created: 'infoWindowCreated',
@@ -108,11 +111,13 @@ export default class AdeliomMap extends AdeliomMapFunctions {
         }
     };
 
-    _addMarkers(markersRawData: any) {
+    _addMarkers(markersRawData: AdeliomMapMarkerParamsType | AdeliomMapMarkerParamsType[]) {
         switch (this.helpers.providers._getProvider()) {
             case 'google':
             default:
-                this.helpers.google.markers._addMapMarkers(markersRawData);
+                if (markersRawData) {
+                    this.helpers.google.markers._addMapMarkers(markersRawData);
+                }
                 break;
         }
     };
@@ -149,5 +154,17 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
     _geolocateOnMap() {
         this.helpers.geolocation._handleGeolocationRequest();
+    }
+
+    _removeGeolocationMarker() {
+        this.helpers.geolocation._removeGeolocationMarker();
+    }
+
+    _clearMap() {
+        this.helpers.map._clearMap();
+    }
+
+    _resetMap() {
+        this.helpers.map._resetMap();
     }
 };

@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         geolocationSelector: '[js-geolocate-on-map]',
         geolocationOptions: {
             zoomOnGeolocation: 12,
+            addMarkerToMap: true,
         },
         placesSelector: '[js-places]',
         placesOptions: {
@@ -324,6 +325,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const disableMapButton = document.querySelector(`[js-disable-map]`);
     const disableClustersButton = document.querySelector(`[js-disable-clusters]`);
     const enableClustersButton = document.querySelector(`[js-enable-clusters]`);
+    const removeGeolocationMarkerButton = document.querySelector(`[js-remove-geolocation-marker]`);
+    const resetMapButton = document.querySelector(`[js-reset-map]`);
+    const clearMapButton = document.querySelector(`[js-clear-map]`);
 
     disableClustersButton.addEventListener('click', () => {
         adeliomMap._disableClusters();
@@ -331,6 +335,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     enableClustersButton.addEventListener('click', () => {
         adeliomMap._enableClusters();
+    });
+
+    removeGeolocationMarkerButton.addEventListener('click', () => {
+        adeliomMap._removeGeolocationMarker();
+    });
+
+    resetMapButton.addEventListener('click', () => {
+        adeliomMap._resetMap();
+    });
+
+    clearMapButton.addEventListener('click', () => {
+        adeliomMap._clearMap();
     });
 
     if (params.testAddMarkers) {
@@ -493,6 +509,24 @@ document.addEventListener("DOMContentLoaded", () => {
     adeliomMap.on(AdeliomMapEvents.geolocation.centered, () => {
         if (params.logAllEvents) {
             console.log('Geolocation centered on map');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.markers.geolocationClicked, () => {
+        if (params.logAllEvents) {
+            console.log('Geolocation marker clicked');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.map.reset, () => {
+        if (params.logAllEvents) {
+            console.log('Map has been reset');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.map.clear, () => {
+        if (params.logAllEvents) {
+            console.log('Map has been cleared');
         }
     });
 });
