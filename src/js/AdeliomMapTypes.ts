@@ -128,6 +128,8 @@ export type AdeliomMapPlacesMapOptionsType = {
 export type AdeliomMapGeolocationOptionsType = {
     zoomOnGeolocation: number,
     addMarkerToMap?: boolean,
+    icon?: string
+    iconSize?: number
 };
 
 export type AdeliomMapOptionsType = {

@@ -1093,14 +1093,25 @@ export default class AdeliomMapFunctions extends Emitter {
                         map: this.map,
                     };
 
-                    const iconSize = markerRawData?.iconSize;
+                    let iconSize: number | undefined = markerRawData?.iconSize;
                     const iconCentered = markerRawData?.iconCentered;
 
+                    if (markerRawData?.isGeolocation) {
+                        iconSize = this.helpers.geolocation._getMarkerSize();
+                    }
+
                     if (markerRawData?.icon) {
-                        markerConfig.icon = this.helpers.google.markers._getIconConfig(markerRawData.icon, iconSize, iconCentered);
+                        const url: string = markerRawData.isGeolocation && this.helpers.geolocation._getMarkerIcon()
+                            ? this.helpers.geolocation._getMarkerIcon()
+                            : markerRawData.icon;
+
+                        markerConfig.icon = this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
                         markerData.icon = markerRawData.icon;
                     } else if (this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType]) {
-                        markerConfig.icon = this.helpers.google.markers._getIconConfig(this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType], iconSize, iconCentered);
+                        const url: string = markerRawData.isGeolocation && this.helpers.geolocation._getMarkerIcon()
+                            ? this.helpers.geolocation._getMarkerIcon()
+                            : this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType];
+                        markerConfig.icon = this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
                     }
 
                     if (markerRawData.isGeolocation) {
@@ -1346,6 +1357,12 @@ export default class AdeliomMapFunctions extends Emitter {
                 }
 
                 return false;
+            },
+            _getMarkerIcon: () => {
+                return this.options[keys.geolocation.options as keyof AdeliomMapOptionsType]?.icon;
+            },
+            _getMarkerSize: () => {
+                return this.options[keys.geolocation.options as keyof AdeliomMapOptionsType]?.iconSize;
             },
             _handleGeolocationRequest: (forceMarker: boolean = false) => {
                 this.helpers.geolocation._getCoordinates((data: GeolocationPosition) => {

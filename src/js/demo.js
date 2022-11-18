@@ -3,7 +3,7 @@ import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
-    logAllEvents: true,
+    logAllEvents: false,
     logClickEvents: false,
     testAddMarkers: false,
     testRemoveMarkers: false,
@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
         geolocationOptions: {
             zoomOnGeolocation: 12,
             addMarkerToMap: true,
+            icon: '/dist/img/adeliom-logo.png',
+            iconSize: 56,
         },
         placesSelector: '[js-places]',
         placesOptions: {
