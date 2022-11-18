@@ -14,6 +14,11 @@ export const AdeliomMapEvents = {
         fieldHasBeenFocused: 'fieldHasBeenFocused',
         fieldHasBeenBlurred: 'fieldHasBeenBlurred',
     },
+    geolocation: {
+        success: 'geolocationSuccess',
+        error: 'geolocationError',
+        centered: 'geolocationCentered',
+    },
     clusters: {
         enabled: 'clustersEnabled',
         disabled: 'clustersDisabled',
@@ -48,6 +53,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
         const mapSelector = this.options[keys.map.selector as keyof AdeliomMapOptionsType];
         const mapListSelector = this.options[keys.list.selector as keyof AdeliomMapOptionsType];
         const placesSelector = this.options[keys.places.selector as keyof AdeliomMapOptionsType];
+        const geolocationSelector = this.options[keys.geolocation.selector as keyof AdeliomMapOptionsType];
 
         this.mapContainer = document.querySelector(mapSelector);
         this.helpers.map._commonInit();
@@ -68,6 +74,12 @@ export default class AdeliomMap extends AdeliomMapFunctions {
             this.placesInput = document.querySelector(placesSelector);
 
             this.helpers.places._commonInit();
+        }
+
+        if (geolocationSelector) {
+            this.geolocationButton = document.querySelector(geolocationSelector);
+
+            this.helpers.geolocation._commonInit();
         }
 
         this.markers = this.options[keys.map.markers as keyof AdeliomMapOptionsType] ?? [];
@@ -133,5 +145,9 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
     _enableClusters() {
         return this.helpers.markers._enableClusters();
+    }
+
+    _geolocateOnMap() {
+        this.helpers.geolocation._handleGeolocationRequest();
     }
 };

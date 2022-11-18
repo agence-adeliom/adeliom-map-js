@@ -7,7 +7,7 @@ import {Loader, LoaderOptions} from "google-maps";
 import {MarkerClusterer} from "@googlemaps/markerclusterer";
 import AdeliomMapClusterRenderer from "./AdeliomMapClusterRenderer";
 import {
-    AdeliomMapCoordinatesType, AdeliomMapGoogleType,
+    AdeliomMapCoordinatesType, AdeliomMapGeolocationOptionsType, AdeliomMapGoogleType,
     AdeliomMapMarkerConfigType,
     AdeliomMapMarkerDataType, AdeliomMapMarkerParamsType,
     AdeliomMapOptionsType, AdeliomMapPlacesMapOptionsType, AdeliomMapPlacesOptionsType
@@ -32,6 +32,7 @@ export default class AdeliomMapFunctions extends Emitter {
     public mapContainer: HTMLElement | null;
     public mapListContainer: HTMLElement | null;
     public placesInput: HTMLInputElement | null;
+    public geolocationButton: HTMLElement | null;
     public autocomplete: any;
     public markers: AdeliomMapMarkerParamsType[];
     private markersData: AdeliomMapMarkerDataType[];
@@ -60,6 +61,7 @@ export default class AdeliomMapFunctions extends Emitter {
         this.mapContainer = null;
         this.mapListContainer = null;
         this.placesInput = null;
+        this.geolocationButton = null;
 
         this.markers = [];
         this.markersData = [];
@@ -1225,6 +1227,52 @@ export default class AdeliomMapFunctions extends Emitter {
                         break;
                     default:
                         break;
+                }
+            },
+        },
+        geolocation: {
+            _canGeolocate: () => {
+                return window.navigator.geolocation;
+            },
+            _getCoordinates: (success: PositionCallback, failure?: PositionErrorCallback) => {
+                if (this.helpers.geolocation._canGeolocate()) {
+                    return window.navigator.geolocation.getCurrentPosition((data) => {
+                        this.emit(AdeliomMapEvents.geolocation.success, data);
+                        success(data);
+                    }, (data) => {
+                        this.emit(AdeliomMapEvents.geolocation.error, data);
+                        if (failure) {
+                            failure(data);
+                        }
+                    });
+                }
+
+                return false;
+            },
+            _handleGeolocationRequest: () => {
+                this.helpers.geolocation._getCoordinates((data: GeolocationPosition) => {
+                    if (data?.coords?.latitude && data?.coords?.longitude) {
+                        const geolocationOptions: AdeliomMapGeolocationOptionsType = this.options[keys.geolocation.options as keyof AdeliomMapOptionsType] ?? {};
+
+                        const latLng = this.helpers.google.coordinates._getLatLng({
+                            lat: data.coords.latitude,
+                            lng: data.coords.longitude,
+                        });
+
+                        this.helpers.map._setCenter(latLng);
+                        this.helpers.map._setZoom(geolocationOptions.zoomOnGeolocation);
+
+                        this.emit(AdeliomMapEvents.geolocation.centered, latLng);
+                    }
+                });
+            },
+            _commonInit: () => {
+                if (this.helpers.geolocation._canGeolocate()) {
+                    if (this.geolocationButton) {
+                        this.geolocationButton.addEventListener('click', () => {
+                            this.helpers.geolocation._handleGeolocationRequest();
+                        });
+                    }
                 }
             },
         }

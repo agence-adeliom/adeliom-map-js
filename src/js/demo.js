@@ -37,6 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         mapSelector: '[js-map]',
         mapListSelector: '[js-map-list]',
+        geolocationSelector: '[js-geolocate-on-map]',
+        geolocationOptions: {
+            zoomOnGeolocation: 12,
+        },
         placesSelector: '[js-places]',
         placesOptions: {
             componentRestrictions: {
@@ -471,6 +475,24 @@ document.addEventListener("DOMContentLoaded", () => {
     adeliomMap.on(AdeliomMapEvents.places.fieldHasBeenBlurred, () => {
         if (params.logAllEvents) {
             console.log('Places field has been blurred');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.geolocation.success, () => {
+        if (params.logAllEvents) {
+            console.log('Geolocation success');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.geolocation.error, () => {
+        if (params.logAllEvents) {
+            console.log('Geolocation error');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.geolocation.centered, () => {
+        if (params.logAllEvents) {
+            console.log('Geolocation centered on map');
         }
     });
 });

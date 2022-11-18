@@ -5,6 +5,7 @@ export type AdeliomMapKeys = {
     list: AdeliomMapKeys_List,
     rgpd: AdeliomMapKeys_Rgpd,
     places: AdeliomMapKeys_Places,
+    geolocation: AdeliomMapKeys_Geolocation,
 }
 
 export type AdeliomMapKeys_Map = {
@@ -57,6 +58,11 @@ export type AdeliomMapKeys_Places = {
     selector: string,
     options: string,
     mapOptions: string,
+}
+
+export type AdeliomMapKeys_Geolocation = {
+    selector: string,
+    options: string,
 }
 
 export type AdeliomMapKeys_Rgpd = {
@@ -117,11 +123,17 @@ export type AdeliomMapPlacesMapOptionsType = {
     zoomOnPlace: number,
 };
 
+export type AdeliomMapGeolocationOptionsType = {
+    zoomOnGeolocation: number,
+};
+
 export type AdeliomMapOptionsType = {
     apiKey?: string
     apiOptions?: AdeliomMapApiOptionsType,
     mapSelector?: string,
     mapListSelector?: string,
+    geolocationSelector?: string,
+    geolocationOptions?: AdeliomMapGeolocationOptionsType,
     placesSelector?: string,
     placesOptions?: AdeliomMapPlacesOptionsType,
     placesMapOptions?: AdeliomMapPlacesMapOptionsType,

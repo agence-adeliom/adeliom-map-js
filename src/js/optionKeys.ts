@@ -50,6 +50,10 @@ const keys: AdeliomMapKeys = {
         options: 'placesOptions',
         mapOptions: 'placesMapOptions',
     },
+    geolocation: {
+        selector: 'geolocationSelector',
+        options: 'geolocationOptions',
+    },
     rgpd: {
         askForConsent: 'mapAskForConsent',
         defaultConsentValue: 'mapConsentDefaultValue',

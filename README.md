@@ -190,7 +190,13 @@ et élément de liste).<br>
 `selectedPlaceHasBeenCentered` : Est émit lorsque le lieu choisit via le champ autocomplete est centré sur la map<br>
 `selectedPlaceHasBeenFound` : Est émit lorsque les données du lieu choisit via le champ autocomplete sont récupérées<br>
 `fieldHasBeenFocused` : Est émit lorsque le champ autocomplete est focus<br>
-`fieldHasBeenBlurred` : Est émit lorsque le champ autocomplete n'est plus focus
+`fieldHasBeenBlurred` : Est émit lorsque le champ autocomplete n'est plus focus<br>
+
+### Géolocalisation
+
+`geolocationSuccess` : Est émit lorsque le navigateur a bien renvoyé des coordonnées GPS<br>
+`geolocationError` : Est emit lorsque le navigateur n'a pas pu renvoyer des coordonnées GPS<br>
+`geolocationCentered` : Est émit lorsque la carte a été centrée sur les coordonnées de l'utilisateur
 
 ## Fonctions
 
@@ -200,3 +206,4 @@ et élément de liste).<br>
 `_getAllCurrentMarkersRawData ()` : Permet de récupérer l'ensemble des données brutes de marker sur la map<br>
 `_disableClusters ()` : Permet de désactiver l'affichage en clusters s'il est activé<br>
 `_enableClusters ()` : Permet d'activer l'affichage en clusters s'il n'est pas activé<br>
+`_geolocateOnMap()` : Permet de centrer la carte sur la position GPS de l'utilisateur
