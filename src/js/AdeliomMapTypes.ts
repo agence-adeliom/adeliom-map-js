@@ -33,6 +33,7 @@ export type AdeliomMapKeys_Map = {
     zoomMarkerOnClick: string,
     animation: string,
     showPlaces: string,
+    type: string,
     replaceInfoWindowContentWithMarkerData: string,
     customStyles: string,
     controls: AdeliomMapKeys_MapControls,
@@ -164,6 +165,7 @@ export type AdeliomMapOptionsType = {
     mapZoomMarkerOnClick?: number,
     mapHideMarkerOnClickOutside?: boolean,
     mapShowPlaces?: boolean,
+    mapType?: AdeliomMapTypes,
     mapInfoWindowReplaceWithMarkerData?: boolean,
     mapCustomStyles?: any,
     mapEnableZoomButtons?: boolean,
@@ -214,3 +216,5 @@ export type AdeliomMapErrorsType = {
 export type AdeliomMapGoogleType = {
     maps: any,
 }
+
+export type AdeliomMapTypes = 'roadmap' | 'satellite' | 'hybrid' | 'terrain';

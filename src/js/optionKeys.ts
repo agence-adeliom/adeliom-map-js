@@ -28,6 +28,7 @@ const keys: AdeliomMapKeys = {
         zoomMarkerOnClick: 'mapZoomMarkerOnClick',
         animation: 'mapAnimation',
         showPlaces: 'mapShowPlaces',
+        type: 'mapType',
         replaceInfoWindowContentWithMarkerData: 'mapInfoWindowReplaceWithMarkerData',
         customStyles: 'mapCustomStyles',
         controls: {

@@ -55,6 +55,7 @@ const defaultOptions: AdeliomMapOptionsType = {
     mapZoomMarkerOnClick: 12,
     mapHideMarkerOnClickOutside: false,
     mapShowPlaces: false,
+    mapType: 'roadmap',
     mapInfoWindowReplaceWithMarkerData: false,
     mapCustomStyles: [],
     mapEnableZoomButtons: false,

@@ -10,7 +10,7 @@ import {
     AdeliomMapCoordinatesType, AdeliomMapGeolocationOptionsType, AdeliomMapGoogleType,
     AdeliomMapMarkerConfigType,
     AdeliomMapMarkerDataType, AdeliomMapMarkerParamsType,
-    AdeliomMapOptionsType, AdeliomMapPlacesMapOptionsType, AdeliomMapPlacesOptionsType
+    AdeliomMapOptionsType, AdeliomMapPlacesMapOptionsType, AdeliomMapPlacesOptionsType, AdeliomMapTypes
 } from "./AdeliomMapTypes";
 import errors from "./errors";
 
@@ -801,6 +801,17 @@ export default class AdeliomMapFunctions extends Emitter {
                     }, 10);
                 }, 10);
             },
+            _setMapType: (type: AdeliomMapTypes) => {
+                switch (this.helpers.providers._getProvider()) {
+                    case 'google':
+                        this.helpers.google.map._setMapType(type);
+                        break;
+                    default:
+                        break;
+                }
+
+                this.emit(AdeliomMapEvents.map.typeChanged, type);
+            }
         },
         consentScreen: {
             /**
@@ -1242,6 +1253,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         scaleControl: this.options[keys.map.controls.displayScale as keyof AdeliomMapOptionsType],
                         rotateControl: this.options[keys.map.controls.rotateControl as keyof AdeliomMapOptionsType],
                         styles: this.helpers.google.map._getMapStyles(),
+                        mapTypeId: this.options[keys.map.type as keyof AdeliomMapOptionsType],
                     });
 
                     this.helpers.google.map._handleClickOnMap();
@@ -1287,7 +1299,10 @@ export default class AdeliomMapFunctions extends Emitter {
                     return [
                         poiStyle
                     ];
-                }
+                },
+                _setMapType: (type: AdeliomMapTypes) => {
+                    this.map?.setMapTypeId(type);
+                },
             },
             places: {
                 _initPlacesField: () => {

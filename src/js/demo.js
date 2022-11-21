@@ -3,7 +3,7 @@ import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
-    logAllEvents: false,
+    logAllEvents: true,
     logClickEvents: false,
     testAddMarkers: false,
     testRemoveMarkers: false,
@@ -137,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mapConsentDefaultValue: true,
         markerIconCentered: true,
         clusterIconCentered: true,
+        //mapType: 'satellite',
         mapCustomStyles: [
             {
                 "featureType": "water",
@@ -529,6 +530,12 @@ document.addEventListener("DOMContentLoaded", () => {
     adeliomMap.on(AdeliomMapEvents.map.clear, () => {
         if (params.logAllEvents) {
             console.log('Map has been cleared');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.map.typeChanged, (type) => {
+        if (params.logAllEvents) {
+            console.log('Map type changed to :', type);
         }
     });
 });

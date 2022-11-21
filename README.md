@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 `mapDefaultZoom (int)` : zoom par défaut de la map<br>
 `mapProvider (string)` : fournisseur de la map (seulement `google` pour le moment)<br>
 `mapShowPlaces (bool)` : afficher ou non les marqueurs de lieux _(peut être surchargé par mapCustomStyles)_<br>
+`mapType (string)` : indique le type de carte souhaité _(roadmap, satellite, hybrid, terrain)_<br>
 `mapCustomStyles (array)` : tableau de styles personnalisés à appliquer à la map<br>
 `markerIconCentered (bool)` : indique si l'icône du marqueur doit être centrée _(utile si ronde)_<br>
 `clusterIconCentered (bool)` : indique si l'icône du cluster doit être centrée _(utile si ronde)_<br>
@@ -160,6 +161,14 @@ adeliomMap.on('eventName', (data) => {
 });
 ```
 
+### Map :
+
+`mapHasAutoCentered` : indique que la carte a été centrée automatiquement<br>
+`mapLoaded` : indique que la carte est complètement chargée<br>
+`mapReset` : indique que la carte a été réinitialisée<br>
+`mapCleared` : indique que la carte a été vidée<br>
+`mapTypeChanged` : indique que le type de carte a été changé<br>
+
 ### Marqueurs :
 
 `markerCreated` : Retourne l'instance d'un marqueur Google Maps lorsqu'il vient d'être créé.<br>
@@ -212,3 +221,4 @@ et élément de liste).<br>
 `_resetMap (void)` : Permet de réinitialiser la map avec ses marqueurs / clusters<br>
 `_setZoom (number)` : Permet de régler le niveau de zoom de la map<br>
 `_setCenter ({lat,lng})` : Permet de régler le centre de la map<br>
+`_setMapType (string)` : Permet de régler dynamiquement le type de carte (roadmap, satellite, hybrid, terrain)<br>

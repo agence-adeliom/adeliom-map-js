@@ -5,7 +5,7 @@ import {
     AdeliomMapCoordinatesType,
     AdeliomMapMarkerDataType,
     AdeliomMapMarkerParamsType,
-    AdeliomMapOptionsType
+    AdeliomMapOptionsType, AdeliomMapTypes
 } from "./AdeliomMapTypes";
 
 export const AdeliomMapEvents = {
@@ -14,6 +14,7 @@ export const AdeliomMapEvents = {
         mapLoaded: 'mapLoaded',
         reset: 'mapReset',
         clear: 'mapCleared',
+        typeChanged: 'mapTypeChanged',
     },
     places: {
         selectedPlaceHasBeenCentered: 'selectedPlaceHasBeenCentered',
@@ -183,5 +184,9 @@ export default class AdeliomMap extends AdeliomMapFunctions {
         if (coordinates) {
             this.helpers.map._setCenter(coordinates);
         }
+    }
+
+    _setMapType(type: AdeliomMapTypes) {
+        this.helpers.map._setMapType(type);
     }
 };
