@@ -118,32 +118,15 @@ export default class AdeliomMap extends AdeliomMapFunctions {
     };
 
     _addMarkers(markersRawData: AdeliomMapMarkerParamsType | AdeliomMapMarkerParamsType[]) {
-        switch (this.helpers.providers._getProvider()) {
-            case 'google':
-            default:
-                if (markersRawData) {
-                    this.helpers.google.markers._addMapMarkers(markersRawData);
-                }
-                break;
-        }
+        this.helpers.markers._addMarkers(markersRawData);
     };
 
     _removeMarkers(markers: any) {
-        switch (this.helpers.providers._getProvider()) {
-            case 'google':
-            default:
-                this.helpers.google.markers._removeMapMarkers(markers);
-                break;
-        }
+        this.helpers.markers._removeMarkers(markers);
     }
 
     _getMarkersData() {
-        switch (this.helpers.providers._getProvider()) {
-            case 'google':
-            default:
-                return this.helpers.markers._getMarkersData();
-                break;
-        }
+        this.helpers.markers._getMarkersData();
     }
 
     _getAllCurrentMarkersRawData() {

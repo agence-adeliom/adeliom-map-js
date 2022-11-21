@@ -238,10 +238,10 @@ export default class AdeliomMapFunctions extends Emitter {
              * Init markers by its map provider (google, ...)
              * @private
              */
-            _initMarkers: (markers: any) => {
+            _initMarkers: (markers: any, firstInit: boolean = false) => {
                 switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                     case 'google':
-                        this.helpers.google.markers._initMapMarkers(markers).then(() => {
+                        this.helpers.google.markers._initMapMarkers(markers, firstInit).then(() => {
                             this.helpers.map._autoCenter(markers);
                         });
                         break;
@@ -273,7 +273,14 @@ export default class AdeliomMapFunctions extends Emitter {
              * Returns all the markers data
              */
             _getMarkersData: () => {
-                return this.markersData;
+                switch (this.helpers.providers._getProvider()) {
+                    case 'google':
+                        return this.markersData;
+                    default:
+                        break;
+                }
+
+                return [];
             },
             /**
              * Un-select all markers and close all infoWindows
@@ -480,7 +487,7 @@ export default class AdeliomMapFunctions extends Emitter {
 
                 return true;
             },
-            _disableClusters: () => {
+            _disableClusters: async () => {
                 if (this.helpers.markers._getClustersStatus() && this.map) {
                     if (this.clusterer) {
                         this.clusterer?.clearMarkers();
@@ -491,7 +498,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         const currentMarkersData: AdeliomMapMarkerParamsType[] = this.helpers.markersData._getAllMarkersRawData();
 
                         this.helpers.google.markers._clearMap();
-                        this.helpers.google.markers._addMapMarkers(currentMarkersData);
+                        this.helpers.google.markers._addMapMarkers(currentMarkersData, true);
 
                         this.emit(AdeliomMapEvents.clusters.disabled);
                     }
@@ -540,6 +547,28 @@ export default class AdeliomMapFunctions extends Emitter {
                         }
 
                         this.emit(AdeliomMapEvents.clusters.enabled);
+                    }
+                }
+            },
+            _addMarkers: (markersRawData: AdeliomMapMarkerParamsType | AdeliomMapMarkerParamsType[]) => {
+                if (markersRawData) {
+                    switch (this.helpers.providers._getProvider()) {
+                        case 'google':
+                            this.helpers.google.markers._addMapMarkers(markersRawData);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            },
+            _removeMarkers: (markers: any) => {
+                if (markers) {
+                    switch (this.helpers.providers._getProvider()) {
+                        case 'google':
+                            this.helpers.google.markers._removeMapMarkers(markers);
+                            break;
+                        default:
+                            break;
                     }
                 }
             },
@@ -660,7 +689,7 @@ export default class AdeliomMapFunctions extends Emitter {
 
                     this._initMap().then((isInit: any) => {
                         if (isInit && this.displayMarkers) {
-                            this.helpers.markers._initMarkers(this.markers);
+                            this.helpers.markers._initMarkers(this.markers, true);
                             this.emit(AdeliomMapEvents.map.mapLoaded);
                         }
                     });
@@ -997,12 +1026,21 @@ export default class AdeliomMapFunctions extends Emitter {
                  * Loop to init Google Maps markers
                  * @private
                  */
-                _initMapMarkers: async (markers: AdeliomMapMarkerParamsType[]) => {
+                _initMapMarkers: async (markers: AdeliomMapMarkerParamsType[], isFirstInit: boolean = false, addingMarkers: boolean = false, isDisablingClusters: boolean = false) => {
                     markers.forEach((marker: any) => {
                         this.helpers.google.markers._initMapMarker(marker);
                     });
 
-                    this.helpers.markers._enableClusters(true);
+                    if (!isDisablingClusters && this.helpers.markers._getClustersStatus()) {
+                        if (!addingMarkers) {
+                            this.helpers.markers._enableClusters(isFirstInit);
+                        } else {
+                            this.helpers.markers._disableClusters().then(() => {
+                                this.helpers.markers._enableClusters();
+                            });
+                        }
+                    }
+
                     this.emit(AdeliomMapEvents.markers.allCreated);
                 },
                 _initMapMarker: async (marker: AdeliomMapMarkerParamsType) => {
@@ -1142,7 +1180,7 @@ export default class AdeliomMapFunctions extends Emitter {
                  * Allows to dynamically add markers to the Google Map
                  * @param markersRawData
                  */
-                _addMapMarkers: (markersRawData: AdeliomMapMarkerParamsType | AdeliomMapMarkerParamsType[]) => {
+                _addMapMarkers: (markersRawData: AdeliomMapMarkerParamsType | AdeliomMapMarkerParamsType[], isDisablingCluster: boolean = false) => {
                     let finalArray: AdeliomMapMarkerParamsType[];
 
                     if (!Array.isArray(markersRawData)) {
@@ -1155,7 +1193,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         this.markers.push(markerRawData);
                     });
 
-                    this.helpers.google.markers._initMapMarkers(finalArray);
+                    this.helpers.google.markers._initMapMarkers(finalArray, false, true, isDisablingCluster);
                 },
                 _addMapMarker: async (markerRawData: AdeliomMapMarkerParamsType) => {
                     return await this.helpers.google.markers._initMapMarker(markerRawData);

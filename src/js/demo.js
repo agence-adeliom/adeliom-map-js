@@ -3,9 +3,8 @@ import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
-    logAllEvents: true,
+    logAllEvents: false,
     logClickEvents: false,
-    testAddMarkers: false,
     testRemoveMarkers: false,
     testDisableClusters: false,
     testReEnableClusters: false,
@@ -125,6 +124,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 coordinates: {
                     lat: 48.858370,
                     lng: 2.294481
+                }
+            },
+            {
+                title: 'Gorges de la Diosaz',
+                description: 'Lieu touristique',
+                coordinates: {
+                    lat: 45.999,
+                    lng: 6.5,
                 }
             }
         ],
@@ -334,7 +341,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const resetMapButton = document.querySelector(`[js-reset-map]`);
     const clearMapButton = document.querySelector(`[js-clear-map]`);
     const satelliteViewButton = document.querySelector(`[js-satellite-view]`);
+    const roadmapViewButton = document.querySelector(`[js-roadmap-view]`);
     const closeAllMarkersButton = document.querySelector(`[js-close-all-markers]`);
+    const addMarkersButton = document.querySelector(`[js-add-markers]`);
 
     disableClustersButton.addEventListener('click', () => {
         adeliomMap._disableClusters();
@@ -360,36 +369,38 @@ document.addEventListener("DOMContentLoaded", () => {
         adeliomMap._setMapType('satellite');
     });
 
+    roadmapViewButton.addEventListener('click', () => {
+        adeliomMap._setMapType('roadmap');
+    });
+
     closeAllMarkersButton.addEventListener('click', () => {
         adeliomMap._unselectAllMarkers();
     });
 
-    if (params.testAddMarkers) {
-        setTimeout(() => {
-            const newMarkers = [
-                {
-                    title: 'Chamonix',
-                    description: 'Lieu touristique',
-                    iconSize: 10,
-                    coordinates: {
-                        lat: 45.923697,
-                        lng: 6.869433,
-                    }
-                },
-                {
-                    title: 'Sommet du Mont-Blanc',
-                    description: 'Lieu touristique',
-                    iconSize: 20,
-                    coordinates: {
-                        lat: 45.8325,
-                        lng: 6.865,
-                    }
+    addMarkersButton.addEventListener('click', () => {
+        const newMarkers = [
+            {
+                title: 'Chamonix',
+                description: 'Lieu touristique',
+                iconSize: 32,
+                coordinates: {
+                    lat: 45.923697,
+                    lng: 6.869433,
                 }
-            ];
+            },
+            {
+                title: 'Sommet du Mont-Blanc',
+                description: 'Lieu touristique',
+                iconSize: 32,
+                coordinates: {
+                    lat: 45.8325,
+                    lng: 6.865,
+                }
+            }
+        ];
 
-            adeliomMap._addMarkers(newMarkers);
-        }, 2000);
-    }
+        adeliomMap._addMarkers(newMarkers);
+    });
 
     if (params.testRemoveMarkers) {
         setTimeout(() => {
