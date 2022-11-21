@@ -664,8 +664,14 @@ export default class AdeliomMapFunctions extends Emitter {
              * @param zoom
              */
             _setZoom: (zoom: number) => {
-                if (this.map) {
-                    this.map.setZoom(zoom);
+                switch (this.helpers.providers._getProvider()) {
+                    case 'google':
+                        if (this.map) {
+                            this.map.setZoom(zoom);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             },
             /**

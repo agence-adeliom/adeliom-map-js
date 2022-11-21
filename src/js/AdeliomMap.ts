@@ -1,7 +1,12 @@
 import AdeliomMapFunctions from "./AdeliomMapFunctions";
 import keys from "./optionKeys";
 import errors from "./errors";
-import {AdeliomMapMarkerDataType, AdeliomMapMarkerParamsType, AdeliomMapOptionsType} from "./AdeliomMapTypes";
+import {
+    AdeliomMapCoordinatesType,
+    AdeliomMapMarkerDataType,
+    AdeliomMapMarkerParamsType,
+    AdeliomMapOptionsType
+} from "./AdeliomMapTypes";
 
 export const AdeliomMapEvents = {
     map: {
@@ -166,5 +171,17 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
     _resetMap() {
         this.helpers.map._resetMap();
+    }
+
+    _setZoom(zoom?: number) {
+        if (zoom) {
+            this.helpers.map._setZoom(zoom);
+        }
+    }
+
+    _setCenter(coordinates: AdeliomMapCoordinatesType) {
+        if (coordinates) {
+            this.helpers.map._setCenter(coordinates);
+        }
     }
 };

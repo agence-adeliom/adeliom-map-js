@@ -203,10 +203,12 @@ et élément de liste).<br>
 `_setConsent (bool)` : Permet d'indiquer dynamiquement l'état de consentement de l'utilisateur<br>
 `_addMarkers (array|object)` : Permet d'ajouter dynamiquement des marqueurs à la map<br>
 `_removeMarkers (array|object)` : Permet de supprimer dynamiquement des marqueurs à la map<br>
-`_getAllCurrentMarkersRawData ()` : Permet de récupérer l'ensemble des données brutes de marker sur la map<br>
-`_disableClusters ()` : Permet de désactiver l'affichage en clusters s'il est activé<br>
-`_enableClusters ()` : Permet d'activer l'affichage en clusters s'il n'est pas activé<br>
-`_geolocateOnMap()` : Permet de centrer la carte sur la position GPS de l'utilisateur<br>
-`_removeGeolocationMarker` : Permet de supprimer le marqueur de position GPS (s'il existe sur la carte)<br>
-`_clearMap` : Permet de supprimer tous les marqueurs de la carte<br>
-`_resetMap` : Permet de réinitialiser la map avec ses marqueurs / clusters<br>
+`_getAllCurrentMarkersRawData (void)` : Permet de récupérer l'ensemble des données brutes de marker sur la map<br>
+`_disableClusters (void)` : Permet de désactiver l'affichage en clusters s'il est activé<br>
+`_enableClusters (void)` : Permet d'activer l'affichage en clusters s'il n'est pas activé<br>
+`_geolocateOnMap (void)` : Permet de centrer la carte sur la position GPS de l'utilisateur<br>
+`_removeGeolocationMarker (void)` : Permet de supprimer le marqueur de position GPS (s'il existe sur la carte)<br>
+`_clearMap (void)` : Permet de supprimer tous les marqueurs de la carte<br>
+`_resetMap (void)` : Permet de réinitialiser la map avec ses marqueurs / clusters<br>
+`_setZoom (number)` : Permet de régler le niveau de zoom de la map<br>
+`_setCenter ({lat,lng})` : Permet de régler le centre de la map<br>
