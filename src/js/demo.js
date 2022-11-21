@@ -342,6 +342,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearMapButton = document.querySelector(`[js-clear-map]`);
     const satelliteViewButton = document.querySelector(`[js-satellite-view]`);
     const roadmapViewButton = document.querySelector(`[js-roadmap-view]`);
+    const hybridViewButton = document.querySelector(`[js-hybrid-view]`);
+    const terrainViewButton = document.querySelector(`[js-terrain-view]`);
     const closeAllMarkersButton = document.querySelector(`[js-close-all-markers]`);
     const addMarkersButton = document.querySelector(`[js-add-markers]`);
 
@@ -371,6 +373,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     roadmapViewButton.addEventListener('click', () => {
         adeliomMap._setMapType('roadmap');
+    });
+
+    hybridViewButton.addEventListener('click', () => {
+        adeliomMap._setMapType('hybrid');
+    });
+
+    terrainViewButton.addEventListener('click', () => {
+        adeliomMap._setMapType('terrain');
     });
 
     closeAllMarkersButton.addEventListener('click', () => {

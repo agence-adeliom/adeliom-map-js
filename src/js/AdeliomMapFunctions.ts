@@ -1516,6 +1516,8 @@ export default class AdeliomMapFunctions extends Emitter {
                         success(data);
                     }, (data) => {
                         this.emit(AdeliomMapEvents.geolocation.error, data);
+                        console.error('Erreur lors de la géolocalisation', data);
+                        
                         if (failure) {
                             failure(data);
                         }
