@@ -172,6 +172,27 @@ export default class AdeliomMapFunctions extends Emitter {
                     infoWindow.close();
                 }
             },
+            _closeAllInfoWindows: () => {
+                this.helpers.infoWindows._getAllInfoWindows().forEach((infoWindow: any) => {
+                    infoWindow.close();
+                });
+            },
+            /**
+             * Returns all the infoWindows instances
+             */
+            _getAllInfoWindows: () => {
+                const infoWindows: any[] = [];
+
+                this.helpers.markers._getAllMarkerInstances().forEach((marker: any) => {
+                    const infoWindow = this.helpers.infoWindows._getInfoWindowByMarker(marker);
+
+                    if (infoWindow) {
+                        infoWindows.push(infoWindow);
+                    }
+                });
+
+                return infoWindows;
+            },
         },
         markers: {
             /**
@@ -667,7 +688,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     if (plusBtn) {
                         plusBtn.addEventListener('click', () => {
                             this.helpers.map._handlePlusZoom();
-                            
+
                             this.emit(AdeliomMapEvents.map.customPlusZoom);
                             this.emit(AdeliomMapEvents.map.customZoom);
                         });
@@ -1471,6 +1492,7 @@ export default class AdeliomMapFunctions extends Emitter {
             },
             _handleGeolocationRequest: (forceMarker: boolean = false) => {
                 this.helpers.geolocation._removeGeolocationMarker();
+                this.helpers.infoWindows._closeAllInfoWindows();
 
                 this.helpers.geolocation._getCoordinates((data: GeolocationPosition) => {
                     if (data?.coords?.latitude && data?.coords?.longitude) {
