@@ -3,7 +3,7 @@ import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
-    logAllEvents: true,
+    logAllEvents: false,
     logClickEvents: false,
     testAddMarkers: false,
     testRemoveMarkers: false,
@@ -331,6 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const removeGeolocationMarkerButton = document.querySelector(`[js-remove-geolocation-marker]`);
     const resetMapButton = document.querySelector(`[js-reset-map]`);
     const clearMapButton = document.querySelector(`[js-clear-map]`);
+    const satelliteViewButton = document.querySelector(`[js-satellite-view]`);
 
     disableClustersButton.addEventListener('click', () => {
         adeliomMap._disableClusters();
@@ -350,6 +351,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     clearMapButton.addEventListener('click', () => {
         adeliomMap._clearMap();
+    });
+
+    satelliteViewButton.addEventListener('click', () => {
+        adeliomMap._setMapType('satellite');
     });
 
     if (params.testAddMarkers) {
@@ -536,6 +541,18 @@ document.addEventListener("DOMContentLoaded", () => {
     adeliomMap.on(AdeliomMapEvents.map.typeChanged, (type) => {
         if (params.logAllEvents) {
             console.log('Map type changed to :', type);
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.map.consentNotGiven, () => {
+        if (params.logAllEvents) {
+            console.log('Map consent not given');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.map.consentGiven, () => {
+        if (params.logAllEvents) {
+            console.log('Map consent given');
         }
     });
 });

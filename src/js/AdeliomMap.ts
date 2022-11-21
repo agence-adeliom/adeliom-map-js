@@ -3,7 +3,6 @@ import keys from "./optionKeys";
 import errors from "./errors";
 import {
     AdeliomMapCoordinatesType,
-    AdeliomMapMarkerDataType,
     AdeliomMapMarkerParamsType,
     AdeliomMapOptionsType, AdeliomMapTypes
 } from "./AdeliomMapTypes";
@@ -15,6 +14,8 @@ export const AdeliomMapEvents = {
         reset: 'mapReset',
         clear: 'mapCleared',
         typeChanged: 'mapTypeChanged',
+        consentNotGiven: 'mapConsentNotGiven',
+        consentGiven: 'mapConsentGiven',
     },
     places: {
         selectedPlaceHasBeenCentered: 'selectedPlaceHasBeenCentered',
@@ -108,13 +109,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
      * @public
      */
     _setConsent(consent: boolean) {
-        this.hasConsent = consent;
-
-        if (consent) {
-            this.helpers.map._setMap();
-        } else {
-            this.helpers.consentScreen._setConsentScreen();
-        }
+        this.helpers.consentScreen._setConsentScreen(consent);
     };
 
     _addMarkers(markersRawData: AdeliomMapMarkerParamsType | AdeliomMapMarkerParamsType[]) {

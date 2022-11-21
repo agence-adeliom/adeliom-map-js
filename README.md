@@ -188,6 +188,8 @@ et élément de liste).<br>
 ### RGPD :
 
 `consentButtonClicked` : Est émit lorsque le bouton de consentement de la map est cliqué.<br>
+`mapConsentNotGiven` : Est émit lorsque le consentement de la map n'a pas été donné _(même au chargement)_.<br>
+`mapConsentGiven` : Est émit lorsque le consentement de la map a été donné _(même au chargement)_.<br>
 
 ### Clusters
 

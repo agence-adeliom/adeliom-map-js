@@ -818,36 +818,44 @@ export default class AdeliomMapFunctions extends Emitter {
              * Removes the displayed map and sets the consent screen
              * @private
              */
-            _setConsentScreen: () => {
-                if (this.mapContainer) {
-                    this.mapContainer.innerHTML = '';
-                    this.mapContainer.setAttribute(notConsentMapAttribute, '');
-                    this.mapContainer.removeAttribute('style');
-                    this.markersData = [];
+            _setConsentScreen: (consent: boolean) => {
+                this.hasConsent = consent;
 
-                    if (this.mapListContainer) {
-                        this.mapListContainer.innerHTML = '';
-                        this.mapListContainer.setAttribute(notConsentListAttribute, '');
+                if (consent) {
+                    this.helpers.map._setMap();
+                } else {
+                    if (this.mapContainer) {
+                        this.mapContainer.innerHTML = '';
+                        this.mapContainer.setAttribute(notConsentMapAttribute, '');
+                        this.mapContainer.removeAttribute('style');
+                        this.markersData = [];
+
+                        if (this.mapListContainer) {
+                            this.mapListContainer.innerHTML = '';
+                            this.mapListContainer.setAttribute(notConsentListAttribute, '');
+                        }
+
+                        if (this.map) {
+                            this.map = null;
+                        }
+
+                        const consentScreen = document.createElement('div');
+                        consentScreen.setAttribute(consentScreenContainerAttribute, '');
+
+                        const consentButton = document.createElement('button');
+                        consentButton.innerText = this.options[keys.rgpd.buttonMessage as keyof AdeliomMapOptionsType];
+                        consentButton.setAttribute(consentButtonAttribute, '');
+
+                        consentButton.addEventListener('click', () => {
+                            this.emit(AdeliomMapEvents.rgpd.consentButtonClicked, this);
+                        });
+
+                        consentScreen.appendChild(consentButton);
+
+                        this.mapContainer.appendChild(consentScreen);
+
+                        this.emit(AdeliomMapEvents.map.consentNotGiven);
                     }
-
-                    if (this.map) {
-                        this.map = null;
-                    }
-
-                    const consentScreen = document.createElement('div');
-                    consentScreen.setAttribute(consentScreenContainerAttribute, '');
-
-                    const consentButton = document.createElement('button');
-                    consentButton.innerText = this.options[keys.rgpd.buttonMessage as keyof AdeliomMapOptionsType];
-                    consentButton.setAttribute(consentButtonAttribute, '');
-
-                    consentButton.addEventListener('click', () => {
-                        this.emit(AdeliomMapEvents.rgpd.consentButtonClicked, this);
-                    });
-
-                    consentScreen.appendChild(consentButton);
-
-                    this.mapContainer.appendChild(consentScreen);
                 }
             }
         },
@@ -1562,10 +1570,23 @@ export default class AdeliomMapFunctions extends Emitter {
     };
 
     async _handleConsent() {
-        if ((this.options[keys.rgpd.askForConsent as keyof AdeliomMapOptionsType] && !this.hasConsent)) {
-            this.helpers.consentScreen._setConsentScreen();
+        const hasToAskForConsent = this.options[keys.rgpd.askForConsent as keyof AdeliomMapOptionsType];
+
+        if ((hasToAskForConsent && !this.hasConsent)) {
+            this.helpers.consentScreen._setConsentScreen(this.hasConsent);
+
+            setTimeout(() => {
+                this.emit(AdeliomMapEvents.map.consentNotGiven);
+            }, 10);
+
             return false;
         } else {
+            if (hasToAskForConsent && this.hasConsent) {
+                setTimeout(() => {
+                    this.emit(AdeliomMapEvents.map.consentGiven);
+                }, 10);
+            }
+
             if (!this.options[keys.map.checkSize as keyof AdeliomMapOptionsType] || (this.mapContainer && this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
                 const provider = this.options[keys.map.provider as keyof AdeliomMapOptionsType];
                 if (provider) {
