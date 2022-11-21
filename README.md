@@ -180,6 +180,9 @@ adeliomMap.on('eventName', (data) => {
 `markerDataCreated` : Retourne les données d'un marqueur lorsqu'il vient d'être intégralement créé (marqueur, infobulle
 et élément de liste).<br>
 `markerClicked` : Retourne les données d'un marqueur lorsque l'on clique dessus.<br>
+`markerGeolocationClicked` : Indique que le marqueur de position GPS a été cliqué.<br>
+`markerGeolocationRemoved` : Indique que le marqueur de position GPS a été supprimé.<br>
+`allMarkerUnselected` : Indique que tous les marqueurs ont été désélectionnés.<br>
 
 ### Infobulles :
 
@@ -231,3 +234,4 @@ et élément de liste).<br>
 `_setMapType (string)` : Permet de régler dynamiquement le type de carte (roadmap, satellite, hybrid, terrain)<br>
 `_zoomPlus (void)` : Enclenche un zoom positif sur la carte<br>
 `_zoomMinus (void)` : Enclenche un zoom négatif sur la carte<br>
+`_unselectAllMarkers (void)` : Dé-sélectionne l'ensemble des marqueurs ouverts (et ferme les infoWindows)<br>

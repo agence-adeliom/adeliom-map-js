@@ -291,6 +291,8 @@ export default class AdeliomMapFunctions extends Emitter {
                         }
                     }
                 });
+
+                this.emit(AdeliomMapEvents.markers.allUnselected);
             },
             /**
              * Returns the lat/lng object of the provided marker
@@ -1492,7 +1494,7 @@ export default class AdeliomMapFunctions extends Emitter {
             },
             _handleGeolocationRequest: (forceMarker: boolean = false) => {
                 this.helpers.geolocation._removeGeolocationMarker();
-                this.helpers.infoWindows._closeAllInfoWindows();
+                this.helpers.markers._unselectAllMarkers();
 
                 this.helpers.geolocation._getCoordinates((data: GeolocationPosition) => {
                     if (data?.coords?.latitude && data?.coords?.longitude) {
@@ -1543,6 +1545,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     }
 
                     this.geolocationMarkerData = null;
+                    this.emit(AdeliomMapEvents.markers.geolocationRemoved);
                 }
             },
             _commonInit: () => {

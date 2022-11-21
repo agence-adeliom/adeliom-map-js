@@ -3,7 +3,7 @@ import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
-    logAllEvents: false,
+    logAllEvents: true,
     logClickEvents: false,
     testAddMarkers: false,
     testRemoveMarkers: false,
@@ -334,6 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resetMapButton = document.querySelector(`[js-reset-map]`);
     const clearMapButton = document.querySelector(`[js-clear-map]`);
     const satelliteViewButton = document.querySelector(`[js-satellite-view]`);
+    const closeAllMarkersButton = document.querySelector(`[js-close-all-markers]`);
 
     disableClustersButton.addEventListener('click', () => {
         adeliomMap._disableClusters();
@@ -357,6 +358,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     satelliteViewButton.addEventListener('click', () => {
         adeliomMap._setMapType('satellite');
+    });
+
+    closeAllMarkersButton.addEventListener('click', () => {
+        adeliomMap._unselectAllMarkers();
     });
 
     if (params.testAddMarkers) {
@@ -573,6 +578,18 @@ document.addEventListener("DOMContentLoaded", () => {
     adeliomMap.on(AdeliomMapEvents.map.customPlusZoom, () => {
         if (params.logAllEvents) {
             console.log('Map custom plus zoom');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.markers.allUnselected, () => {
+        if (params.logAllEvents) {
+            console.log('All markers unselected');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.markers.geolocationRemoved, () => {
+        if (params.logAllEvents) {
+            console.log('Geolocation marker removed');
         }
     });
 });

@@ -41,6 +41,8 @@ export const AdeliomMapEvents = {
         dataCreated: 'markerDataCreated',
         clicked: 'markerClicked',
         geolocationClicked: 'markerGeolocationClicked',
+        geolocationRemoved: 'markerGeolocationRemoved',
+        allUnselected: 'allMarkerUnselected',
     },
     infoWindows: {
         created: 'infoWindowCreated',
@@ -194,5 +196,9 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
     _zoomPlus() {
         this.helpers.map._handlePlusZoom();
+    }
+
+    _unselectAllMarkers() {
+        this.helpers.markers._unselectAllMarkers();
     }
 };
