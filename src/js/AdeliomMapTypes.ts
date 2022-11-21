@@ -36,6 +36,8 @@ export type AdeliomMapKeys_Map = {
     type: string,
     replaceInfoWindowContentWithMarkerData: string,
     customStyles: string,
+    customZoomPlusSelector: string,
+    customZoomMinusSelector: string,
     controls: AdeliomMapKeys_MapControls,
 }
 
@@ -168,6 +170,8 @@ export type AdeliomMapOptionsType = {
     mapType?: AdeliomMapTypes,
     mapInfoWindowReplaceWithMarkerData?: boolean,
     mapCustomStyles?: any,
+    mapCustomZoomPlusSelector?: string | null,
+    mapCustomZoomMinusSelector?: string | null,
     mapEnableZoomButtons?: boolean,
     mapEnableStreetView?: boolean,
     mapEnableFullscreenButton?: boolean,

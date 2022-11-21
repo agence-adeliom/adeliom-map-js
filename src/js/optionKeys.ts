@@ -31,6 +31,8 @@ const keys: AdeliomMapKeys = {
         type: 'mapType',
         replaceInfoWindowContentWithMarkerData: 'mapInfoWindowReplaceWithMarkerData',
         customStyles: 'mapCustomStyles',
+        customZoomPlusSelector: 'mapCustomZoomPlusSelector',
+        customZoomMinusSelector: 'mapCustomZoomMinusSelector',
         controls: {
             zoomButtons: 'mapEnableZoomButtons',
             streetViewButton: 'mapEnableStreetView',

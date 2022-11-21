@@ -3,7 +3,7 @@ import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
-    logAllEvents: false,
+    logAllEvents: true,
     logClickEvents: false,
     testAddMarkers: false,
     testRemoveMarkers: false,
@@ -37,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         mapSelector: '[js-map]',
         mapListSelector: '[js-map-list]',
+        mapCustomZoomMinusSelector: '[js-custom-zoom-minus]',
+        mapCustomZoomPlusSelector: '[js-custom-zoom-plus]',
         geolocationSelector: '[js-geolocate-on-map]',
         geolocationOptions: {
             zoomOnGeolocation: 12,
@@ -553,6 +555,24 @@ document.addEventListener("DOMContentLoaded", () => {
     adeliomMap.on(AdeliomMapEvents.map.consentGiven, () => {
         if (params.logAllEvents) {
             console.log('Map consent given');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.map.customZoom, () => {
+        if (params.logAllEvents) {
+            console.log('Map custom zoom');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.map.customMinusZoom, () => {
+        if (params.logAllEvents) {
+            console.log('Map custom minus zoom');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.map.customPlusZoom, () => {
+        if (params.logAllEvents) {
+            console.log('Map custom plus zoom');
         }
     });
 });

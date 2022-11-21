@@ -30,6 +30,8 @@ export default class AdeliomMapFunctions extends Emitter {
     public defaultOptions: AdeliomMapOptionsType;
     private map: google.maps.Map | null;
     public mapContainer: HTMLElement | null;
+    public customZoomPlusBtn: HTMLElement | null;
+    public customZoomMinusBtn: HTMLElement | null;
     public mapListContainer: HTMLElement | null;
     public placesInput: HTMLInputElement | null;
     public geolocationButton: HTMLElement | null;
@@ -60,6 +62,8 @@ export default class AdeliomMapFunctions extends Emitter {
 
         this.map = null;
         this.mapContainer = null;
+        this.customZoomPlusBtn = null;
+        this.customZoomMinusBtn = null;
         this.mapListContainer = null;
         this.placesInput = null;
         this.geolocationButton = null;
@@ -629,6 +633,8 @@ export default class AdeliomMapFunctions extends Emitter {
                         this.mapListContainer.removeAttribute(notConsentListAttribute);
                     }
 
+                    this.helpers.map._handleCustomZoomBtns();
+
                     this._initMap().then((isInit: any) => {
                         if (isInit && this.displayMarkers) {
                             this.helpers.markers._initMarkers(this.markers);
@@ -636,6 +642,76 @@ export default class AdeliomMapFunctions extends Emitter {
                         }
                     });
                 }
+            },
+            _handleCustomZoomBtns: () => {
+                let minusBtn: HTMLElement | null = null;
+                let plusBtn: HTMLElement | null = null;
+
+                const minus = this.options[keys.map.customZoomMinusSelector as keyof AdeliomMapOptionsType];
+                const plus = this.options[keys.map.customZoomPlusSelector as keyof AdeliomMapOptionsType];
+
+                if (minus) {
+                    minusBtn = document.querySelector(minus);
+                    if (minusBtn) {
+                        minusBtn.addEventListener('click', () => {
+                            this.helpers.map._handleMinusZoom();
+
+                            this.emit(AdeliomMapEvents.map.customMinusZoom);
+                            this.emit(AdeliomMapEvents.map.customZoom);
+                        });
+                    }
+                }
+
+                if (plus) {
+                    plusBtn = document.querySelector(plus);
+                    if (plusBtn) {
+                        plusBtn.addEventListener('click', () => {
+                            this.helpers.map._handlePlusZoom();
+                            
+                            this.emit(AdeliomMapEvents.map.customPlusZoom);
+                            this.emit(AdeliomMapEvents.map.customZoom);
+                        });
+                    }
+                }
+
+                if (minusBtn && plusBtn) {
+
+                } else if (minus || plus) {
+                    if (!minusBtn) {
+                        console.error('You must provide a valid selector for the minus button');
+                    }
+
+                    if (!plusBtn) {
+                        console.error('You must provide a valid selector for the plus button');
+                    }
+                }
+            },
+            _handleMinusZoom: () => {
+                const currentZoomLevel = this.helpers.map._getCurrentZoomLevel();
+
+                if (currentZoomLevel || currentZoomLevel === 0) {
+                    this.helpers.map._setZoom(currentZoomLevel - 1);
+                }
+            },
+            _handlePlusZoom: () => {
+                const currentZoomLevel = this.helpers.map._getCurrentZoomLevel();
+
+                if (currentZoomLevel || currentZoomLevel === 0) {
+                    this.helpers.map._setZoom(currentZoomLevel + 1);
+                }
+            },
+            _getCurrentZoomLevel: () => {
+                let currentZoom: number | undefined;
+
+                switch (this.helpers.providers._getProvider()) {
+                    case 'google':
+                        currentZoom = this.map?.getZoom();
+                        break;
+                    default:
+                        break;
+                }
+
+                return currentZoom;
             },
             /**
              * Centers the map on the provided marker

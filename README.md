@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
 `apiKey (string)` : clé API de la map<br>
 `mapSelector (string)` : sélecteur CSS du container de la map<br>
 `mapListSelector (string)` : sélecteur CSS du container de la lise des points<br>
+`mapCustomZoomMinusSelector` : sélecteur CSS d'un élément allant servir de bouton zoom -<br>
+`mapCustomZoomPlusSelector` sélecteur CSS d'un élément allant servir de bouton zoom +<br>
 `placesSelector (string)` : sélecteur CSS de l'input utilisé pour l'autocomplete<br>
 `placesOptions (object)` : objet d'options pour l'autocomplete<br>
 `placesMapOptions (object)` : objet d'options pour l'association champ autocomplete / map<br>
@@ -168,6 +170,9 @@ adeliomMap.on('eventName', (data) => {
 `mapReset` : indique que la carte a été réinitialisée<br>
 `mapCleared` : indique que la carte a été vidée<br>
 `mapTypeChanged` : indique que le type de carte a été changé<br>
+`mapCustomMinusZoom` : indique que le zoom a été diminué via le bouton custom<br>
+`mapCustomPlusZoom` : indique que le zoom a été augmenté via le bouton custom<br>
+`mapCustomZoom` : indique que le zoom a été modifié via un bouton custom<br>
 
 ### Marqueurs :
 
@@ -224,3 +229,5 @@ et élément de liste).<br>
 `_setZoom (number)` : Permet de régler le niveau de zoom de la map<br>
 `_setCenter ({lat,lng})` : Permet de régler le centre de la map<br>
 `_setMapType (string)` : Permet de régler dynamiquement le type de carte (roadmap, satellite, hybrid, terrain)<br>
+`_zoomPlus (void)` : Enclenche un zoom positif sur la carte<br>
+`_zoomMinus (void)` : Enclenche un zoom négatif sur la carte<br>

@@ -16,6 +16,9 @@ export const AdeliomMapEvents = {
         typeChanged: 'mapTypeChanged',
         consentNotGiven: 'mapConsentNotGiven',
         consentGiven: 'mapConsentGiven',
+        customMinusZoom: 'mapCustomMinusZoom',
+        customPlusZoom: 'mapCustomPlusZoom',
+        customZoom: 'mapCustomZoom',
     },
     places: {
         selectedPlaceHasBeenCentered: 'selectedPlaceHasBeenCentered',
@@ -183,5 +186,13 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
     _setMapType(type: AdeliomMapTypes) {
         this.helpers.map._setMapType(type);
+    }
+
+    _zoomMinus() {
+        this.helpers.map._handleMinusZoom();
+    }
+
+    _zoomPlus() {
+        this.helpers.map._handlePlusZoom();
     }
 };
