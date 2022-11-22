@@ -218,7 +218,7 @@ export const getBaseStyleParams = (stringify: boolean = false) => {
     return JSON.stringify(allStyleParams);
 };
 
-export const initStyleBuilderFields = () => {
+export const initStyleBuilderFields = (onChange: Function | null = null) => {
     const fieldsContainer = document.querySelector(`[js-style-color-fields]`);
 
     if (fieldsContainer) {
@@ -242,6 +242,10 @@ export const initStyleBuilderFields = () => {
                                             style.color = newColorValue;
                                         }
                                     })
+                                }
+
+                                if (onChange) {
+                                    onChange();
                                 }
                             });
 

@@ -165,6 +165,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const addMarkersButton = document.querySelector(`[js-add-markers]`);
     const printStylesToConsoleButton = document.querySelector(`[js-print-params-in-console]`);
     const updateStylesButton = document.querySelector(`[js-set-custom-styles]`);
+    const copyStylesButton = document.querySelector(`[js-copy-custom-styles]`);
+    const textareaStyleContainer = document.querySelector(`[js-style-text-container]`);
 
     disableClustersButton.addEventListener('click', () => {
         adeliomMap._disableClusters();
@@ -212,6 +214,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateStylesButton.addEventListener('click', () => {
         adeliomMap._setStyle(getBaseStyleParams());
+    });
+
+    copyStylesButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(getBaseStyleParams(true));
     });
 
     addMarkersButton.addEventListener('click', () => {
@@ -441,5 +447,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    initStyleBuilderFields();
+    const fillTextareaStyle = (text) => {
+        if (typeof text === 'string') {
+            textareaStyleContainer.innerHTML = text;
+        }
+    };
+
+    adeliomMap.on(AdeliomMapEvents.map.mapLoaded, () => {
+        fillTextareaStyle(getBaseStyleParams(true));
+    });
+
+    initStyleBuilderFields(() => {
+        fillTextareaStyle(getBaseStyleParams(true));
+    });
 });
