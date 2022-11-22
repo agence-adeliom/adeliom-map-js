@@ -223,8 +223,14 @@ export type AdeliomMapGoogleType = {
 
 export type AdeliomMapTypes = 'roadmap' | 'satellite' | 'hybrid' | 'terrain';
 
+type RGB = `rgb(${number}, ${number}, ${number})`;
+type RGBA = `rgba(${number}, ${number}, ${number}, ${number})`;
+type HEX = `#${string}`;
+
+type Color = RGB | RGBA | HEX;
+
 export type AdeliomMapStyleStylersElement = {
-    color?: string,
+    color?: Color,
     visibility?: 'on' | 'off',
     weight?: number,
 }

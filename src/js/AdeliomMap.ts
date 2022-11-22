@@ -4,7 +4,7 @@ import errors from "./errors";
 import {
     AdeliomMapCoordinatesType,
     AdeliomMapMarkerParamsType,
-    AdeliomMapOptionsType, AdeliomMapTypes
+    AdeliomMapOptionsType, AdeliomMapStyleElement, AdeliomMapTypes
 } from "./AdeliomMapTypes";
 
 export const AdeliomMapEvents = {
@@ -187,5 +187,9 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
     _unselectAllMarkers() {
         this.helpers.markers._unselectAllMarkers();
+    }
+
+    _setStyle(styles: AdeliomMapStyleElement[]) {
+        this.helpers.map._setMapStyle(styles);
     }
 };

@@ -954,7 +954,16 @@ export default class AdeliomMapFunctions extends Emitter {
                 }
 
                 this.emit(AdeliomMapEvents.map.typeChanged, type);
-            }
+            },
+            _setMapStyle: (styles: AdeliomMapStyleElement[]) => {
+                switch (this.helpers.providers._getProvider()) {
+                    case 'google':
+                        this.helpers.google.map._setMapStyle(styles);
+                        break;
+                    default:
+                        break;
+                }
+            },
         },
         consentScreen: {
             /**
@@ -1476,6 +1485,12 @@ export default class AdeliomMapFunctions extends Emitter {
                 },
                 _setMapType: (type: AdeliomMapTypes) => {
                     this.map?.setMapTypeId(type);
+                },
+                _setMapStyle: (styles: AdeliomMapStyleElement[]) => {
+                    if (this.map) {
+                        // @ts-ignore
+                        this.map.setOptions({styles: styles});
+                    }
                 },
             },
             places: {
