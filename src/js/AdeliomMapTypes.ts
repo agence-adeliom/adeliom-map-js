@@ -169,7 +169,7 @@ export type AdeliomMapOptionsType = {
     mapShowPlaces?: boolean,
     mapType?: AdeliomMapTypes,
     mapInfoWindowReplaceWithMarkerData?: boolean,
-    mapCustomStyles?: any,
+    mapCustomStyles?: AdeliomMapStyleElement[],
     mapCustomZoomPlusSelector?: string | null,
     mapCustomZoomMinusSelector?: string | null,
     mapEnableZoomButtons?: boolean,
@@ -222,3 +222,15 @@ export type AdeliomMapGoogleType = {
 }
 
 export type AdeliomMapTypes = 'roadmap' | 'satellite' | 'hybrid' | 'terrain';
+
+export type AdeliomMapStyleStylersElement = {
+    color?: string,
+    visibility?: 'on' | 'off',
+    weight?: number,
+}
+
+export type AdeliomMapStyleElement = {
+    featureType: string,
+    elementType?: string,
+    stylers: AdeliomMapStyleStylersElement[],
+}

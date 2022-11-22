@@ -63,18 +63,21 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
         this.options = Object.assign(this.defaultOptions, options);
 
-        this.hasConsent = this.options[keys.rgpd.defaultConsentValue as keyof AdeliomMapOptionsType];
+        this.hasConsent = Boolean(this.options[keys.rgpd.defaultConsentValue as keyof AdeliomMapOptionsType]);
 
         const mapSelector = this.options[keys.map.selector as keyof AdeliomMapOptionsType];
         const mapListSelector = this.options[keys.list.selector as keyof AdeliomMapOptionsType];
         const placesSelector = this.options[keys.places.selector as keyof AdeliomMapOptionsType];
         const geolocationSelector = this.options[keys.geolocation.selector as keyof AdeliomMapOptionsType];
 
-        this.mapContainer = document.querySelector(mapSelector);
+        if (mapSelector && typeof mapSelector === 'string') {
+            this.mapContainer = document.querySelector(mapSelector);
+        }
+
         this.helpers.map._commonInit();
         this.mapListEltTemplate = null;
 
-        if (mapListSelector) {
+        if (mapListSelector && typeof mapListSelector === 'string') {
             this.mapListContainer = document.querySelector(mapListSelector);
             this.helpers.listNodes._commonInit();
 
@@ -85,20 +88,21 @@ export default class AdeliomMap extends AdeliomMapFunctions {
             }
         }
 
-        if (placesSelector) {
+        if (placesSelector && typeof placesSelector === 'string') {
             this.placesInput = document.querySelector(placesSelector);
 
             this.helpers.places._commonInit();
         }
 
-        if (geolocationSelector) {
+        if (geolocationSelector && typeof geolocationSelector === 'string') {
             this.geolocationButton = document.querySelector(geolocationSelector);
 
             this.helpers.geolocation._commonInit();
         }
 
+        // @ts-ignore
         this.markers = this.options[keys.map.markers as keyof AdeliomMapOptionsType] ?? [];
-        this.displayMarkers = this.options[keys.map.displayMarkers as keyof AdeliomMapOptionsType] ?? false;
+        this.displayMarkers = Boolean(this.options[keys.map.displayMarkers as keyof AdeliomMapOptionsType]) ?? false;
 
         if (this.options[keys.apiKey as keyof AdeliomMapOptionsType]) {
             this.helpers.map._setMap();

@@ -1,5 +1,7 @@
 import {DefaultRenderer} from "@googlemaps/markerclusterer";
-import {AdeliomMapOptionsType} from "./AdeliomMapTypes";
+import {
+    AdeliomMapOptionsType,
+} from "./AdeliomMapTypes";
 
 type renderParams = {
     count: number,
@@ -11,7 +13,7 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
     private params: any;
     private options: AdeliomMapOptionsType;
 
-    constructor(params = null, options: AdeliomMapOptionsType) {
+    constructor(params: any, options: AdeliomMapOptionsType) {
         super();
 
         this.icon = null;
