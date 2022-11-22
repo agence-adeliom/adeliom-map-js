@@ -1,26 +1,32 @@
-import {AdeliomMapStyleElement} from "./AdeliomMapTypes";
+import {AdeliomMapStyleElement, AdeliomMapStyleElementWithAdditional} from "./AdeliomMapTypes";
 
-export const styleWaterFill: AdeliomMapStyleElement = {
+export const styleWaterFill: AdeliomMapStyleElementWithAdditional = {
     featureType: 'water',
     elementType: 'geometry.fill',
     stylers: [
         {
             color: '#d3d3d3',
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleWaterTextFill: AdeliomMapStyleElement = {
+export const styleWaterTextFill: AdeliomMapStyleElementWithAdditional = {
     featureType: 'water',
     elementType: 'labels.text.fill',
     stylers: [
         {
             color: '#333333',
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleTransit: AdeliomMapStyleElement = {
+export const styleTransit: AdeliomMapStyleElementWithAdditional = {
     featureType: 'transit',
     stylers: [
         {
@@ -29,10 +35,13 @@ export const styleTransit: AdeliomMapStyleElement = {
         {
             color: '#808080',
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 }
 
-export const styleRoadHighwayStroke: AdeliomMapStyleElement = {
+export const styleRoadHighwayStroke: AdeliomMapStyleElementWithAdditional = {
     featureType: "road.highway",
     elementType: "geometry.stroke",
     stylers: [
@@ -42,20 +51,26 @@ export const styleRoadHighwayStroke: AdeliomMapStyleElement = {
         {
             color: '#b3b3b3',
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleRoadHighwayFill: AdeliomMapStyleElement = {
+export const styleRoadHighwayFill: AdeliomMapStyleElementWithAdditional = {
     featureType: 'road.highway',
     elementType: 'geometry.fill',
     stylers: [
         {
             color: '#ffffff'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleRoadLocalFill: AdeliomMapStyleElement = {
+export const styleRoadLocalFill: AdeliomMapStyleElementWithAdditional = {
     featureType: 'road.local',
     elementType: 'geometry.fill',
     stylers: [
@@ -68,60 +83,78 @@ export const styleRoadLocalFill: AdeliomMapStyleElement = {
         {
             weight: 1.8
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleRoadArterialFill: AdeliomMapStyleElement = {
+export const styleRoadArterialFill: AdeliomMapStyleElementWithAdditional = {
     featureType: 'road.arterial',
     elementType: 'geometry.fill',
     stylers: [
         {
             color: '#ffffff'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleRoadArterialStroke: AdeliomMapStyleElement = {
+export const styleRoadArterialStroke: AdeliomMapStyleElementWithAdditional = {
     featureType: 'road.arterial',
     elementType: 'geometry.stroke',
     stylers: [
         {
             color: '#d6d6d6'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleRoadLocalStroke: AdeliomMapStyleElement = {
+export const styleRoadLocalStroke: AdeliomMapStyleElementWithAdditional = {
     featureType: 'road.local',
     elementType: 'geometry.stroke',
     stylers: [
         {
             color: '#d7d7d7'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleRoadTextFill: AdeliomMapStyleElement = {
+export const styleRoadTextFill: AdeliomMapStyleElementWithAdditional = {
     featureType: 'road',
     elementType: 'labels.text.fill',
     stylers: [
         {
             color: '#696969'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleRoadLabelsIcon: AdeliomMapStyleElement = {
+export const styleRoadLabelsIcon: AdeliomMapStyleElementWithAdditional = {
     featureType: 'road',
     elementType: 'labels.icon',
     stylers: [
         {
             visibility: 'off'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const stylePoiFill: AdeliomMapStyleElement = {
+export const stylePoiFill: AdeliomMapStyleElementWithAdditional = {
     featureType: 'poi',
     elementType: 'geometry.fill',
     stylers: [
@@ -131,40 +164,52 @@ export const stylePoiFill: AdeliomMapStyleElement = {
         {
             color: '#ebebeb'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const stylePoiLabels: AdeliomMapStyleElement = {
+export const stylePoiLabels: AdeliomMapStyleElementWithAdditional = {
     featureType: 'poi',
     elementType: 'labels',
     stylers: [
         {
             visibility: 'off'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 }
 
-export const stylePoiLabelsIcon: AdeliomMapStyleElement = {
+export const stylePoiLabelsIcon: AdeliomMapStyleElementWithAdditional = {
     featureType: 'poi',
     elementType: 'labels.icon',
     stylers: [
         {
             visibility: 'off'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleAdministrative: AdeliomMapStyleElement = {
+export const styleAdministrative: AdeliomMapStyleElementWithAdditional = {
     featureType: 'administrative',
     elementType: 'geometry',
     stylers: [
         {
             color: '#a7a7a7'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleAdministrativeTextFill: AdeliomMapStyleElement = {
+export const styleAdministrativeTextFill: AdeliomMapStyleElementWithAdditional = {
     featureType: 'administrative',
     elementType: 'labels.text.fill',
     stylers: [
@@ -174,10 +219,13 @@ export const styleAdministrativeTextFill: AdeliomMapStyleElement = {
         {
             color: '#737373'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
-export const styleLandscape: AdeliomMapStyleElement = {
+export const styleLandscape: AdeliomMapStyleElementWithAdditional = {
     featureType: 'landscape',
     elementType: 'geometry.fill',
     stylers: [
@@ -187,7 +235,10 @@ export const styleLandscape: AdeliomMapStyleElement = {
         {
             color: '#efefef'
         }
-    ]
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
 };
 
 export const allStyleParams = [
@@ -208,14 +259,31 @@ export const allStyleParams = [
     styleAdministrative,
     styleAdministrativeTextFill,
     styleLandscape,
-]
+];
+
+export const getAllStyleParams = () => {
+    const allStyleParamsFinal: AdeliomMapStyleElement[] = [];
+
+    // Deep copy
+    JSON.parse(JSON.stringify(allStyleParams)).forEach((styleParam: AdeliomMapStyleElementWithAdditional) => {
+        if (styleParam?.additionalData && styleParam.additionalData.isEnabled) {
+            if (styleParam?.additionalData) {
+                delete styleParam.additionalData;
+            }
+
+            allStyleParamsFinal.push(styleParam);
+        }
+    });
+
+    return allStyleParamsFinal;
+};
 
 export const getBaseStyleParams = (stringify: boolean = false) => {
     if (!stringify) {
-        return allStyleParams;
+        return getAllStyleParams();
     }
 
-    return JSON.stringify(allStyleParams);
+    return JSON.stringify(getAllStyleParams());
 };
 
 export const initStyleBuilderFields = (onChange: Function | null = null) => {
@@ -250,9 +318,29 @@ export const initStyleBuilderFields = (onChange: Function | null = null) => {
                             });
 
                             const fieldContainer = document.createElement('div');
+
                             const fieldLabel = document.createElement('label');
                             fieldLabel.textContent = ` ${styleParam.featureType} - ${styleParam.elementType}`;
 
+                            const fieldEnabled = document.createElement('input');
+                            fieldEnabled.type = 'checkbox';
+                            fieldEnabled.style.marginRight = '8px';
+
+                            if (styleParam.additionalData) {
+                                fieldEnabled.checked = Boolean(styleParam.additionalData.isEnabled);
+                            }
+
+                            fieldEnabled.addEventListener('change', (e) => {
+                                if (styleParam.additionalData) {
+                                    styleParam.additionalData.isEnabled = (e.target as HTMLInputElement).checked;
+                                }
+
+                                if (onChange) {
+                                    onChange();
+                                }
+                            });
+
+                            fieldContainer.appendChild(fieldEnabled);
                             fieldContainer.appendChild(newInput);
                             fieldContainer.appendChild(fieldLabel);
 

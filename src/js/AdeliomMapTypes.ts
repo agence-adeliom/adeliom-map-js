@@ -240,3 +240,9 @@ export type AdeliomMapStyleElement = {
     elementType?: string,
     stylers: AdeliomMapStyleStylersElement[],
 }
+
+export interface AdeliomMapStyleElementWithAdditional extends AdeliomMapStyleElement {
+    additionalData?: {
+        isEnabled?: boolean,
+    },
+}

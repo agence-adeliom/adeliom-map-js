@@ -1,5 +1,5 @@
 import AdeliomMap, {AdeliomMapEvents} from "./AdeliomMap";
-import {allStyleParams, getBaseStyleParams, initStyleBuilderFields} from "./AdeliomMapStyleBase";
+import {allStyleParams, getAllStyleParams, getBaseStyleParams, initStyleBuilderFields} from "./AdeliomMapStyleBase";
 
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
         markerIconCentered: true,
         clusterIconCentered: true,
         //mapType: 'satellite',
-        mapCustomStyles: allStyleParams
+        mapCustomStyles: getAllStyleParams(),
     });
 
     const disableMapButton = document.querySelector(`[js-disable-map]`);
