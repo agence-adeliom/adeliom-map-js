@@ -4,7 +4,7 @@ import {allStyleParams, getAllStyleParams, getBaseStyleParams, initStyleBuilderF
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
-    logAllEvents: false,
+    logAllEvents: true,
     logClickEvents: false,
     testRemoveMarkers: false,
     testDisableClusters: false,
@@ -168,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const updateStylesButton = document.querySelector(`[js-set-custom-styles]`);
     const copyStylesButton = document.querySelector(`[js-copy-custom-styles]`);
     const textareaStyleContainer = document.querySelector(`[js-style-text-container]`);
+    const fitAllMarkersButton = document.querySelector(`[js-fit-all-markers]`);
 
     disableClustersButton.addEventListener('click', () => {
         adeliomMap._disableClusters();
@@ -244,6 +245,14 @@ document.addEventListener("DOMContentLoaded", () => {
         ];
 
         adeliomMap._addMarkers(newMarkers);
+
+        setTimeout(() => {
+            console.log(adeliomMap._getMarkersData());
+        }, 1000);
+    });
+
+    fitAllMarkersButton.addEventListener('click', () => {
+        adeliomMap._fitAllMarkers();
     });
 
     if (params.testRemoveMarkers) {
@@ -445,6 +454,12 @@ document.addEventListener("DOMContentLoaded", () => {
     adeliomMap.on(AdeliomMapEvents.markers.geolocationRemoved, () => {
         if (params.logAllEvents) {
             console.log('Geolocation marker removed');
+        }
+    });
+
+    adeliomMap.on(AdeliomMapEvents.markers.allFit, (bounds) => {
+        if (params.logAllEvents) {
+            console.log('All markers fit in map view', bounds);
         }
     });
 

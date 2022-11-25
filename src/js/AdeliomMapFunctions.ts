@@ -242,22 +242,13 @@ export default class AdeliomMapFunctions extends Emitter {
                 }
             },
             _autoZoomToFitAllMarkers: (markersRawData: AdeliomMapMarkerParamsType[]) => {
-                if (this.google) {
-                    const bounds = new this.google.maps.LatLngBounds();
-
-                    const myPoints: any[] = [];
-
-                    markersRawData.forEach((markerRawData: AdeliomMapMarkerParamsType) => {
-                        if (this.google) {
-                            myPoints.push(new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng));
-                        }
-                    });
-
-                    myPoints.forEach((point: any) => {
-                        bounds.extend(point);
-                    });
-
-                    this.map?.fitBounds(bounds);
+                this.helpers.google;
+                switch (this.helpers.providers._getProvider()) {
+                    case 'google':
+                        this.helpers.google.markers._autoZoomToFitAllMarkers(markersRawData);
+                        break;
+                    default:
+                        break;
                 }
             },
             /**
@@ -1380,7 +1371,28 @@ export default class AdeliomMapFunctions extends Emitter {
                     this.helpers.google.markers._handleBasicMarkerListeners(markerInstance);
 
                     return markerData;
-                }
+                },
+                _autoZoomToFitAllMarkers: (markersRawData: AdeliomMapMarkerParamsType[]) => {
+                    if (this.google) {
+                        const bounds = new this.google.maps.LatLngBounds();
+
+                        const myPoints: any[] = [];
+
+                        markersRawData.forEach((markerRawData: AdeliomMapMarkerParamsType) => {
+                            if (this.google) {
+                                myPoints.push(new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng));
+                            }
+                        });
+
+                        myPoints.forEach((point: any) => {
+                            bounds.extend(point);
+                        });
+
+                        this.map?.fitBounds(bounds);
+                        
+                        this.emit(AdeliomMapEvents.markers.allFit, bounds);
+                    }
+                },
             },
             infoWindows: {
                 /**

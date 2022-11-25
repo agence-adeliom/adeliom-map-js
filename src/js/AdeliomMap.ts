@@ -43,6 +43,7 @@ export const AdeliomMapEvents = {
         geolocationClicked: 'markerGeolocationClicked',
         geolocationRemoved: 'markerGeolocationRemoved',
         allUnselected: 'allMarkerUnselected',
+        allFit: 'allMarkersFit',
     },
     infoWindows: {
         created: 'infoWindowCreated',
@@ -130,7 +131,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
     }
 
     _getMarkersData() {
-        this.helpers.markers._getMarkersData();
+        return this.helpers.markers._getMarkersData();
     }
 
     _getAllCurrentMarkersRawData() {
@@ -191,5 +192,17 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
     _setStyle(styles: AdeliomMapStyleElement[]) {
         this.helpers.map._setMapStyle(styles);
+    }
+
+    _fitAllMarkers() {
+        const markersRawData: AdeliomMapMarkerParamsType[] = [];
+
+        this.helpers.markers._getMarkersData().forEach((marker: any) => {
+            if (marker?.rawData) {
+                markersRawData.push(marker.rawData);
+            }
+        });
+
+        this.helpers.markers._autoZoomToFitAllMarkers(markersRawData);
     }
 };

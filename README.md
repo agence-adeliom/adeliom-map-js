@@ -237,3 +237,4 @@ et élément de liste).<br>
 `_zoomMinus (void)` : Enclenche un zoom négatif sur la carte<br>
 `_unselectAllMarkers (void)` : Dé-sélectionne l'ensemble des marqueurs ouverts (et ferme les infoWindows)<br>
 `_setStyle (object)` : Permet de régler dynamiquement le style de la map<br>
+`_fitAllMarkers (void)` : Permet de faire tenir l'ensemble des marqueurs dans la map<br>
