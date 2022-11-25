@@ -208,7 +208,7 @@ export default class AdeliomMapFunctions extends Emitter {
              * @returns {{lng: number, lat: number}|*}
              * @private
              */
-            _getMarkersCenterCoordinates: (markersRawData: any) => {
+            _getMarkersCenterCoordinates: (markersRawData: AdeliomMapMarkerParamsType[]) => {
                 if (markersRawData.length === 1) {
                     return markersRawData[0].coordinates;
                 }
@@ -239,6 +239,25 @@ export default class AdeliomMapFunctions extends Emitter {
                 return {
                     lat: centralLatitude * 180 / Math.PI,
                     lng: centralLongitude * 180 / Math.PI
+                }
+            },
+            _autoZoomToFitAllMarkers: (markersRawData: AdeliomMapMarkerParamsType[]) => {
+                if (this.google) {
+                    const bounds = new this.google.maps.LatLngBounds();
+
+                    const myPoints: any[] = [];
+
+                    markersRawData.forEach((markerRawData: AdeliomMapMarkerParamsType) => {
+                        if (this.google) {
+                            myPoints.push(new this.google.maps.LatLng(markerRawData.coordinates.lat, markerRawData.coordinates.lng));
+                        }
+                    });
+
+                    myPoints.forEach((point: any) => {
+                        bounds.extend(point);
+                    });
+
+                    this.map?.fitBounds(bounds);
                 }
             },
             /**
@@ -843,12 +862,16 @@ export default class AdeliomMapFunctions extends Emitter {
             },
             /**
              * Auto center the map on the markers
-             * @param markers
+             * @param markersRawData
              * @private
              */
-            _autoCenter: (markers: any) => {
+            _autoCenter: (markersRawData: AdeliomMapMarkerParamsType[]) => {
                 if (this.options[keys.map.autoCenter as keyof AdeliomMapOptionsType]) {
-                    const center: AdeliomMapCoordinatesType = this.helpers.markers._getMarkersCenterCoordinates(markers);
+                    const center: AdeliomMapCoordinatesType = this.helpers.markers._getMarkersCenterCoordinates(markersRawData);
+
+                    if (this.options[keys.map.autoZoom as keyof AdeliomMapOptionsType]) {
+                        this.helpers.markers._autoZoomToFitAllMarkers(markersRawData);
+                    }
 
                     if (center) {
                         switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {

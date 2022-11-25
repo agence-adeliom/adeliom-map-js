@@ -7,6 +7,7 @@ const keys: AdeliomMapKeys = {
         selector: 'mapSelector',
         defaultCenter: 'mapDefaultCenter',
         autoCenter: 'mapAutoCenter',
+        autoZoom: 'mapAutoZoom',
         defaultZoom: 'mapDefaultZoom',
         provider: 'mapProvider',
         checkSize: 'checkMapSize',

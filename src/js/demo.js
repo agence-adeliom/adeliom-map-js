@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mapListReplaceWithMarkerData: true,
         checkMapSize: false,
         mapAutoCenter: true,
+        mapAutoZoom: true,
         mapDefaultCenter: {
             lat: 48.614782,
             lng: 7.714012

@@ -48,6 +48,7 @@ const defaultOptions: AdeliomMapOptionsType = {
     allowMultipleMarkersSelected: true,
     mapDefaultCenter: {lat: 48.614782, lng: 7.714012},
     mapAutoCenter: false,
+    mapAutoZoom: false,
     mapDefaultZoom: 12,
     mapProvider: 'google',
     mapDisplayMarkers: true,
