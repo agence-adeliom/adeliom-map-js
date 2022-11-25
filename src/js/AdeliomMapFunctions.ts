@@ -552,12 +552,16 @@ export default class AdeliomMapFunctions extends Emitter {
 
                         switch (this.helpers.providers._getProvider()) {
                             case 'google':
-                                this.clusterer = new MarkerClusterer({
-                                    markers: clusterableMarkers,
-                                    map: this.map,
-                                    onClusterClick: this.helpers.google.clusters._handleClusterClick,
-                                    renderer: this.helpers.google.clusters._getRenderer()
-                                });
+                                const renderer = this.helpers.google.clusters._getRenderer();
+
+                                if (renderer) {
+                                    this.clusterer = new MarkerClusterer({
+                                        markers: clusterableMarkers,
+                                        map: this.map,
+                                        onClusterClick: this.helpers.google.clusters._handleClusterClick,
+                                        renderer: renderer,
+                                    });
+                                }
                                 break;
                             default:
                                 break;
@@ -1061,6 +1065,8 @@ export default class AdeliomMapFunctions extends Emitter {
 
                         return renderer;
                     }
+
+                    return null;
                 },
                 _handleClusterClick: (e: any, cluster: any, map: any) => {
                     this.helpers.markers._unselectAllMarkers();
