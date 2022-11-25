@@ -19,6 +19,7 @@ export const AdeliomMapEvents = {
         customMinusZoom: 'mapCustomMinusZoom',
         customPlusZoom: 'mapCustomPlusZoom',
         customZoom: 'mapCustomZoom',
+        hasBeenDragged: 'mapHasBeenDragged',
     },
     places: {
         selectedPlaceHasBeenCentered: 'selectedPlaceHasBeenCentered',

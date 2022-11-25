@@ -1481,6 +1481,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     });
 
                     this.helpers.google.map._handleClickOnMap();
+                    this.helpers.google.map._handleMapMove();
                 },
                 _handleClickOnMap: () => {
                     if (this.map) {
@@ -1491,6 +1492,13 @@ export default class AdeliomMapFunctions extends Emitter {
                                 });
                             });
                         }
+                    }
+                },
+                _handleMapMove: () => {
+                    if (this.map) {
+                        this.map.addListener('dragend', () => {
+                            this.emit(AdeliomMapEvents.map.hasBeenDragged, this.map?.getBounds());
+                        });
                     }
                 },
                 /**

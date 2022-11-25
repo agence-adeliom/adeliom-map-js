@@ -174,6 +174,7 @@ adeliomMap.on('eventName', (data) => {
 `mapCustomMinusZoom` : indique que le zoom a été diminué via le bouton custom<br>
 `mapCustomPlusZoom` : indique que le zoom a été augmenté via le bouton custom<br>
 `mapCustomZoom` : indique que le zoom a été modifié via un bouton custom<br>
+`mapHasBeenDragged` : indique que la map a été déplacée via un drag & drop<br>
 
 ### Marqueurs :
 

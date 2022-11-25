@@ -463,6 +463,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    adeliomMap.on(AdeliomMapEvents.map.hasBeenDragged, (bounds) => {
+        if (params.logAllEvents) {
+            console.log('Map has been dragged', bounds);
+        }
+    });
+
     const fillTextareaStyle = (text) => {
         if (typeof text === 'string') {
             textareaStyleContainer.innerHTML = text;
