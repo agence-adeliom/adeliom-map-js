@@ -487,4 +487,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initStyleBuilderFields(() => {
         fillTextareaStyle(getBaseStyleParams(true));
     });
+
+    // Sélection automatique du code au click sur le conteneur
+    textareaStyleContainer.addEventListener('click', () => {
+        textareaStyleContainer.select();
+    });
 });
