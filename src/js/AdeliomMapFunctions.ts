@@ -1105,7 +1105,13 @@ export default class AdeliomMapFunctions extends Emitter {
                  * Removes everything from the map and the list
                  */
                 _clearMap: () => {
+                    const currentClusterStatus = this.helpers.markers._getClustersStatus();
+
                     this.helpers.markers._disableClusters();
+
+                    if (currentClusterStatus) {
+                        this.helpers.markers._setClustersStatus(true);
+                    }
 
                     this.markersData.forEach((markerData: AdeliomMapMarkerDataType) => {
                         markerData.marker?.setMap(null);
@@ -1632,7 +1638,7 @@ export default class AdeliomMapFunctions extends Emitter {
                 this.helpers.geolocation._getCoordinates((data: GeolocationPosition) => {
                     if (data?.coords?.latitude && data?.coords?.longitude) {
                         const geolocationOptions: AdeliomMapGeolocationOptionsType = Object(this.options[keys.geolocation.options as keyof AdeliomMapOptionsType]) ?? {};
-                        
+
                         if (typeof showMarker === 'undefined') {
                             if (forceMarker) {
                                 showMarker = true;
