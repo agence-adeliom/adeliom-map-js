@@ -169,6 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const copyStylesButton = document.querySelector(`[js-copy-custom-styles]`);
     const textareaStyleContainer = document.querySelector(`[js-style-text-container]`);
     const fitAllMarkersButton = document.querySelector(`[js-fit-all-markers]`);
+    const centerOnPositionButton = document.querySelector(`[js-center-on-position]`);
 
     disableClustersButton.addEventListener('click', () => {
         adeliomMap._disableClusters();
@@ -220,6 +221,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     copyStylesButton.addEventListener('click', () => {
         navigator.clipboard.writeText(getBaseStyleParams(true));
+    });
+
+    centerOnPositionButton.addEventListener('click', () => {
+        adeliomMap._geolocateOnMap();
     });
 
     addMarkersButton.addEventListener('click', () => {

@@ -1625,19 +1625,20 @@ export default class AdeliomMapFunctions extends Emitter {
             _getMarkerSize: () => {
                 return Object(this.options[keys.geolocation.options as keyof AdeliomMapOptionsType])?.iconSize;
             },
-            _handleGeolocationRequest: (forceMarker: boolean = false) => {
+            _handleGeolocationRequest: (forceMarker: boolean = false, showMarker?: boolean) => {
                 this.helpers.geolocation._removeGeolocationMarker();
                 this.helpers.markers._unselectAllMarkers();
 
                 this.helpers.geolocation._getCoordinates((data: GeolocationPosition) => {
                     if (data?.coords?.latitude && data?.coords?.longitude) {
-                        let showMarker: boolean;
                         const geolocationOptions: AdeliomMapGeolocationOptionsType = Object(this.options[keys.geolocation.options as keyof AdeliomMapOptionsType]) ?? {};
-
-                        if (forceMarker) {
-                            showMarker = true;
-                        } else {
-                            showMarker = geolocationOptions.addMarkerToMap ?? false;
+                        
+                        if (typeof showMarker === 'undefined') {
+                            if (forceMarker) {
+                                showMarker = true;
+                            } else {
+                                showMarker = geolocationOptions.addMarkerToMap ?? false;
+                            }
                         }
 
                         const latLng = this.helpers.google.coordinates._getLatLng({

@@ -227,7 +227,7 @@ et élément de liste).<br>
 `_getAllCurrentMarkersRawData (void)` : Permet de récupérer l'ensemble des données brutes de marker sur la map<br>
 `_disableClusters (void)` : Permet de désactiver l'affichage en clusters s'il est activé<br>
 `_enableClusters (void)` : Permet d'activer l'affichage en clusters s'il n'est pas activé<br>
-`_geolocateOnMap (void)` : Permet de centrer la carte sur la position GPS de l'utilisateur<br>
+`_geolocateOnMap (bool)` : Permet de centrer la carte sur la position GPS de l'utilisateur (avec ou sans marqueur)<br>
 `_removeGeolocationMarker (void)` : Permet de supprimer le marqueur de position GPS (s'il existe sur la carte)<br>
 `_clearMap (void)` : Permet de supprimer tous les marqueurs de la carte<br>
 `_resetMap (void)` : Permet de réinitialiser la map avec ses marqueurs / clusters<br>
