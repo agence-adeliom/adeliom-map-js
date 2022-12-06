@@ -225,6 +225,22 @@ export const styleAdministrativeTextFill: AdeliomMapStyleElementWithAdditional =
     }
 };
 
+export const styleAdministrativeTextStroke: AdeliomMapStyleElementWithAdditional = {
+    featureType: 'administrative',
+    elementType: 'labels.text.stroke',
+    stylers: [
+        {
+            visibility: 'on'
+        },
+        {
+            color: '#737373'
+        }
+    ],
+    additionalData: {
+        isEnabled: false,
+    }
+};
+
 export const styleLandscape: AdeliomMapStyleElementWithAdditional = {
     featureType: 'landscape',
     elementType: 'geometry.fill',
@@ -258,6 +274,7 @@ export const allStyleParams = [
     stylePoiLabelsIcon,
     styleAdministrative,
     styleAdministrativeTextFill,
+    styleAdministrativeTextStroke,
     styleLandscape,
 ];
 
@@ -286,8 +303,27 @@ export const getBaseStyleParams = (stringify: boolean = false) => {
     return JSON.stringify(getAllStyleParams());
 };
 
+const getAllStylesInput = () => {
+    const checkAllStyles: any = document.querySelector(`[js-style-color-check-all]`);
+
+    return checkAllStyles;
+}
+
+export const getAllStylesChecked = () => {
+    const checkAllStyles = getAllStylesInput();
+    let isCheckAllStylesChecked = false;
+
+    if (checkAllStyles) {
+        isCheckAllStylesChecked = checkAllStyles.checked;
+    }
+
+    return isCheckAllStylesChecked;
+}
+
 export const initStyleBuilderFields = (onChange: Function | null = null) => {
     const fieldsContainer = document.querySelector(`[js-style-color-fields]`);
+    const checkAllStyles: any = document.querySelector(`[js-style-color-check-all]`);
+    let isCheckAllStylesChecked = getAllStylesChecked();
 
     if (fieldsContainer) {
         allStyleParams.forEach((styleParam) => {
@@ -331,8 +367,15 @@ export const initStyleBuilderFields = (onChange: Function | null = null) => {
                             }
 
                             fieldEnabled.addEventListener('change', (e) => {
+                                const isOptionChecked = (e.target as HTMLInputElement).checked
+
                                 if (styleParam.additionalData) {
-                                    styleParam.additionalData.isEnabled = (e.target as HTMLInputElement).checked;
+                                    styleParam.additionalData.isEnabled = isOptionChecked;
+                                }
+
+                                if (isOptionChecked !== getAllStylesChecked() && isOptionChecked === false) {
+                                    const allInput: HTMLInputElement = getAllStylesInput();
+                                    allInput.checked = false
                                 }
 
                                 if (onChange) {
@@ -348,6 +391,37 @@ export const initStyleBuilderFields = (onChange: Function | null = null) => {
                         }
                     }
                 });
+            }
+        });
+    }
+
+    if (checkAllStyles) {
+        checkAllStyles.addEventListener('change', (e: any) => {
+            const isChecked = (e.target as HTMLInputElement).checked;
+            const allFields: any = fieldsContainer?.querySelectorAll('input[type="checkbox"]');
+
+            if (allFields) {
+                allFields.forEach((field: HTMLInputElement) => {
+                    if (field) {
+                        const attr = field.getAttribute('js-style-color-check-all');
+                        if (!attr && attr !== "") {
+                            // If field is checked
+                            if (field.checked !== isChecked) {
+                                field.checked = isChecked;
+                            }
+                        }
+                    }
+                });
+            }
+
+            allStyleParams.forEach((styleParam) => {
+                if (styleParam?.additionalData) {
+                    styleParam.additionalData.isEnabled = isChecked;
+                }
+            });
+
+            if (onChange) {
+                onChange();
             }
         });
     }

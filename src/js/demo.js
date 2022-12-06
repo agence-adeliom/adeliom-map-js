@@ -4,7 +4,7 @@ import {allStyleParams, getAllStyleParams, getBaseStyleParams, initStyleBuilderF
 const API_KEY = 'AIzaSyAzfQjZpxnhBQq-KqK-t_eMoeuSs36Zt1w';
 
 const params = {
-    logAllEvents: true,
+    logAllEvents: false,
     logClickEvents: false,
     testRemoveMarkers: false,
     testDisableClusters: false,
