@@ -147,8 +147,8 @@ export default class AdeliomMap extends AdeliomMapFunctions {
         return this.helpers.markers._enableClusters();
     }
 
-    _geolocateOnMap(displayMarker: boolean = false) {
-        this.helpers.geolocation._handleGeolocationRequest(false, displayMarker);
+    _geolocateOnMap(withZoom: number | boolean = false, displayMarker: boolean = false) {
+        this.helpers.geolocation._handleGeolocationRequest(false, withZoom, displayMarker);
     }
 
     _removeGeolocationMarker() {

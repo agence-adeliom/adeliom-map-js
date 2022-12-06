@@ -1631,9 +1631,20 @@ export default class AdeliomMapFunctions extends Emitter {
             _getMarkerSize: () => {
                 return Object(this.options[keys.geolocation.options as keyof AdeliomMapOptionsType])?.iconSize;
             },
-            _handleGeolocationRequest: (forceMarker: boolean = false, showMarker?: boolean) => {
+            _handleGeolocationRequest: (forceMarker: boolean = false, withZoom?: number | boolean, showMarker?: boolean) => {
                 this.helpers.geolocation._removeGeolocationMarker();
                 this.helpers.markers._unselectAllMarkers();
+
+                let zoomValue: undefined | number = undefined;
+
+                if (withZoom) {
+                    if (typeof withZoom === "number") {
+                        zoomValue = withZoom;
+                    } else {
+                        const geolocationOptions: AdeliomMapGeolocationOptionsType = Object(this.options[keys.geolocation.options as keyof AdeliomMapOptionsType]) ?? {};
+                        zoomValue = geolocationOptions.zoomOnGeolocation;
+                    }
+                }
 
                 this.helpers.geolocation._getCoordinates((data: GeolocationPosition) => {
                     if (data?.coords?.latitude && data?.coords?.longitude) {
@@ -1653,7 +1664,10 @@ export default class AdeliomMapFunctions extends Emitter {
                         });
 
                         this.helpers.map._setCenter(latLng);
-                        this.helpers.map._setZoom(geolocationOptions.zoomOnGeolocation);
+
+                        if (withZoom && zoomValue) {
+                            this.helpers.map._setZoom(zoomValue);
+                        }
 
                         if (showMarker) {
                             const marker: AdeliomMapMarkerParamsType = {
