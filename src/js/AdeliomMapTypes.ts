@@ -101,6 +101,8 @@ export type AdeliomMapMarkerParamsType = {
     listEltId?: any,
     hasInteractions?: boolean,
     isGeolocation?: boolean,
+    isFakeCluster?: boolean,
+    fakeClusterMarkers?: AdeliomMapMarkerParamsType[],
 }
 
 export type AdeliomMapCoordinatesType = {
@@ -204,13 +206,16 @@ export type AdeliomMapMarkerDataType = {
     rawData: AdeliomMapMarkerParamsType,
     hasInteraction?: boolean,
     isGeolocation?: boolean,
+    isFakeCluster?: boolean,
+    fakeClusterMarkers?: AdeliomMapMarkerParamsType[],
 }
 
 export type AdeliomMapMarkerConfigType = {
     position?: any,
     title?: any,
     map?: any,
-    icon?: any
+    icon?: any,
+    label?: any,
     zIndex?: number,
 }
 
@@ -248,3 +253,14 @@ export interface AdeliomMapStyleElementWithAdditional extends AdeliomMapStyleEle
         isEnabled?: boolean,
     },
 }
+
+export type AdeliomMapClusterParams = {
+    from: number,
+    size: number,
+    hoverIcon: string,
+    icon: string,
+    defaultIconColor: string,
+    defaultIconHoverColor: string,
+    fontColor: string,
+    fontSize: number,
+};

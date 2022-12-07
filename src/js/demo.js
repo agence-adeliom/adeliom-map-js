@@ -82,13 +82,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 icon: '/dist/img/cluster.png',
                 hoverIcon: '/dist/img/adeliom-logo.png',
                 size: 40,
-                from: 0
+                from: 0,
+                defaultIconColor: '#30b702',
             },
             {
                 size: 56,
                 from: 3,
-                defaultIconColor: '#E62A4D',
-                defaultIconHoverColor: '#FF00FF',
+                defaultIconColor: '#ea8906',
+                defaultIconHoverColor: '#d35800',
+            },
+            {
+                size: 56,
+                from: 5,
+                defaultIconColor: '#980000',
+                defaultIconHoverColor: '#d70000',
             }
         ],
         mapMarkerIconUrl: '/dist/img/marker.png',
@@ -135,6 +142,38 @@ document.addEventListener("DOMContentLoaded", () => {
                     lat: 45.999,
                     lng: 6.5,
                 }
+            },
+            {
+                title: 'Faux cluster',
+                description: 'Description du faux cluster',
+                iconSize: 32,
+                isFakeCluster: true,
+                fakeClusterMarkers: [
+                    {
+                        title: 'Lyon',
+                        description: 'Ville de Lyon',
+                        coordinates: {
+                            lat: 45.764043,
+                            lng: 4.835659,
+                        }
+                    },
+                    {
+                        title: 'Dijon',
+                        description: 'Ville de Dijon',
+                        coordinates: {
+                            lat: 47.322047,
+                            lng: 5.04148,
+                        }
+                    },
+                    {
+                        title: 'Montpellier',
+                        description: 'Ville de Montpellier',
+                        coordinates: {
+                            lat: 43.610769,
+                            lng: 3.876716,
+                        }
+                    }
+                ]
             }
         ],
         mapDisplayMarkers: true,

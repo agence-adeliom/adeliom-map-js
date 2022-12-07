@@ -4,9 +4,15 @@ import keys from "./optionKeys";
 import defaultOptions, {mapAnims} from "./defaultOptions";
 import {AdeliomMapEvents} from "./AdeliomMap";
 import {Loader, LoaderOptions} from "google-maps";
-import {MarkerClusterer} from "@googlemaps/markerclusterer";
-import AdeliomMapClusterRenderer from "./AdeliomMapClusterRenderer";
+import {Cluster, MarkerClusterer} from "@googlemaps/markerclusterer";
+import AdeliomMapClusterRenderer, {
+    getDefaultIconData,
+    getIconConfig,
+    getParamsByCount,
+    getSvg, orderParamsByFromValue
+} from "./AdeliomMapClusterRenderer";
 import {
+    AdeliomMapClusterParams,
     AdeliomMapCoordinatesType,
     AdeliomMapGeolocationOptionsType,
     AdeliomMapGoogleType,
@@ -20,6 +26,7 @@ import {
     AdeliomMapTypes
 } from "./AdeliomMapTypes";
 import errors from "./errors";
+import AdeliomMapMarkerClusterer from "./AdeliomMapMarkerClusterer";
 
 const mapAttribute = 'adeliom-map';
 const listAttribute = `${mapAttribute}-list`;
@@ -47,6 +54,7 @@ export default class AdeliomMapFunctions extends Emitter {
     private markersData: AdeliomMapMarkerDataType[];
     private geolocationMarkerData: AdeliomMapMarkerDataType | null;
     public clusterer: MarkerClusterer | null;
+    public clusters: any[] = [];
     public displayMarkers: boolean;
     public google: AdeliomMapGoogleType | null = null;
     public options: AdeliomMapOptionsType = defaultOptions;
@@ -369,13 +377,17 @@ export default class AdeliomMapFunctions extends Emitter {
                         if (!isSelected) {
                             switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                                 case 'google':
-                                    this.helpers.google.markers._setIdleIcon(marker);
+                                    if (!markerData.isFakeCluster) {
+                                        this.helpers.google.markers._setIdleIcon(marker);
+                                    }
                                     break;
                             }
                         } else {
                             switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
                                 case 'google':
-                                    this.helpers.google.markers._setSelectedIcon(marker);
+                                    if (!markerData.isFakeCluster) {
+                                        this.helpers.google.markers._setSelectedIcon(marker);
+                                    }
                                     break;
                             }
                         }
@@ -555,12 +567,12 @@ export default class AdeliomMapFunctions extends Emitter {
                                 const renderer = this.helpers.google.clusters._getRenderer();
 
                                 if (renderer) {
-                                    this.clusterer = new MarkerClusterer({
+                                    this.clusterer = new AdeliomMapMarkerClusterer({
                                         markers: clusterableMarkers,
                                         map: this.map,
                                         onClusterClick: this.helpers.google.clusters._handleClusterClick,
                                         renderer: renderer,
-                                    });
+                                    }, this);
                                 }
                                 break;
                             default:
@@ -1054,13 +1066,45 @@ export default class AdeliomMapFunctions extends Emitter {
                 },
             },
             clusters: {
+                _getParams: () => {
+                    // @ts-ignore
+                    let clusterParams: AdeliomMapClusterParams = this.options[keys.map.clusterParams as keyof AdeliomMapOptionsType]
+
+                    if (clusterParams) {
+                        clusterParams = orderParamsByFromValue(clusterParams);
+                    }
+
+                    return clusterParams;
+                },
+                _getParamsByCount: (count: number) => {
+                    return getParamsByCount(count, this.helpers.google.clusters._getParams());
+                },
+                _getHoveredIcon: (count: number) => {
+                    const paramsByCount = this.helpers.google.clusters._getParamsByCount(count);
+
+                    return getIconConfig(getDefaultIconData(getSvg(paramsByCount?.defaultIconHoverColor)), paramsByCount.size, this.options.clusterIconCentered);
+                },
+                _getBasicIcon: (count: number) => {
+                    const paramsByCount = this.helpers.google.clusters._getParamsByCount(count);
+
+                    return getIconConfig(getDefaultIconData(getSvg(paramsByCount?.defaultIconColor)), paramsByCount.size, this.options.clusterIconCentered);
+                },
+                _getFontSize: (count: number) => {
+                    const defaultValue: number = 12;
+
+                    return defaultValue + 'px';
+                },
+                _getFontColor: (count: number) => {
+                    return 'rgba(255,255,255,0.9)';
+                },
                 _getRenderer: () => {
-                    const clusterParams = this.options[keys.map.clusterParams as keyof AdeliomMapOptionsType];
+                    // @ts-ignore
+                    const clusterParams: AdeliomMapClusterParams = this.helpers.google.clusters._getParams();
 
                     if (clusterParams) {
                         const renderer = new AdeliomMapClusterRenderer(
                             clusterParams,
-                            this.options
+                            this
                         );
 
                         return renderer;
@@ -1226,12 +1270,20 @@ export default class AdeliomMapFunctions extends Emitter {
                         if (markerData.hasInteraction) {
                             // Listener to handle mouseover (change icon)
                             this.google.maps.event.addListener(markerInstance, 'mouseover', () => {
-                                this.helpers.google.markers._setHoveredIcon(markerInstance);
+                                if (!markerData.isFakeCluster) {
+                                    this.helpers.google.markers._setHoveredIcon(markerInstance);
+                                } else if (markerData.fakeClusterMarkers?.length) {
+                                    markerInstance.setIcon(this.helpers.google.clusters._getHoveredIcon(markerData.fakeClusterMarkers.length));
+                                }
                             });
 
                             // Listener to handle mouseout (change icon)
                             this.google.maps.event.addListener(markerInstance, 'mouseout', () => {
-                                this.helpers.google.markers._setIdleIcon(markerInstance);
+                                if (!markerData.isFakeCluster) {
+                                    this.helpers.google.markers._setIdleIcon(markerInstance);
+                                } else if (markerData.fakeClusterMarkers?.length) {
+                                    markerInstance.setIcon(this.helpers.google.clusters._getBasicIcon(markerData.fakeClusterMarkers.length));
+                                }
                             });
                         }
                     }
@@ -1300,6 +1352,16 @@ export default class AdeliomMapFunctions extends Emitter {
                     markerData.selected = false;
                     markerData.rawData = markerRawData;
                     markerData.hasInteraction = markerRawData.hasInteractions ?? true;
+                    markerData.isFakeCluster = markerRawData.isFakeCluster ?? false;
+
+                    if (markerData.isFakeCluster && markerRawData?.fakeClusterMarkers) {
+                        markerData.fakeClusterMarkers = markerRawData.fakeClusterMarkers;
+
+                        // Si le faux cluster n'a pas de coordonnées et qu'il a bien des markers
+                        if (!markerRawData?.coordinates && Array.isArray(markerData.fakeClusterMarkers)) {
+                            markerRawData.coordinates = this.helpers.markers._getMarkersCenterCoordinates(markerData.fakeClusterMarkers);
+                        }
+                    }
 
                     let markerPosition = null;
 
@@ -1333,7 +1395,18 @@ export default class AdeliomMapFunctions extends Emitter {
                         const url: string = markerRawData.isGeolocation && this.helpers.geolocation._getMarkerIcon()
                             ? this.helpers.geolocation._getMarkerIcon()
                             : this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType];
-                        markerConfig.icon = this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
+                        if (!markerRawData.isFakeCluster) {
+                            markerConfig.icon = this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
+                        } else if (markerData.fakeClusterMarkers?.length) {
+                            const markersCount = markerData.fakeClusterMarkers.length;
+
+                            markerConfig.icon = this.helpers.google.clusters._getBasicIcon(markersCount);
+                            markerConfig.label = {
+                                text: markerData.fakeClusterMarkers.length.toString(),
+                                color: this.helpers.google.clusters._getFontColor(markersCount),
+                                fontSize: this.helpers.google.clusters._getFontSize(markersCount),
+                            }
+                        }
                     }
 
                     if (markerRawData.isGeolocation) {

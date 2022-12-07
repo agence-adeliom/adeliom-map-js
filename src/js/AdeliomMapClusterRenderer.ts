@@ -1,85 +1,114 @@
 import {DefaultRenderer} from "@googlemaps/markerclusterer";
 import {
+    AdeliomMapClusterParams,
     AdeliomMapOptionsType,
 } from "./AdeliomMapTypes";
+import AdeliomMapFunctions from "./AdeliomMapFunctions";
 
 type renderParams = {
     count: number,
     position: any,
 }
 
-export default class AdeliomMapClusterRenderer extends DefaultRenderer {
-    private icon: any;
-    private params: any;
-    private options: AdeliomMapOptionsType;
-
-    constructor(params: any, options: AdeliomMapOptionsType) {
-        super();
-
-        this.icon = null;
-        this.params = this.orderParamsByFromValue(params);
-        this.options = options;
-    }
-
-    getSvg(color: string) {
-        return window.btoa(`
+export const getSvg: Function = (color: string) => {
+    return window.btoa(`
   <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
     <circle cx="120" cy="120" opacity=".6" r="70" />
     <circle cx="120" cy="120" opacity=".3" r="90" />
     <circle cx="120" cy="120" opacity=".2" r="110" />
   </svg>`);
+}
+
+export const getDefaultIconData: Function = (svg: string) => {
+    return `data:image/svg+xml;base64,${svg}`
+}
+
+export const getDefaultIconConfig: Function = (color: string, size: number) => {
+    return getIconConfig(getDefaultIconData(getSvg(color)), size);
+}
+
+export const getIconConfig: Function = (url: string, size: number, clusterIconCentered: boolean) => {
+    if (clusterIconCentered) {
+        const config = {
+            url: url,
+            scaledSize: new google.maps.Size(size, size),
+            anchor: new google.maps.Point(size / 2, size / 2),
+        }
+
+        return config;
+    } else {
+        const config = {
+            url: url,
+            scaledSize: new google.maps.Size(size, size),
+        }
+
+        return config;
+    }
+}
+
+/**
+ * Returns the corresponding params object from a count value
+ * @param count
+ * @returns {null}
+ */
+export const getParamsByCount: Function = (count: any, params: any) => {
+    let currentParams: AdeliomMapClusterParams;
+
+    for (let i in params) {
+        const paramArray = params[i];
+
+        if (paramArray?.from <= count) {
+            currentParams = paramArray;
+        } else {
+            break;
+        }
     }
 
-    /**
-     * Re-orders all params objects so that it's ordered by "from" value (ASC)
-     * @param params
-     * @returns {*}
-     */
-    orderParamsByFromValue(params: any) {
-        if (params) {
-            params.sort((a: any, b: any) => {
-                return a.from > b.from ? 1 : -1;
-            });
-        }
+    // @ts-ignore
+    return currentParams;
+};
 
-        return params;
-    };
+/**
+ * Re-orders all params objects so that it's ordered by "from" value (ASC)
+ * @param params
+ * @returns {*}
+ */
+export const orderParamsByFromValue: Function = (params: any) => {
+    if (params) {
+        params.sort((a: any, b: any) => {
+            return a.from > b.from ? 1 : -1;
+        });
+    }
 
-    /**
-     * Returns the corresponding params object from a count value
-     * @param count
-     * @returns {null}
-     */
-    getParamsByCount(count: any) {
-        let currentParams = null;
+    return params;
+};
 
-        for (let i in this.params) {
-            const paramArray = this.params[i];
 
-            if (paramArray?.from <= count) {
-                currentParams = paramArray;
-            } else {
-                break;
-            }
-        }
+export default class AdeliomMapClusterRenderer extends DefaultRenderer {
+    private icon: any;
+    private params: any;
+    private options: AdeliomMapOptionsType;
+    private adeliomMap: AdeliomMapFunctions;
 
-        return currentParams;
-    };
+    constructor(params: AdeliomMapClusterParams, adeliomMap: AdeliomMapFunctions) {
+        super();
 
-    getDefaultIconData(svg: string) {
-        return `data:image/svg+xml;base64,${svg}`
+        this.icon = null;
+        this.params = orderParamsByFromValue(params);
+        this.adeliomMap = adeliomMap;
+        this.options = this.adeliomMap.options;
     }
 
     render({count, position}: renderParams, stats: any) {
-        const params: any = this.getParamsByCount(count);
+        let params: AdeliomMapClusterParams = getParamsByCount(count, this.params);
 
         const color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
         const defaultIconColor = params?.defaultIconColor ?? color;
 
-        const fontColor = params?.fontColor ?? 'rgba(255,255,255,0.9)';
+        const fontColor = params?.fontColor ?? this.adeliomMap.helpers.google.clusters._getFontColor(count);
         const iconSize = params?.size ?? 56;
-        const iconData = params?.icon ?? this.getDefaultIconData(this.getSvg(defaultIconColor));
-        const fontSize = params?.fontSize ?? '12px';
+        const iconData = params?.icon ?? getDefaultIconData(getSvg(defaultIconColor));
+        const fontSize = params?.fontSize ?? this.adeliomMap.helpers.google.clusters._getFontSize(count);
 
         const options = {
             position: position,
@@ -89,46 +118,9 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
                 fontSize: fontSize,
             },
             zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count, icon: undefined
-
         };
 
         // @ts-ignore
-        options.icon = this.getIconConfig(iconData, iconSize);
-
-        const clusterMarker = new google.maps.Marker(options);
-
-        if (params?.hoverIcon || params?.defaultIconHoverColor) {
-            clusterMarker.addListener('mouseover', () => {
-                if (params?.hoverIcon) {
-                    clusterMarker.setIcon(this.getIconConfig(params.hoverIcon, iconSize));
-                } else {
-                    clusterMarker.setIcon(this.getIconConfig(this.getDefaultIconData(this.getSvg(params.defaultIconHoverColor)), iconSize));
-                }
-            });
-            clusterMarker.addListener('mouseout', () => {
-                clusterMarker.setIcon(this.getIconConfig(iconData, iconSize));
-            });
-        }
-
-        return clusterMarker;
-    }
-
-    getIconConfig(url: string, size: number) {
-        if (this.options.clusterIconCentered) {
-            const config = {
-                url: url,
-                scaledSize: new google.maps.Size(size, size),
-                anchor: new google.maps.Point(size / 2, size / 2),
-            }
-
-            return config;
-        } else {
-            const config = {
-                url: url,
-                scaledSize: new google.maps.Size(size, size),
-            }
-
-            return config;
-        }
+        return new google.maps.Marker(options);
     }
 }
