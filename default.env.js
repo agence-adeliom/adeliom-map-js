@@ -1,3 +1,5 @@
-export const env = {
+const env = {
     apiKey: '',
 };
+
+export default env;
