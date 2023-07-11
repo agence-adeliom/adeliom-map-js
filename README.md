@@ -116,6 +116,16 @@ marqueur contient une propriété `title`, mettre des balises `{{ title }}` dans
 `mapConsentDefaultValue (bool)` : valeur par défaut pour le consentement _(permet d'initialiser directement la map si
 consentement déjà donné)_<br>
 `mapConsentButtonMessage (string)` : message affiché dans le bouton de consentement<br>
+`mapConsentButtonClass (string)` : permet de renseigner des classes au bouton de consentement<br>
+`mapConsentScreenClass (string)` : permet de renseigner des classes à l'écran de consentement de la map<br>
+
+### Piwik Pro
+
+`mapUsePiwik (bool)` : indique si la map doit utiliser Piwik pour le consentement<br>
+`mapPiwikConsentKey (string)` : indique la clé de consentement à utiliser pour afficher ou non la map (par défaut
+à `analytics`)<br>
+`piwikButtonSelectors (object)` : permet de configurer les sélecteurs des boutons de
+Piwik (`acceptAll`, `rejectAll`, `saveChoices`)<br>
 
 ## Exemples de paramètres :
 
@@ -233,6 +243,12 @@ et élément de liste).<br>
 `consentButtonClicked` : Est émit lorsque le bouton de consentement de la map est cliqué.<br>
 `mapConsentNotGiven` : Est émit lorsque le consentement de la map n'a pas été donné _(même au chargement)_.<br>
 `mapConsentGiven` : Est émit lorsque le consentement de la map a été donné _(même au chargement)_.<br>
+
+### Piwik Pro :
+
+`acceptAllClicked` : Est émit lorsque le bouton "Tout accepter" de Piwik est cliqué<br>
+`rejectAllClicked` : Est émit lorsque le bouton "Tout refuser" de Piwik est cliqué<br>
+`saveChoicesClicked` : Est émit lorsque le bouton "Enregistrer les choix" de Piwik est cliqué<br>
 
 ### Clusters
 
