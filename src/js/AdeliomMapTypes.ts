@@ -71,6 +71,8 @@ export type AdeliomMapKeys_Geolocation = {
 
 export type AdeliomMapKeys_Rgpd = {
     askForConsent: string,
+    usePiwik: string,
+    piwikConsentKey: string,
     defaultConsentValue: string,
     buttonMessage: string,
 }
@@ -183,6 +185,8 @@ export type AdeliomMapOptionsType = {
     mapDisplayScale?: boolean,
     mapRotate?: boolean,
     mapAskForConsent?: boolean,
+    mapUsePiwik?: boolean,
+    mapPiwikConsentKey: string,
     mapConsentButtonMessage?: string,
     mapConsentDefaultValue?: boolean,
     mapListReplaceWithMarkerData?: boolean,

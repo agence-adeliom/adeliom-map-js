@@ -65,7 +65,7 @@ export default class AdeliomMapFunctions extends Emitter {
     public markerIconCentered: boolean = false;
     public clusterIconCentered: boolean = false;
     public mapCustomClass: string = 'adeliom-map-js';
-
+    public usePiwik: boolean = false;
 
     constructor() {
         super();
@@ -1474,7 +1474,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         });
 
                         this.map?.fitBounds(bounds);
-                        
+
                         this.emit(AdeliomMapEvents.markers.allFit, bounds);
                     }
                 },
@@ -1509,7 +1509,7 @@ export default class AdeliomMapFunctions extends Emitter {
                                 content: content,
                             });
                         }
-                        
+
                         this.emit(AdeliomMapEvents.infoWindows.created, infoWindowInstance);
 
                         return infoWindowInstance;
@@ -1689,7 +1689,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     }, (data) => {
                         this.emit(AdeliomMapEvents.geolocation.error, data);
                         console.error('Erreur lors de la géolocalisation', data);
-                        
+
                         if (failure) {
                             failure(data);
                         }
@@ -1901,8 +1901,61 @@ export default class AdeliomMapFunctions extends Emitter {
         return false;
     };
 
+    /**
+     * Returns 0 if no consent, 1 if consent
+     */
+    async _getPiwikConsent() {
+        let consent: number = 0;
+
+        // @ts-ignore
+        const ppms = window.ppms;
+
+        if (ppms) {
+            // Promisify the callback function
+            consent = await new Promise<number>((resolve, reject) => {
+                ppms.cm.api('getComplianceSettings', (type: any) => {
+                    const key: any = this.options[keys.rgpd.piwikConsentKey as keyof AdeliomMapOptionsType];
+
+                    if (type && type.consents && type.consents[key]) {
+                        resolve(type.consents[key].status);
+                    } else {
+                        reject('Unable to get consent status');
+                    }
+                });
+            });
+        }
+
+        return consent;
+    }
+
+    async _handleInitAfterConsentGiven() {
+        const provider = this.options[keys.map.provider as keyof AdeliomMapOptionsType];
+
+        if (provider && typeof provider === 'string') {
+            if (this.helpers.providers._isProviderAvailable(provider)) {
+                switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
+                    case 'google':
+                    default:
+                        await this.helpers.google.map._initMap(this.mapContainer);
+                }
+
+                return true;
+            } else {
+                console.error(`The provider "${provider}" is not available.`);
+            }
+        }
+
+        return false;
+    }
+
     async _handleConsent() {
         const hasToAskForConsent = this.options[keys.rgpd.askForConsent as keyof AdeliomMapOptionsType];
+
+        if (this.usePiwik) {
+            const piwikConsent = await this._getPiwikConsent();
+
+            this.hasConsent = piwikConsent === 1;
+        }
 
         if ((hasToAskForConsent && !this.hasConsent)) {
             this.helpers.consentScreen._setConsentScreen(this.hasConsent);
@@ -1920,23 +1973,7 @@ export default class AdeliomMapFunctions extends Emitter {
             }
 
             if (!this.options[keys.map.checkSize as keyof AdeliomMapOptionsType] || (this.mapContainer && this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
-                const provider = this.options[keys.map.provider as keyof AdeliomMapOptionsType];
-
-                if (provider && typeof provider === 'string') {
-                    if (this.helpers.providers._isProviderAvailable(provider)) {
-                        switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
-                            case 'google':
-                            default:
-                                await this.helpers.google.map._initMap(this.mapContainer);
-                        }
-
-                        return true;
-                    } else {
-                        console.error(`The provider "${provider}" is not available.`);
-                    }
-                }
-
-                return false;
+                return this._handleInitAfterConsentGiven();
             } else {
                 console.error(errors.selectors.map.tooSmall);
 

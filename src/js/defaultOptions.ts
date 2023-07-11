@@ -68,6 +68,8 @@ const defaultOptions: AdeliomMapOptionsType = {
     mapDisplayScale: false,
     mapRotate: false,
     mapAskForConsent: false,
+    mapUsePiwik: false,
+    mapPiwikConsentKey: 'analytics',
     mapConsentDefaultValue: false,
     mapConsentButtonMessage: 'Activer la carte',
     mapListReplaceWithMarkerData: false,

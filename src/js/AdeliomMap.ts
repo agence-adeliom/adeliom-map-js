@@ -65,6 +65,7 @@ export default class AdeliomMap extends AdeliomMapFunctions {
 
         this.options = Object.assign(this.defaultOptions, options);
 
+        this.usePiwik = Boolean(this.options[keys.rgpd.usePiwik as keyof AdeliomMapOptionsType]);
         this.hasConsent = Boolean(this.options[keys.rgpd.defaultConsentValue as keyof AdeliomMapOptionsType]);
 
         const mapSelector = this.options[keys.map.selector as keyof AdeliomMapOptionsType];
