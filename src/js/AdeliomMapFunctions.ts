@@ -19,7 +19,7 @@ import {
     AdeliomMapMarkerConfigType,
     AdeliomMapMarkerDataType,
     AdeliomMapMarkerParamsType,
-    AdeliomMapOptionsType,
+    AdeliomMapOptionsType, AdeliomMapPiwikButtonSelectorsType,
     AdeliomMapPlacesMapOptionsType,
     AdeliomMapPlacesOptionsType,
     AdeliomMapStyleElement,
@@ -65,7 +65,11 @@ export default class AdeliomMapFunctions extends Emitter {
     public markerIconCentered: boolean = false;
     public clusterIconCentered: boolean = false;
     public mapCustomClass: string = 'adeliom-map-js';
-
+    public usePiwik: boolean = false;
+    public ppms: any = null;
+    public piwikAcceptAllBtn: any = null;
+    public piwikRejectAllBtn: any = null;
+    public piwikSaveChoicesBtn: any = null;
 
     constructor() {
         super();
@@ -720,13 +724,16 @@ export default class AdeliomMapFunctions extends Emitter {
 
                     this.helpers.map._handleCustomZoomBtns();
 
-                    this._initMap().then((isInit: any) => {
-                        if (isInit && this.displayMarkers) {
-                            this.helpers.markers._initMarkers(this.markers, true);
-                            this.emit(AdeliomMapEvents.map.mapLoaded);
-                        }
-                    });
+                    this.helpers.map._initMapAndMarkers();
                 }
+            },
+            _initMapAndMarkers: () => {
+                this._initMap().then((isInit: any) => {
+                    if (isInit && this.displayMarkers) {
+                        this.helpers.markers._initMarkers(this.markers, true);
+                        this.emit(AdeliomMapEvents.map.mapLoaded);
+                    }
+                });
             },
             _handleCustomZoomBtns: () => {
                 let minusBtn: HTMLElement | null = null;
@@ -1030,13 +1037,32 @@ export default class AdeliomMapFunctions extends Emitter {
                         if (typeof consentButtonMessage === 'string') {
                             consentButton.innerText = consentButtonMessage;
                         }
+
+                        // @ts-ignore
+                        const consentButtonClass: string = this.options[keys.rgpd.buttonClass as keyof AdeliomMapOptionsType];
+                        // @ts-ignore
+                        const consentScreenClass: string = this.options[keys.rgpd.consentScreenClass as keyof AdeliomMapOptionsType];
+
                         consentButton.setAttribute(consentButtonAttribute, '');
 
+                        if (consentButtonClass) {
+                            consentButtonClass.split(' ').forEach(classElt => {
+                                consentButton.classList.add(classElt);
+                            })
+                        }
+
                         consentButton.addEventListener('click', () => {
+                            this._openPiwikConsent();
                             this.emit(AdeliomMapEvents.rgpd.consentButtonClicked, this);
                         });
 
                         consentScreen.appendChild(consentButton);
+
+                        if (consentScreenClass) {
+                            consentScreenClass.split(' ').forEach(classElt => {
+                                consentScreen.classList.add(classElt);
+                            });
+                        }
 
                         this.mapContainer.appendChild(consentScreen);
 
@@ -1474,7 +1500,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         });
 
                         this.map?.fitBounds(bounds);
-                        
+
                         this.emit(AdeliomMapEvents.markers.allFit, bounds);
                     }
                 },
@@ -1509,7 +1535,7 @@ export default class AdeliomMapFunctions extends Emitter {
                                 content: content,
                             });
                         }
-                        
+
                         this.emit(AdeliomMapEvents.infoWindows.created, infoWindowInstance);
 
                         return infoWindowInstance;
@@ -1545,6 +1571,7 @@ export default class AdeliomMapFunctions extends Emitter {
 
                         this.google = await loader.load();
                     }
+
 
                     this.map = new this.google.maps.Map(container, {
                         center: this.options[keys.map.defaultCenter as keyof AdeliomMapOptionsType],
@@ -1689,7 +1716,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     }, (data) => {
                         this.emit(AdeliomMapEvents.geolocation.error, data);
                         console.error('Erreur lors de la géolocalisation', data);
-                        
+
                         if (failure) {
                             failure(data);
                         }
@@ -1901,8 +1928,134 @@ export default class AdeliomMapFunctions extends Emitter {
         return false;
     };
 
+    _getPPMS() {
+        if (null === this.ppms) {
+            // @ts-ignore
+            const ppms: any = window.ppms;
+
+            if (ppms) {
+                this.ppms = ppms;
+            }
+        }
+
+        return this.ppms;
+    }
+
+    /**
+     * Returns 0 if no consent, 1 if consent
+     */
+    async _getPiwikConsent() {
+        let consent: number = 0;
+
+        if (this._getPPMS()) {
+            // Promisify the callback function
+            consent = await new Promise<number>((resolve, reject) => {
+                this._getPPMS().cm.api('getComplianceSettings', (type: any) => {
+                    const key: any = this.options[keys.rgpd.piwikConsentKey as keyof AdeliomMapOptionsType];
+
+                    if (type && type.consents && type.consents[key]) {
+                        resolve(type.consents[key].status);
+                    } else {
+                        reject('Unable to get consent status');
+                    }
+                });
+            });
+        }
+
+        return consent;
+    }
+
+    _openPiwikConsent() {
+        if (this.usePiwik) {
+            if (this._getPPMS()) {
+                this._getPPMS().cm.api('openConsentForm');
+            }
+        }
+    }
+
+    async _handleInitAfterConsentGiven() {
+        const provider = this.options[keys.map.provider as keyof AdeliomMapOptionsType];
+
+        if (provider && typeof provider === 'string') {
+            if (this.helpers.providers._isProviderAvailable(provider)) {
+                switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
+                    case 'google':
+                    default:
+                        await this.helpers.google.map._initMap(this.mapContainer);
+                        break;
+                }
+
+                return true;
+            } else {
+                console.error(`The provider "${provider}" is not available.`);
+            }
+        }
+
+        return false;
+    }
+
+    async _handlePiwikEvents() {
+        if (this.usePiwik && this._getPPMS()) {
+            // @ts-ignore
+            const buttonKeys: AdeliomMapPiwikButtonSelectorsType = this.options[keys.rgpd.piwikButtonSelectors as keyof AdeliomMapOptionsType];
+
+            document.body.addEventListener('click', (e) => {
+                // @ts-ignore
+                if (e.target && e.target.parentNode) {
+                    // @ts-ignore
+                    const parent = e.target.parentNode;
+
+                    Object.keys(buttonKeys).forEach((key) => {
+                        // @ts-ignore
+                        const elt = parent.querySelector(buttonKeys[key]);
+
+                        if (elt === e.target) {
+                            switch (key) {
+                                case 'acceptAll':
+                                    this._handlePiwikAcceptAllEvent();
+                                    break;
+                                case 'rejectAll':
+                                    this._handlePiwikRejectAllEvent();
+                                    break;
+                                case 'saveChoices':
+                                    this._handlePiwikSaveChoicesEvent();
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    _handlePiwikAcceptAllEvent() {
+        this.emit(AdeliomMapEvents.rgpd.acceptAllClicked);
+
+        this.helpers.map._initMapAndMarkers();
+    }
+
+    _handlePiwikRejectAllEvent() {
+        this.emit(AdeliomMapEvents.rgpd.rejectAllClicked);
+
+        this._handleConsent();
+    }
+
+    _handlePiwikSaveChoicesEvent() {
+        this.emit(AdeliomMapEvents.rgpd.saveChoicesClicked);
+
+        this._handleConsent();
+    }
+
     async _handleConsent() {
         const hasToAskForConsent = this.options[keys.rgpd.askForConsent as keyof AdeliomMapOptionsType];
+
+        if (this.usePiwik) {
+            const piwikConsent = await this._getPiwikConsent();
+
+            this.hasConsent = piwikConsent === 1;
+        }
 
         if ((hasToAskForConsent && !this.hasConsent)) {
             this.helpers.consentScreen._setConsentScreen(this.hasConsent);
@@ -1920,23 +2073,7 @@ export default class AdeliomMapFunctions extends Emitter {
             }
 
             if (!this.options[keys.map.checkSize as keyof AdeliomMapOptionsType] || (this.mapContainer && this.mapContainer.clientHeight !== 0 && this.mapContainer.clientWidth !== 0)) {
-                const provider = this.options[keys.map.provider as keyof AdeliomMapOptionsType];
-
-                if (provider && typeof provider === 'string') {
-                    if (this.helpers.providers._isProviderAvailable(provider)) {
-                        switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
-                            case 'google':
-                            default:
-                                await this.helpers.google.map._initMap(this.mapContainer);
-                        }
-
-                        return true;
-                    } else {
-                        console.error(`The provider "${provider}" is not available.`);
-                    }
-                }
-
-                return false;
+                return await this._handleInitAfterConsentGiven();
             } else {
                 console.error(errors.selectors.map.tooSmall);
 

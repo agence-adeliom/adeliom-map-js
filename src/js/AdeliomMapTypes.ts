@@ -71,8 +71,13 @@ export type AdeliomMapKeys_Geolocation = {
 
 export type AdeliomMapKeys_Rgpd = {
     askForConsent: string,
+    usePiwik: string,
+    piwikConsentKey: string,
+    piwikButtonSelectors: string,
     defaultConsentValue: string,
     buttonMessage: string,
+    buttonClass: string,
+    consentScreenClass: string,
 }
 
 export type AdeliomMapAnimsType = {
@@ -138,6 +143,12 @@ export type AdeliomMapGeolocationOptionsType = {
     iconSize?: number
 };
 
+export type AdeliomMapPiwikButtonSelectorsType = {
+    acceptAll: string,
+    rejectAll: string,
+    saveChoices: string,
+};
+
 export type AdeliomMapOptionsType = {
     apiKey?: string
     apiOptions?: AdeliomMapApiOptionsType,
@@ -183,8 +194,13 @@ export type AdeliomMapOptionsType = {
     mapDisplayScale?: boolean,
     mapRotate?: boolean,
     mapAskForConsent?: boolean,
+    mapUsePiwik?: boolean,
+    mapPiwikConsentKey: string,
+    piwikButtonSelectors: AdeliomMapPiwikButtonSelectorsType,
     mapConsentButtonMessage?: string,
+    mapConsentButtonClass: string,
     mapConsentDefaultValue?: boolean,
+    mapConsentScreenClass: string,
     mapListReplaceWithMarkerData?: boolean,
     mapListCenterMarkerOnClick?: boolean,
     mapListEltTemplate?: string,

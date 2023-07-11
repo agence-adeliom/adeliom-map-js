@@ -60,8 +60,13 @@ const keys: AdeliomMapKeys = {
     },
     rgpd: {
         askForConsent: 'mapAskForConsent',
+        usePiwik: 'mapUsePiwik',
+        piwikConsentKey: 'mapPiwikConsentKey',
+        piwikButtonSelectors: 'piwikButtonSelectors',
         defaultConsentValue: 'mapConsentDefaultValue',
         buttonMessage: 'mapConsentButtonMessage',
+        buttonClass: 'mapConsentButtonClass',
+        consentScreenClass: 'mapConsentScreenClass',
     }
 };
 
