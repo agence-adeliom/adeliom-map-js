@@ -207,6 +207,15 @@ export type AdeliomMapOptionsType = {
     mapAnimation?: string,
     markerIconCentered?: boolean,
     clusterIconCentered?: boolean,
+    mapPolylines?: AdeliomMapPolyline[],
+}
+
+export type AdeliomMapPolyline = {
+    closeShape: boolean,
+    strokeColor: string,
+    strokeOpacity: number,
+    strokeWeight: number,
+    coordinates: AdeliomMapCoordinatesType[],
 }
 
 export type AdeliomMapMarkerDataType = {
