@@ -85,6 +85,7 @@ const defaultOptions: AdeliomMapOptionsType = {
     mapAnimation: mapAnims.smooth,
     markerIconCentered: false,
     clusterIconCentered: false,
+    mapPolylines: [],
 };
 
 export default defaultOptions;

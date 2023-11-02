@@ -21,7 +21,7 @@ import {
     AdeliomMapMarkerParamsType,
     AdeliomMapOptionsType, AdeliomMapPiwikButtonSelectorsType,
     AdeliomMapPlacesMapOptionsType,
-    AdeliomMapPlacesOptionsType,
+    AdeliomMapPlacesOptionsType, AdeliomMapPolyline,
     AdeliomMapStyleElement,
     AdeliomMapTypes
 } from "./AdeliomMapTypes";
@@ -51,6 +51,7 @@ export default class AdeliomMapFunctions extends Emitter {
     public geolocationButton: HTMLElement | null;
     public autocomplete: any;
     public markers: AdeliomMapMarkerParamsType[];
+    public polylines: AdeliomMapPolyline[];
     private markersData: AdeliomMapMarkerDataType[];
     private geolocationMarkerData: AdeliomMapMarkerDataType | null;
     public clusterer: MarkerClusterer | null;
@@ -88,6 +89,7 @@ export default class AdeliomMapFunctions extends Emitter {
         this.geolocationButton = null;
 
         this.markers = [];
+        this.polylines = [];
         this.markersData = [];
         this.geolocationMarkerData = null;
         this.clusterer = null;
@@ -610,6 +612,34 @@ export default class AdeliomMapFunctions extends Emitter {
                 }
             },
         },
+        polylines: {
+            _initPolylines: () => {
+                switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
+                    case 'google':
+                        this.helpers.google.polylines._initPolylines(this.options.mapPolylines ?? []).then(() => {
+
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            },
+            _addPolylines: (polylines: AdeliomMapPolyline | AdeliomMapPolyline[]) => {
+                if (!Array.isArray(polylines)) {
+                    polylines = [polylines];
+                }
+
+                switch (this.options[keys.map.provider as keyof AdeliomMapOptionsType]) {
+                    case 'google':
+                        this.helpers.google.polylines._initPolylines(polylines ?? []).then(() => {
+
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            }
+        },
         markersData: {
             /**
              * Get datas from markerData by providing a property name and its value
@@ -733,6 +763,8 @@ export default class AdeliomMapFunctions extends Emitter {
                         this.helpers.markers._initMarkers(this.markers, true);
                         this.emit(AdeliomMapEvents.map.mapLoaded);
                     }
+
+                    this.helpers.polylines._initPolylines();
                 });
             },
             _handleCustomZoomBtns: () => {
@@ -970,6 +1002,7 @@ export default class AdeliomMapFunctions extends Emitter {
 
                 setTimeout(() => {
                     this.helpers.markers._initMarkers(newMarkers);
+                    this.helpers.polylines._initPolylines();
                     const defaultZoom = Number(this.options[keys.map.defaultZoom as keyof AdeliomMapOptionsType]);
 
                     if (defaultZoom) {
@@ -1502,6 +1535,39 @@ export default class AdeliomMapFunctions extends Emitter {
                         this.map?.fitBounds(bounds);
 
                         this.emit(AdeliomMapEvents.markers.allFit, bounds);
+                    }
+                },
+            },
+            polylines: {
+                _initPolylines: async (polylines: AdeliomMapPolyline[]) => {
+                    polylines.forEach(polyline => {
+                        this.helpers.google.polylines._addMapPolyline(polyline);
+                    });
+                },
+                _addMapPolyline: (polyline: AdeliomMapPolyline) => {
+                    const coordinates = polyline.coordinates;
+
+                    if (polyline.closeShape) {
+                        const firstCoordinate = coordinates[0];
+                        const lastCoordinate = coordinates[coordinates.length - 1];
+
+                        if (firstCoordinate.lat !== lastCoordinate.lat || firstCoordinate.lng !== lastCoordinate.lng) {
+                            coordinates.push(coordinates[0]);
+                        }
+                    }
+
+                    if (this.google?.maps) {
+                        const newPolyline = new this.google.maps.Polyline({
+                            path: coordinates,
+                            geodesic: true,
+                            strokeColor: polyline.strokeColor ?? '#FF0000',
+                            strokeOpacity: polyline.strokeOpacity ?? 1,
+                            strokeWeight: polyline.strokeWeight ?? 2,
+                        });
+
+                        newPolyline.setMap(this.map);
+
+                        this.polylines.push(newPolyline);
                     }
                 },
             },

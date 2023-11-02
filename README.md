@@ -72,6 +72,39 @@ document.addEventListener('DOMContentLoaded', () => {
 `mapHideMarkerOnClickOutside (bool)` : Indique si les marqueurs doivent se fermer au click sur la carte (en dehors du
 marqueur)<br>
 
+### PolyLines
+
+`mapPolylines (array)` : tableau de polylines à afficher
+
+```javascript
+mapPolylines: [
+    {
+        closeShape: false,
+        strokeColor: '#dd00ff',
+        strokeWeight: 4,
+        strokeOpacity: .5,
+        coordinates: [
+            {lat: 48.5911443, lng: 7.7411831},
+            {lat: 48.6148307, lng: 7.7137141},
+        ],
+    },
+    {
+        closeShape: true,
+        strokeColor: '#ff0000',
+        strokeWeight: 4,
+        strokeOpacity: 1,
+        coordinates: [
+            {lat: 48.5807382, lng: 7.7382374},
+            {lat: 48.5855077, lng: 7.743516},
+            {lat: 48.5868846, lng: 7.743516},
+            {lat: 48.583705, lng: 7.7561331},
+            {lat: 48.5800426, lng: 7.7514982},
+            {lat: 48.5798013, lng: 7.7434945},
+        ],
+    }
+]
+```
+
 ### Clusters de markers
 
 `mapUseClusters (bool)` : indique si la map doit générer des clusters lorsque les points sont suffisamment
@@ -272,6 +305,7 @@ et élément de liste).<br>
 
 `_setConsent (bool)` : Permet d'indiquer dynamiquement l'état de consentement de l'utilisateur<br>
 `_addMarkers (array|object)` : Permet d'ajouter dynamiquement des marqueurs à la map<br>
+`_addPolylines (array|object)` : Permet d'ajouter dynamiquement des polylines à la map<br>
 `_removeMarkers (array|object)` : Permet de supprimer dynamiquement des marqueurs à la map<br>
 `_getAllCurrentMarkersRawData (void)` : Permet de récupérer l'ensemble des données brutes de marker sur la map<br>
 `_disableClusters (void)` : Permet de désactiver l'affichage en clusters s'il est activé<br>
