@@ -1344,7 +1344,9 @@ var AdeliomMap = /*#__PURE__*/function (_AdeliomMapFunctions) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "clusterBgClass": () => (/* binding */ clusterBgClass),
 /* harmony export */   "default": () => (/* binding */ AdeliomMapClusterRenderer),
+/* harmony export */   "generateElement": () => (/* binding */ generateElement),
 /* harmony export */   "getDefaultIconConfig": () => (/* binding */ getDefaultIconConfig),
 /* harmony export */   "getDefaultIconData": () => (/* binding */ getDefaultIconData),
 /* harmony export */   "getIconConfig": () => (/* binding */ getIconConfig),
@@ -1465,6 +1467,8 @@ var getDefaultIconConfig = function getDefaultIconConfig(color, size) {
 var getIconConfig = function getIconConfig(url, size, clusterIconCentered) {
   var markerImg = document.createElement('img');
   markerImg.src = url;
+  markerImg.height = size;
+  markerImg.width = size;
   return markerImg;
   // if (clusterIconCentered) {
   //     const config = {
@@ -1514,6 +1518,46 @@ var orderParamsByFromValue = function orderParamsByFromValue(params) {
   }
   return params;
 };
+var clusterBgClass = 'bg';
+var generateElement = function generateElement(count, fontColor) {
+  var iconSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 56;
+  var fontSize = arguments.length > 3 ? arguments[3] : undefined;
+  var defaultIconColor = arguments.length > 4 ? arguments[4] : undefined;
+  var background = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
+  var color = count > Math.max(10, count) ? "#ff0000" : "#0000ff";
+  var element = document.createElement('div');
+  element.textContent = String(count);
+  element.style.color = fontColor;
+  element.style.height = "".concat(iconSize, "px");
+  element.style.width = "".concat(iconSize, "px");
+  element.style.fontSize = "".concat(fontSize, "px");
+  element.style.display = 'flex';
+  element.style.justifyContent = 'center';
+  element.style.alignItems = 'center';
+  element.style.borderRadius = '50%';
+  element.style.position = 'relative';
+  element.style.transform = 'translate(-50%, 50%)';
+  element.style.top = '50%';
+  element.style.left = '50%';
+  if (null === background) {
+    element.style.backgroundColor = defaultIconColor;
+  } else {
+    if (typeof background === 'string') {
+      var url = background;
+      background = document.createElement('img');
+      background.src = url;
+    }
+    background.height = iconSize;
+    background.width = iconSize;
+    background.style.position = 'absolute';
+    background.style.top = '0';
+    background.style.left = '0';
+    background.style.zIndex = '-1';
+    background.classList.add(clusterBgClass);
+    element.appendChild(background);
+  }
+  return element;
+};
 var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
   _inherits(AdeliomMapClusterRenderer, _DefaultRenderer);
   var _super = _createSuper(AdeliomMapClusterRenderer);
@@ -1540,23 +1584,10 @@ var AdeliomMapClusterRenderer = /*#__PURE__*/function (_DefaultRenderer) {
       var iconSize = (_c = params === null || params === void 0 ? void 0 : params.size) !== null && _c !== void 0 ? _c : 56;
       var iconData = (_d = params === null || params === void 0 ? void 0 : params.icon) !== null && _d !== void 0 ? _d : getDefaultIconData(getSvg(defaultIconColor));
       var fontSize = (_e = params === null || params === void 0 ? void 0 : params.fontSize) !== null && _e !== void 0 ? _e : this.adeliomMap.helpers.google.clusters._getFontSize(count);
-      var element = document.createElement('div');
-      element.textContent = String(count);
-      element.style.color = fontColor;
-      element.style.height = "".concat(iconSize, "px");
-      element.style.width = "".concat(iconSize, "px");
-      element.style.fontSize = "".concat(fontSize, "px");
-      element.style.display = 'flex';
-      element.style.justifyContent = 'center';
-      element.style.alignItems = 'center';
-      element.style.backgroundColor = defaultIconColor;
-      element.style.borderRadius = '50%';
       var options = {
         position: position,
-        content: element
+        content: generateElement(count, fontColor, iconSize, fontSize, defaultIconColor, iconData)
       };
-      // @ts-ignore
-      console.log(google.maps.marker.AdvancedMarkerElement);
       // @ts-ignore
       return new google.maps.marker.AdvancedMarkerElement(options);
     }
@@ -3284,20 +3315,24 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
               if (markerData.hasInteraction) {
                 // Listener to handle mouseover (change icon)
                 markerInstance.content.addEventListener('mouseenter', function () {
-                  var _a;
+                  var _a, _b;
                   if (!markerData.isFakeCluster) {
                     _this.helpers.google.markers._setHoveredIcon(markerInstance);
                   } else if ((_a = markerData.fakeClusterMarkers) === null || _a === void 0 ? void 0 : _a.length) {
-                    markerInstance.setIcon(_this.helpers.google.clusters._getHoveredIcon(markerData.fakeClusterMarkers.length));
+                    var newIcon = _this.helpers.google.clusters._getHoveredIcon(markerData.fakeClusterMarkers.length);
+                    var currentIcon = (_b = markerInstance.content) === null || _b === void 0 ? void 0 : _b.querySelector(".".concat(_AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_4__.clusterBgClass));
+                    currentIcon.src = newIcon.src;
                   }
                 });
                 // Listener to handle mouseout (change icon)
                 markerInstance.content.addEventListener('mouseout', function () {
-                  var _a;
+                  var _a, _b;
                   if (!markerData.isFakeCluster) {
                     _this.helpers.google.markers._setIdleIcon(markerInstance);
                   } else if ((_a = markerData.fakeClusterMarkers) === null || _a === void 0 ? void 0 : _a.length) {
-                    markerInstance.setIcon(_this.helpers.google.clusters._getBasicIcon(markerData.fakeClusterMarkers.length));
+                    var newIcon = _this.helpers.google.clusters._getBasicIcon(markerData.fakeClusterMarkers.length);
+                    var currentIcon = (_b = markerInstance.content) === null || _b === void 0 ? void 0 : _b.querySelector(".".concat(_AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_4__.clusterBgClass));
+                    currentIcon.src = newIcon.src;
                   }
                 });
               }
@@ -3368,7 +3403,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * @private
            */
           _createMapMarker: function _createMapMarker(markerRawData) {
-            var _a, _b, _c;
+            var _a, _b, _c, _d;
             var markerData = {
               rawData: {
                 coordinates: {
@@ -3413,15 +3448,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
                 markerConfig.content = _this.helpers.google.markers._getIconConfig(_url, iconSize, iconCentered);
               } else if ((_c = markerData.fakeClusterMarkers) === null || _c === void 0 ? void 0 : _c.length) {
                 var markersCount = markerData.fakeClusterMarkers.length;
-                markerConfig.content = _this.helpers.google.clusters._getBasicIcon(markersCount);
-                // markerConfig.label = {
-                //     text: markerData.fakeClusterMarkers.length.toString(),
-                //     color: this.helpers.google.clusters._getFontColor(markersCount),
-                //     fontSize: this.helpers.google.clusters._getFontSize(markersCount),
-                // }
+                var background = _this.helpers.google.clusters._getBasicIcon(markersCount);
+                var fontColor = _this.helpers.google.clusters._getFontColor(markersCount);
+                var _iconSize = (_d = markerData.iconSize) !== null && _d !== void 0 ? _d : 56;
+                markerConfig.content = (0,_AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_4__.generateElement)(markersCount, fontColor, _iconSize, null, null, background);
               }
             }
-
             if (markerRawData.isGeolocation) {
               markerConfig.zIndex = 9999999999;
               markerData.isGeolocation = true;
@@ -4350,7 +4382,7 @@ var AdeliomMapMarkerClusterer = /*#__PURE__*/function (_MarkerClusterer) {
           var _a, _b;
           var currentLabel = (_b = (_a = cluster === null || cluster === void 0 ? void 0 : cluster.marker) === null || _a === void 0 ? void 0 : _a.content) === null || _b === void 0 ? void 0 : _b.textContent;
           var markers = cluster === null || cluster === void 0 ? void 0 : cluster.markers;
-          if ((currentLabel === null || currentLabel === void 0 ? void 0 : currentLabel.text) && markers) {
+          if (currentLabel && markers) {
             var currentCount = 0;
             if (Array.isArray(markers)) {
               markers.forEach(function (marker) {
@@ -4369,22 +4401,33 @@ var AdeliomMapMarkerClusterer = /*#__PURE__*/function (_MarkerClusterer) {
                 }
               });
             }
-            currentLabel.text = String(currentCount);
-            cluster.marker.setLabel(currentLabel);
-            cluster.marker.setIcon(_this2.adeliomMap.helpers.google.clusters._getBasicIcon(currentCount));
+            currentLabel = String(currentCount);
+            var fontColor = _this2.adeliomMap.helpers.google.clusters._getFontColor(currentCount);
+            var background = _this2.adeliomMap.helpers.google.clusters._getBasicIcon(currentCount);
+            var iconSize = _this2.adeliomMap.options.mapClusterIconSize;
+            cluster.marker.content = (0,_AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_1__.generateElement)(currentCount, fontColor, iconSize, null, null, background);
             var clusterParams = _this2.adeliomMap.helpers.google.clusters._getParamsByCount(currentCount);
             if ((clusterParams === null || clusterParams === void 0 ? void 0 : clusterParams.hoverIcon) || (clusterParams === null || clusterParams === void 0 ? void 0 : clusterParams.defaultIconHoverColor)) {
-              cluster.marker.addListener('mouseover', function () {
-                var _a, _b;
+              cluster.marker.content.addEventListener('mouseover', function () {
+                var icon = null;
                 if (clusterParams === null || clusterParams === void 0 ? void 0 : clusterParams.hoverIcon) {
-                  (_a = cluster.marker) === null || _a === void 0 ? void 0 : _a.setIcon((0,_AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_1__.getIconConfig)(clusterParams.hoverIcon, clusterParams.size, _this2.adeliomMap.options.clusterIconCentered));
+                  icon = (0,_AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_1__.getIconConfig)(clusterParams.hoverIcon, clusterParams.size, _this2.adeliomMap.options.clusterIconCentered);
                 } else {
-                  (_b = cluster.marker) === null || _b === void 0 ? void 0 : _b.setIcon(_this2.adeliomMap.helpers.google.clusters._getHoveredIcon(currentCount));
+                  icon = _this2.adeliomMap.helpers.google.clusters._getHoveredIcon(currentCount);
+                }
+                if (null !== icon) {
+                  var currentIcon = cluster.marker.content.querySelector(".".concat(_AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_1__.clusterBgClass));
+                  if (currentIcon) {
+                    currentIcon.src = icon.src;
+                  }
                 }
               });
-              cluster.marker.addListener('mouseout', function () {
-                var _a;
-                (_a = cluster.marker) === null || _a === void 0 ? void 0 : _a.setIcon(_this2.adeliomMap.helpers.google.clusters._getBasicIcon(currentCount));
+              cluster.marker.content.addEventListener('mouseout', function () {
+                var icon = _this2.adeliomMap.helpers.google.clusters._getBasicIcon(currentCount);
+                var currentIcon = cluster.marker.content.querySelector(".".concat(_AdeliomMapClusterRenderer__WEBPACK_IMPORTED_MODULE_1__.clusterBgClass));
+                if (currentIcon) {
+                  currentIcon.src = icon.src;
+                }
               });
             }
           }

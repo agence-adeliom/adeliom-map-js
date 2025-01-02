@@ -30,6 +30,8 @@ export const getDefaultIconConfig: Function = (color: string, size: number) => {
 export const getIconConfig: Function = (url: string, size: number, clusterIconCentered: boolean) => {
     const markerImg = document.createElement('img');
     markerImg.src = url;
+    markerImg.height = size;
+    markerImg.width = size;
 
     return markerImg;
     // if (clusterIconCentered) {
@@ -87,6 +89,50 @@ export const orderParamsByFromValue: Function = (params: any) => {
     return params;
 };
 
+export const clusterBgClass = 'bg';
+
+export const generateElement: Function = (count: number, fontColor: string, iconSize: number = 56, fontSize: number, defaultIconColor: string, background: HTMLImageElement | string | null = null) => {
+    const color = count > Math.max(10, count) ? "#ff0000" : "#0000ff";
+
+    const element = document.createElement('div');
+    element.textContent = String(count);
+    element.style.color = fontColor;
+    element.style.height = `${iconSize}px`;
+    element.style.width = `${iconSize}px`;
+    element.style.fontSize = `${fontSize}px`;
+    element.style.display = 'flex';
+    element.style.justifyContent = 'center';
+    element.style.alignItems = 'center';
+    element.style.borderRadius = '50%';
+    element.style.position = 'relative';
+
+    element.style.transform = 'translate(-50%, 50%)';
+    element.style.top = '50%';
+    element.style.left = '50%';
+
+    if (null === background) {
+        element.style.backgroundColor = defaultIconColor;
+    } else {
+        if (typeof background === 'string') {
+            const url = background;
+            background = document.createElement('img');
+            background.src = url;
+        }
+
+        background.height = iconSize;
+        background.width = iconSize;
+        background.style.position = 'absolute';
+        background.style.top = '0';
+        background.style.left = '0';
+        background.style.zIndex = '-1';
+        background.classList.add(clusterBgClass);
+
+        element.appendChild(background);
+    }
+
+    return element;
+}
+
 
 export default class AdeliomMapClusterRenderer extends DefaultRenderer {
     private icon: any;
@@ -114,25 +160,10 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
         const iconData = params?.icon ?? getDefaultIconData(getSvg(defaultIconColor));
         const fontSize = params?.fontSize ?? this.adeliomMap.helpers.google.clusters._getFontSize(count);
 
-        const element = document.createElement('div');
-        element.textContent = String(count);
-        element.style.color = fontColor;
-        element.style.height = `${iconSize}px`;
-        element.style.width = `${iconSize}px`;
-        element.style.fontSize = `${fontSize}px`;
-        element.style.display = 'flex';
-        element.style.justifyContent = 'center';
-        element.style.alignItems = 'center';
-        element.style.backgroundColor = defaultIconColor;
-        element.style.borderRadius = '50%';
-
         const options = {
             position: position,
-            content: element,
+            content: generateElement(count, fontColor, iconSize, fontSize, defaultIconColor, iconData),
         };
-
-        // @ts-ignore
-        console.log(google.maps.marker.AdvancedMarkerElement);
 
         // @ts-ignore
         return new google.maps.marker.AdvancedMarkerElement(options);

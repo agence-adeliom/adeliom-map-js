@@ -1,6 +1,6 @@
 import {Cluster, MarkerClusterer} from "@googlemaps/markerclusterer";
 import AdeliomMapFunctions from "./AdeliomMapFunctions";
-import {getIconConfig} from "./AdeliomMapClusterRenderer";
+import {clusterBgClass, generateElement, getIconConfig} from "./AdeliomMapClusterRenderer";
 
 export default class AdeliomMapMarkerClusterer extends MarkerClusterer {
 
@@ -21,10 +21,10 @@ export default class AdeliomMapMarkerClusterer extends MarkerClusterer {
         // sont donc représentés par un seul marker).
         if (Array.isArray(this.clusters)) {
             this.clusters.forEach((cluster: Cluster) => {
-                const currentLabel = cluster?.marker?.content?.textContent;
+                let currentLabel = cluster?.marker?.content?.textContent;
                 const markers = cluster?.markers;
 
-                if (currentLabel?.text && markers) {
+                if (currentLabel && markers) {
                     let currentCount = 0;
 
                     if (Array.isArray(markers)) {
@@ -45,23 +45,42 @@ export default class AdeliomMapMarkerClusterer extends MarkerClusterer {
                         });
                     }
 
-                    currentLabel.text = String(currentCount);
+                    currentLabel = String(currentCount);
+                    const fontColor = this.adeliomMap.helpers.google.clusters._getFontColor(currentCount);
+                    const background = this.adeliomMap.helpers.google.clusters._getBasicIcon(currentCount);
+                    const iconSize = this.adeliomMap.options.mapClusterIconSize;
 
-                    cluster.marker.setLabel(currentLabel);
-                    cluster.marker.setIcon(this.adeliomMap.helpers.google.clusters._getBasicIcon(currentCount));
+                    cluster.marker.content = generateElement(currentCount, fontColor, iconSize, null, null, background)
 
                     const clusterParams = this.adeliomMap.helpers.google.clusters._getParamsByCount(currentCount);
 
+
                     if (clusterParams?.hoverIcon || clusterParams?.defaultIconHoverColor) {
-                        cluster.marker.addListener('mouseover', () => {
+                        cluster.marker.content.addEventListener('mouseover', () => {
+                            let icon = null;
+
                             if (clusterParams?.hoverIcon) {
-                                cluster.marker?.setIcon(getIconConfig(clusterParams.hoverIcon, clusterParams.size, this.adeliomMap.options.clusterIconCentered));
+                                icon = getIconConfig(clusterParams.hoverIcon, clusterParams.size, this.adeliomMap.options.clusterIconCentered);
                             } else {
-                                cluster.marker?.setIcon(this.adeliomMap.helpers.google.clusters._getHoveredIcon(currentCount));
+                                icon = this.adeliomMap.helpers.google.clusters._getHoveredIcon(currentCount);
+                            }
+
+                            if (null !== icon) {
+                                const currentIcon = cluster.marker.content.querySelector(`.${clusterBgClass}`);
+
+                                if (currentIcon) {
+                                    currentIcon.src = icon.src;
+                                }
                             }
                         });
-                        cluster.marker.addListener('mouseout', () => {
-                            cluster.marker?.setIcon(this.adeliomMap.helpers.google.clusters._getBasicIcon(currentCount));
+                        cluster.marker.content.addEventListener('mouseout', () => {
+                            const icon = this.adeliomMap.helpers.google.clusters._getBasicIcon(currentCount);
+
+                            const currentIcon = cluster.marker.content.querySelector(`.${clusterBgClass}`);
+
+                            if (currentIcon) {
+                                currentIcon.src = icon.src;
+                            }
                         });
                     }
                 }
