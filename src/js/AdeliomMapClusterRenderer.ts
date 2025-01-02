@@ -114,18 +114,27 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
         const iconData = params?.icon ?? getDefaultIconData(getSvg(defaultIconColor));
         const fontSize = params?.fontSize ?? this.adeliomMap.helpers.google.clusters._getFontSize(count);
 
+        const element = document.createElement('div');
+        element.textContent = String(count);
+        element.style.color = fontColor;
+        element.style.height = `${iconSize}px`;
+        element.style.width = `${iconSize}px`;
+        element.style.fontSize = `${fontSize}px`;
+        element.style.display = 'flex';
+        element.style.justifyContent = 'center';
+        element.style.alignItems = 'center';
+        element.style.backgroundColor = defaultIconColor;
+        element.style.borderRadius = '50%';
+
         const options = {
             position: position,
-            label: {
-                text: String(count),
-                color: fontColor,
-                fontSize: fontSize,
-            },
-            // @ts-ignore
-            zIndex: Number(google.maps.marker.AdvancedMarkerElement.MAX_ZINDEX) + count, icon: undefined
+            content: element,
         };
 
         // @ts-ignore
-        return new google.maps.marker.AdvancedMarkerElement.Marker(options);
+        console.log(google.maps.marker.AdvancedMarkerElement);
+
+        // @ts-ignore
+        return new google.maps.marker.AdvancedMarkerElement(options);
     }
 }

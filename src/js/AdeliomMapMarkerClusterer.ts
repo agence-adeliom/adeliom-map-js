@@ -21,7 +21,7 @@ export default class AdeliomMapMarkerClusterer extends MarkerClusterer {
         // sont donc représentés par un seul marker).
         if (Array.isArray(this.clusters)) {
             this.clusters.forEach((cluster: Cluster) => {
-                const currentLabel = cluster?.marker?.getLabel();
+                const currentLabel = cluster?.marker?.content?.textContent;
                 const markers = cluster?.markers;
 
                 if (currentLabel?.text && markers) {

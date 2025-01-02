@@ -16,7 +16,7 @@
     "build:production": "mix --production"
   },
   "dependencies": {
-    "@googlemaps/markerclusterer": "^1.0.24",
+    "@googlemaps/markerclusterer": "^2.0",
     "google-maps": "^4.3.3",
     "ts-loader": "^9.2.7",
     "typescript": "^4.6.2"
