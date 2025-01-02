@@ -28,22 +28,26 @@ export const getDefaultIconConfig: Function = (color: string, size: number) => {
 }
 
 export const getIconConfig: Function = (url: string, size: number, clusterIconCentered: boolean) => {
-    if (clusterIconCentered) {
-        const config = {
-            url: url,
-            scaledSize: new google.maps.Size(size, size),
-            anchor: new google.maps.Point(size / 2, size / 2),
-        }
+    const markerImg = document.createElement('img');
+    markerImg.src = url;
 
-        return config;
-    } else {
-        const config = {
-            url: url,
-            scaledSize: new google.maps.Size(size, size),
-        }
-
-        return config;
-    }
+    return markerImg;
+    // if (clusterIconCentered) {
+    //     const config = {
+    //         url: url,
+    //         scaledSize: new google.maps.Size(size, size),
+    //         anchor: new google.maps.Point(size / 2, size / 2),
+    //     }
+// 
+    //     return config;
+    // } else {
+    //     const config = {
+    //         url: url,
+    //         scaledSize: new google.maps.Size(size, size),
+    //     }
+// 
+    //     return config;
+    // }
 }
 
 /**

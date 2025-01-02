@@ -340,8 +340,8 @@ export default class AdeliomMapFunctions extends Emitter {
              */
             _getMarkerCoordinates: (marker: any) => {
                 return {
-                    lat: marker.getPosition().lat(),
-                    lng: marker.getPosition().lng(),
+                    lat: marker.position.lat,
+                    lng: marker.position.lng,
                 };
             },
             /**
@@ -1234,8 +1234,7 @@ export default class AdeliomMapFunctions extends Emitter {
                  * @private
                  */
                 _getIconConfig: (url: any, iconSize?: number, iconCentered?: boolean) => {
-                    let size;
-                    let isCentered;
+                    let size: any;
 
                     if (iconSize) {
                         size = iconSize;
@@ -1243,26 +1242,13 @@ export default class AdeliomMapFunctions extends Emitter {
                         size = this.options[keys.map.markerIconSize as keyof AdeliomMapOptionsType];
                     }
 
-                    if (iconCentered !== undefined) {
-                        isCentered = iconCentered;
-                    } else {
-                        isCentered = this.options[keys.map.markerIconCentered as keyof AdeliomMapOptionsType];
-                    }
-
                     if (this.google) {
-                        const config = {
-                            url: url,
-                            scaledSize: new this.google.maps.Size(size, size),
-                            anchor: null,
-                        };
+                        const iconImg: HTMLImageElement = document.createElement('img');
+                        iconImg.src = url;
+                        iconImg.setAttribute('height', size.toString());
+                        iconImg.setAttribute('width', size.toString());
 
-                        if (isCentered) {
-                            if (size) {
-                                config.anchor = new this.google.maps.Point(Number(size) / 2, Number(size) / 2);
-                            }
-                        }
-
-                        return config;
+                        return iconImg;
                     }
 
                     return null;
@@ -1279,7 +1265,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         const iconSize = this.helpers.markers._getIconSizeForMarker(marker);
                         const iconCentered = this.helpers.markers._getIconCenteredForMarker(marker);
 
-                        marker.setIcon(this.helpers.google.markers._getIconConfig(idleIcon, iconSize, iconCentered));
+                        marker.content.src = this.helpers.google.markers._getIconConfig(idleIcon, iconSize, iconCentered)?.src;
                     }
                 },
                 /**
@@ -1294,7 +1280,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         const iconSize = this.helpers.markers._getIconSizeForMarker(marker);
                         const iconCentered = this.helpers.markers._getIconCenteredForMarker(marker);
 
-                        marker.setIcon(this.helpers.google.markers._getIconConfig(selectedIcon, iconSize, iconCentered));
+                        marker.content.src = this.helpers.google.markers._getIconConfig(selectedIcon, iconSize, iconCentered)?.src;
                     }
                 },
                 /**
@@ -1309,7 +1295,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         const iconSize = this.helpers.markers._getIconSizeForMarker(marker);
                         const iconCentered = this.helpers.markers._getIconCenteredForMarker(marker);
 
-                        marker.setIcon(this.helpers.google.markers._getIconConfig(hoveredIcon, iconSize, iconCentered));
+                        marker.content.src = this.helpers.google.markers._getIconConfig(hoveredIcon, iconSize, iconCentered)?.src;
                     }
                 },
                 /**
@@ -1321,14 +1307,9 @@ export default class AdeliomMapFunctions extends Emitter {
                     if (this.google) {
                         const markerData: AdeliomMapMarkerDataType = this.helpers.markersData._getDataByProperty('marker', markerInstance);
 
-                        // Listener to handle marker click
-                        this.google.maps.event.addListener(markerInstance, 'click', () => {
-                            this._handleClickMarker(markerInstance)
-                        });
-
                         if (markerData.hasInteraction) {
                             // Listener to handle mouseover (change icon)
-                            this.google.maps.event.addListener(markerInstance, 'mouseover', () => {
+                            markerInstance.content.addEventListener('mouseenter', () => {
                                 if (!markerData.isFakeCluster) {
                                     this.helpers.google.markers._setHoveredIcon(markerInstance);
                                 } else if (markerData.fakeClusterMarkers?.length) {
@@ -1337,7 +1318,7 @@ export default class AdeliomMapFunctions extends Emitter {
                             });
 
                             // Listener to handle mouseout (change icon)
-                            this.google.maps.event.addListener(markerInstance, 'mouseout', () => {
+                            markerInstance.content.addEventListener('mouseout', () => {
                                 if (!markerData.isFakeCluster) {
                                     this.helpers.google.markers._setIdleIcon(markerInstance);
                                 } else if (markerData.fakeClusterMarkers?.length) {
@@ -1345,6 +1326,11 @@ export default class AdeliomMapFunctions extends Emitter {
                                 }
                             });
                         }
+
+                        // Listener to handle marker click
+                        this.google.maps.event.addListener(markerInstance, 'click', () => {
+                            this._handleClickMarker(markerInstance)
+                        });
                     }
                 },
                 /**
@@ -1448,23 +1434,23 @@ export default class AdeliomMapFunctions extends Emitter {
                             ? this.helpers.geolocation._getMarkerIcon()
                             : markerRawData.icon;
 
-                        markerConfig.icon = this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
+                        markerConfig.content = this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
                         markerData.icon = markerRawData.icon;
                     } else if (this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType]) {
                         const url: string = markerRawData.isGeolocation && this.helpers.geolocation._getMarkerIcon()
                             ? this.helpers.geolocation._getMarkerIcon()
                             : this.options[keys.map.markerIconUrl as keyof AdeliomMapOptionsType];
                         if (!markerRawData.isFakeCluster) {
-                            markerConfig.icon = this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
+                            markerConfig.content = this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
                         } else if (markerData.fakeClusterMarkers?.length) {
                             const markersCount = markerData.fakeClusterMarkers.length;
 
-                            markerConfig.icon = this.helpers.google.clusters._getBasicIcon(markersCount);
-                            markerConfig.label = {
-                                text: markerData.fakeClusterMarkers.length.toString(),
-                                color: this.helpers.google.clusters._getFontColor(markersCount),
-                                fontSize: this.helpers.google.clusters._getFontSize(markersCount),
-                            }
+                            markerConfig.content = this.helpers.google.clusters._getBasicIcon(markersCount);
+                            // markerConfig.label = {
+                            //     text: markerData.fakeClusterMarkers.length.toString(),
+                            //     color: this.helpers.google.clusters._getFontColor(markersCount),
+                            //     fontSize: this.helpers.google.clusters._getFontSize(markersCount),
+                            // }
                         }
                     }
 
@@ -1484,6 +1470,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     let markerInstance = null;
 
                     if (this.google) {
+                        // Marker instanciation
                         markerInstance = new this.google.maps.marker.AdvancedMarkerElement(markerConfig);
                     }
 

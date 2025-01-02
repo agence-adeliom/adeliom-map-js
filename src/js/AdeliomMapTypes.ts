@@ -242,6 +242,7 @@ export type AdeliomMapMarkerConfigType = {
     icon?: any,
     label?: any,
     zIndex?: number,
+    content?: any,
 }
 
 export type AdeliomMapErrorsType = {

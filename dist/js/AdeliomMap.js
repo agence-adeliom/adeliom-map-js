@@ -1347,20 +1347,25 @@ var getDefaultIconConfig = function getDefaultIconConfig(color, size) {
   return getIconConfig(getDefaultIconData(getSvg(color)), size);
 };
 var getIconConfig = function getIconConfig(url, size, clusterIconCentered) {
-  if (clusterIconCentered) {
-    var config = {
-      url: url,
-      scaledSize: new google.maps.Size(size, size),
-      anchor: new google.maps.Point(size / 2, size / 2)
-    };
-    return config;
-  } else {
-    var _config = {
-      url: url,
-      scaledSize: new google.maps.Size(size, size)
-    };
-    return _config;
-  }
+  var markerImg = document.createElement('img');
+  markerImg.src = url;
+  return markerImg;
+  // if (clusterIconCentered) {
+  //     const config = {
+  //         url: url,
+  //         scaledSize: new google.maps.Size(size, size),
+  //         anchor: new google.maps.Point(size / 2, size / 2),
+  //     }
+  // 
+  //     return config;
+  // } else {
+  //     const config = {
+  //         url: url,
+  //         scaledSize: new google.maps.Size(size, size),
+  //     }
+  // 
+  //     return config;
+  // }
 };
 /**
  * Returns the corresponding params object from a count value
@@ -2258,8 +2263,8 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
          */
         _getMarkerCoordinates: function _getMarkerCoordinates(marker) {
           return {
-            lat: marker.getPosition().lat(),
-            lng: marker.getPosition().lng()
+            lat: marker.position.lat,
+            lng: marker.position.lng
           };
         },
         /**
@@ -3091,29 +3096,17 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            */
           _getIconConfig: function _getIconConfig(url, iconSize, iconCentered) {
             var size;
-            var isCentered;
             if (iconSize) {
               size = iconSize;
             } else {
               size = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.markerIconSize];
             }
-            if (iconCentered !== undefined) {
-              isCentered = iconCentered;
-            } else {
-              isCentered = _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.markerIconCentered];
-            }
             if (_this.google) {
-              var config = {
-                url: url,
-                scaledSize: new _this.google.maps.Size(size, size),
-                anchor: null
-              };
-              if (isCentered) {
-                if (size) {
-                  config.anchor = new _this.google.maps.Point(Number(size) / 2, Number(size) / 2);
-                }
-              }
-              return config;
+              var iconImg = document.createElement('img');
+              iconImg.src = url;
+              iconImg.setAttribute('height', size.toString());
+              iconImg.setAttribute('width', size.toString());
+              return iconImg;
             }
             return null;
           },
@@ -3123,11 +3116,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * @private
            */
           _setIdleIcon: function _setIdleIcon(marker) {
+            var _a;
             var idleIcon = _this.helpers.markers._getIdleIconForMarker(marker);
             if (!_this.helpers.markers._isMarkerSelected(marker) && idleIcon) {
               var iconSize = _this.helpers.markers._getIconSizeForMarker(marker);
               var iconCentered = _this.helpers.markers._getIconCenteredForMarker(marker);
-              marker.setIcon(_this.helpers.google.markers._getIconConfig(idleIcon, iconSize, iconCentered));
+              marker.content.src = (_a = _this.helpers.google.markers._getIconConfig(idleIcon, iconSize, iconCentered)) === null || _a === void 0 ? void 0 : _a.src;
             }
           },
           /**
@@ -3136,11 +3130,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * @private
            */
           _setSelectedIcon: function _setSelectedIcon(marker) {
+            var _a;
             var selectedIcon = _this.helpers.markers._getSelectedIconForMarker(marker);
             if (selectedIcon) {
               var iconSize = _this.helpers.markers._getIconSizeForMarker(marker);
               var iconCentered = _this.helpers.markers._getIconCenteredForMarker(marker);
-              marker.setIcon(_this.helpers.google.markers._getIconConfig(selectedIcon, iconSize, iconCentered));
+              marker.content.src = (_a = _this.helpers.google.markers._getIconConfig(selectedIcon, iconSize, iconCentered)) === null || _a === void 0 ? void 0 : _a.src;
             }
           },
           /**
@@ -3149,11 +3144,12 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
            * @private
            */
           _setHoveredIcon: function _setHoveredIcon(marker) {
+            var _a;
             var hoveredIcon = _this.helpers.markers._getHoveredIconForMarker(marker);
             if (!_this.helpers.markers._isMarkerSelected(marker) && hoveredIcon) {
               var iconSize = _this.helpers.markers._getIconSizeForMarker(marker);
               var iconCentered = _this.helpers.markers._getIconCenteredForMarker(marker);
-              marker.setIcon(_this.helpers.google.markers._getIconConfig(hoveredIcon, iconSize, iconCentered));
+              marker.content.src = (_a = _this.helpers.google.markers._getIconConfig(hoveredIcon, iconSize, iconCentered)) === null || _a === void 0 ? void 0 : _a.src;
             }
           },
           /**
@@ -3164,13 +3160,9 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
           _handleBasicMarkerListeners: function _handleBasicMarkerListeners(markerInstance) {
             if (_this.google) {
               var markerData = _this.helpers.markersData._getDataByProperty('marker', markerInstance);
-              // Listener to handle marker click
-              _this.google.maps.event.addListener(markerInstance, 'click', function () {
-                _this._handleClickMarker(markerInstance);
-              });
               if (markerData.hasInteraction) {
                 // Listener to handle mouseover (change icon)
-                _this.google.maps.event.addListener(markerInstance, 'mouseover', function () {
+                markerInstance.content.addEventListener('mouseenter', function () {
                   var _a;
                   if (!markerData.isFakeCluster) {
                     _this.helpers.google.markers._setHoveredIcon(markerInstance);
@@ -3179,7 +3171,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
                   }
                 });
                 // Listener to handle mouseout (change icon)
-                _this.google.maps.event.addListener(markerInstance, 'mouseout', function () {
+                markerInstance.content.addEventListener('mouseout', function () {
                   var _a;
                   if (!markerData.isFakeCluster) {
                     _this.helpers.google.markers._setIdleIcon(markerInstance);
@@ -3188,6 +3180,10 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
                   }
                 });
               }
+              // Listener to handle marker click
+              _this.google.maps.event.addListener(markerInstance, 'click', function () {
+                _this._handleClickMarker(markerInstance);
+              });
             }
           },
           /**
@@ -3288,22 +3284,23 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             }
             if (markerRawData === null || markerRawData === void 0 ? void 0 : markerRawData.icon) {
               var url = markerRawData.isGeolocation && _this.helpers.geolocation._getMarkerIcon() ? _this.helpers.geolocation._getMarkerIcon() : markerRawData.icon;
-              markerConfig.icon = _this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
+              markerConfig.content = _this.helpers.google.markers._getIconConfig(url, iconSize, iconCentered);
               markerData.icon = markerRawData.icon;
             } else if (_this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.markerIconUrl]) {
               var _url = markerRawData.isGeolocation && _this.helpers.geolocation._getMarkerIcon() ? _this.helpers.geolocation._getMarkerIcon() : _this.options[_optionKeys__WEBPACK_IMPORTED_MODULE_1__["default"].map.markerIconUrl];
               if (!markerRawData.isFakeCluster) {
-                markerConfig.icon = _this.helpers.google.markers._getIconConfig(_url, iconSize, iconCentered);
+                markerConfig.content = _this.helpers.google.markers._getIconConfig(_url, iconSize, iconCentered);
               } else if ((_c = markerData.fakeClusterMarkers) === null || _c === void 0 ? void 0 : _c.length) {
                 var markersCount = markerData.fakeClusterMarkers.length;
-                markerConfig.icon = _this.helpers.google.clusters._getBasicIcon(markersCount);
-                markerConfig.label = {
-                  text: markerData.fakeClusterMarkers.length.toString(),
-                  color: _this.helpers.google.clusters._getFontColor(markersCount),
-                  fontSize: _this.helpers.google.clusters._getFontSize(markersCount)
-                };
+                markerConfig.content = _this.helpers.google.clusters._getBasicIcon(markersCount);
+                // markerConfig.label = {
+                //     text: markerData.fakeClusterMarkers.length.toString(),
+                //     color: this.helpers.google.clusters._getFontColor(markersCount),
+                //     fontSize: this.helpers.google.clusters._getFontSize(markersCount),
+                // }
               }
             }
+
             if (markerRawData.isGeolocation) {
               markerConfig.zIndex = 9999999999;
               markerData.isGeolocation = true;
@@ -3316,6 +3313,7 @@ var AdeliomMapFunctions = /*#__PURE__*/function (_Emitter) {
             }
             var markerInstance = null;
             if (_this.google) {
+              // Marker instanciation
               markerInstance = new _this.google.maps.marker.AdvancedMarkerElement(markerConfig);
             }
             _this.emit(_AdeliomMap__WEBPACK_IMPORTED_MODULE_3__.AdeliomMapEvents.markers.created, markerInstance);
