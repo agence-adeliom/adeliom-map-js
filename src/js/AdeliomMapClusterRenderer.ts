@@ -117,10 +117,11 @@ export default class AdeliomMapClusterRenderer extends DefaultRenderer {
                 color: fontColor,
                 fontSize: fontSize,
             },
-            zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count, icon: undefined
+            // @ts-ignore
+            zIndex: Number(google.maps.marker.AdvancedMarkerElement.MAX_ZINDEX) + count, icon: undefined
         };
 
         // @ts-ignore
-        return new google.maps.Marker(options);
+        return new google.maps.marker.AdvancedMarkerElement.Marker(options);
     }
 }

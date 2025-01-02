@@ -1484,7 +1484,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     let markerInstance = null;
 
                     if (this.google) {
-                        markerInstance = new this.google.maps.Marker(markerConfig);
+                        markerInstance = new this.google.maps.marker.AdvancedMarkerElement(markerConfig);
                     }
 
                     this.emit(AdeliomMapEvents.markers.created, markerInstance);
@@ -1628,8 +1628,14 @@ export default class AdeliomMapFunctions extends Emitter {
                     if (!this.google) {
                         let loader;
 
-                        if (this.options[keys.apiOptions as keyof AdeliomMapOptionsType]) {
-                            const options: LoaderOptions = Object(this.options[keys.apiOptions as keyof AdeliomMapOptionsType]);
+                        const options: LoaderOptions = Object(this.options[keys.apiOptions as keyof AdeliomMapOptionsType]) ?? {};
+
+                        if (!options.libraries || !options.libraries.includes('marker')) {
+                            // Append marker to array option.libraries
+                            options.libraries = options.libraries ? [...options.libraries, 'marker'] : ['marker'];
+                        }
+
+                        if (options) {
                             loader = new Loader(this.options.apiKey, options);
                         } else {
                             loader = new Loader(this.options.apiKey);
@@ -1650,6 +1656,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         rotateControl: this.options[keys.map.controls.rotateControl as keyof AdeliomMapOptionsType],
                         styles: this.helpers.google.map._getMapStyles(),
                         mapTypeId: this.options[keys.map.type as keyof AdeliomMapOptionsType],
+                        mapId: 'DEMO_MAP_ID',
                     });
 
                     this.helpers.google.map._handleClickOnMap();
