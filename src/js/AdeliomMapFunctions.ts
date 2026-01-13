@@ -856,7 +856,7 @@ export default class AdeliomMapFunctions extends Emitter {
                     // Only zoom if less zoomed than zoom value
                     let zoomMarkerOnClick = this.options[keys.map.zoomMarkerOnClick as keyof AdeliomMapOptionsType];
 
-                    if (this.map && zoomMarkerOnClick && this.map.getZoom() < zoomMarkerOnClick) {
+                    if (this.map && zoomMarkerOnClick && this.map.getZoom() < (zoomMarkerOnClick as number)) {
                         this.helpers.map._setZoom(parseInt(String(zoomMarkerOnClick)));
                     }
                 }
