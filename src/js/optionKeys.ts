@@ -30,6 +30,7 @@ const keys: AdeliomMapKeys = {
         animation: 'mapAnimation',
         showPlaces: 'mapShowPlaces',
         type: 'mapType',
+        id: 'mapId',
         replaceInfoWindowContentWithMarkerData: 'mapInfoWindowReplaceWithMarkerData',
         customStyles: 'mapCustomStyles',
         customZoomPlusSelector: 'mapCustomZoomPlusSelector',

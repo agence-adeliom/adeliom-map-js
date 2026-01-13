@@ -1647,7 +1647,7 @@ export default class AdeliomMapFunctions extends Emitter {
                         rotateControl: this.options[keys.map.controls.rotateControl as keyof AdeliomMapOptionsType],
                         styles: this.helpers.google.map._getMapStyles(),
                         mapTypeId: this.options[keys.map.type as keyof AdeliomMapOptionsType],
-                        mapId: 'DEMO_MAP_ID',
+                        mapId: this.options[keys.map.id as keyof AdeliomMapOptionsType] ?? 'DEFAULT_MAP_ID',
                     });
 
                     this.helpers.google.map._handleClickOnMap();

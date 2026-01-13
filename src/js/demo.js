@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         apiOptions: {
             libraries: ['places'],
         },
+        mapId: 'TEST',
         mapSelector: '[js-map]',
         mapListSelector: '[js-map-list]',
         mapCustomZoomMinusSelector: '[js-custom-zoom-minus]',

@@ -9,6 +9,7 @@ const defaultOptions: AdeliomMapOptionsType = {
     checkMapSize: false,
     mapUseClusters: false,
     mapClusterIconSize: 56,
+    mapId: 'DEFAULT_MAP_ID',
     mapCustomZoomMinusSelector: null,
     mapCustomZoomPlusSelector: null,
     geolocationSelector: undefined,
